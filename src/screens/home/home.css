@@ -1,0 +1,32 @@
+.container {
+	display: flex;
+	height: 100vh;
+	width: 100vw;
+	flex-direction: column;
+}
+
+.navbar {
+	flex: 1;
+	padding: 0 48px;
+}
+
+.body{
+	display: flex;
+	flex: 10;
+}
+
+
+.left {
+	/* background-color: blueviolet; */
+	flex: 1.2;
+}
+
+.center {
+	/* background-color: brown; */
+	flex: 4;
+}
+
+.right {
+	/* background-color: royalblue; */
+	flex: 2;
+}
