@@ -1,0 +1,19 @@
+.highlights-container {
+	padding: 24px;
+	background-color: white;
+	border-radius: 10px;
+}
+
+.highlights-title {
+	font-weight: 600;
+	margin-bottom: 12px;
+}
+
+.collection-action {
+	text-align: center;
+	color: #00c775;
+	font-size: 16px;
+	font-weight: 500;
+	margin-top: 12px;
+	cursor: pointer;
+}
