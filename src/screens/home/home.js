@@ -1,5 +1,6 @@
-import { NavBar } from "../../components/navBar/navBar";
 import "./home.css";
+import { NavBar } from "../../components/navBar/navBar";
+import { SideNav } from "../../components/sidenav/sidenav";
 // import { TopNotification } from "../../components/topNotification/topNotification";
 
 function Home() {
@@ -9,9 +10,12 @@ function Home() {
 				<NavBar />
 			</div>
 			<div className="body">
-				<div className="left">k</div>
-				<div className="center">o</div>
-				<div className="right">m</div>
+				<div className="left">
+					<SideNav />
+				</div>
+				<div className="center">
+					<p>Body</p>
+				</div>
 			</div>
 		</div>
 	);
