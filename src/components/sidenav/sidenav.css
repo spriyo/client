@@ -1,0 +1,59 @@
+.sidenav {
+	padding: 20px;
+	height: 89vh;
+}
+
+.sidenav-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background-color: white;
+	height: 100%;
+	border-radius: 10px;
+	padding: 24px 14px 10px 14px;
+}
+
+.sidenav-title {
+	font-weight: 500;
+	margin-bottom: 18px;
+	margin-left: 10px;
+}
+
+.sidenav-option {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	width: 100%;
+	border-radius: 18px;
+	padding: 12px 8px;
+	max-height: 38px;
+}
+
+.sidenav-option:hover {
+	background-color: #ddddeb;
+}
+
+.sidenav-option-title {
+	font-weight: 500;
+	margin-left: 14px;
+	font-size: 12px;
+}
+
+.sidenav-footer {
+	border-top: 1px solid #ddddeb;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.sidenav-footer div {
+	display: flex;
+	justify-content: space-evenly;
+	margin-top: 6px;
+}
+
+.sidenav-footer div p {
+	font-size: 10px;
+	color: #b1b1b1;
+	cursor: pointer;
+}
