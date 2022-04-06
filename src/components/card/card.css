@@ -4,38 +4,95 @@
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
+
+	height: auto;
 	min-height: 288px;
+	min-width: 300px;
 	width: 100%;
-	height: 100%;
+
 	border-radius: 8px;
 	display: flex;
 	align-items: flex-end;
 	margin: 2px;
+	cursor: pointer;
 }
 
-.card-info-container {
+.card-info {
 	height: 80px;
 	margin: 8px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	color: white;
-	border-radius: 8px;
 	padding: 10px;
 	width: 100%;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	color: white;
+	border-radius: 8px;
+
 	/* Blur */
-	background-color: rgba(255, 255, 255, 0.3);
-	-webkit-backdrop-filter: blur(10px);
-	backdrop-filter: blur(10px);
+	background-color: rgba(255, 255, 255, 0.24);
+	-webkit-backdrop-filter: blur(20px);
+	backdrop-filter: blur(20px);
 }
 
-.card-info-container div {
+.card-info-profileimg {
+	position: absolute;
+	top: -16px;
+	border: 1px solid #ffffff;
+	border-radius: 50%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 32px;
+	height: 32px;
+	background-image: url("https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&q=60");
+}
+
+.card-info-creator {
+	position: absolute;
+	top: 6px;
+	right: 16px;
+	font-size: 10px;
+	font-weight: 300;
+}
+
+.card-info-top {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+	margin-top: 16px;
 }
 
-.card-info-container div:last-child p:last-child {
-	background-color: rgb(110, 255, 110);
+.card-info-top .card-info-title {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.card-info-bottom {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 2px;
+}
+
+.card-info-bottom .card-info-price {
+	font-size: 12px;
+}
+
+.card-info-bottom .card-info-price span {
+	font-weight: 600;
+}
+
+.card-info-action {
+	background-color: #00c775;
 	padding: 4px 8px;
+	width: 90px;
+	height: 24px;
 	border-radius: 6px;
+	display: flex;
+	justify-content: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: 500;
 }
