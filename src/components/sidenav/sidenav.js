@@ -4,12 +4,10 @@ import {
 	AiOutlineHeart,
 	AiOutlineStock,
 	AiOutlineSetting,
-	AiFillProfile,
 	AiOutlineProfile,
 	AiOutlineWallet,
-	AiOutlineLike,
 } from "react-icons/ai";
-import { BsBookmarkStar, BsPerson } from "react-icons/bs";
+import { BsBookmarkStar } from "react-icons/bs";
 
 export function SideNav() {
 	return (

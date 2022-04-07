@@ -38,18 +38,3 @@
 .activity-card-info.time {
 	font-size: 12px;
 }
-
-.activity-card-action-container {
-	display: flex;
-	flex: 1;
-	align-items: center;
-	justify-content: end;
-}
-
-.activity-card-action {
-	background-color: #00c775;
-	padding: 7px 15px;
-	border-radius: 54px;
-	color: white;
-	cursor: pointer;
-}
