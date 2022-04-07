@@ -1,0 +1,131 @@
+.activebid-container {
+	padding: 24px;
+	background-color: white;
+	border-radius: 10px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.activebid-body {
+	flex: 1;
+}
+
+/* Title */
+.activebid-title {
+	font-weight: 600;
+	margin-bottom: 20px;
+}
+
+.activebid-title-name {
+	font-size: 24px;
+}
+.activebid-title-id {
+	font-size: 12px;
+	color: #c4c4c4;
+}
+
+/* User */
+.activebid-user-container {
+	display: flex;
+	margin: 12px 0px;
+	align-items: center;
+}
+
+.activebid-user-img {
+	cursor: pointer;
+	margin-right: 10px;
+	width: 46px;
+	height: 46px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	border-radius: 50%;
+	background-image: url("https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&q=60");
+}
+
+.activebid-user-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.activebid-user-info.name {
+	font-size: 24px;
+}
+
+.activebid-user-info.username {
+	font-size: 12px;
+}
+
+.activebid-img-container {
+	flex: 1;
+	cursor: pointer;
+	margin-right: 10px;
+	margin-left: 24px;
+	height: 416px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	border-radius: 10px;
+	background-image: url("https://f8n-production-collection-assets.imgix.net/0x2db77122C5971647aC67cdcD151DcA0EfCe3966f/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680");
+}
+
+.activebid-bidder {
+	margin-top: 40px;
+}
+
+.activebid-bidder-time {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 24px;
+}
+
+.activebid-bidder-time div:first-child p:first-child {
+	font-size: 12px;
+	font-weight: 600;
+	color: #7e7e7e;
+}
+
+.activebid-bidder-time div:first-child p:last-child {
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.active-bidder-current {
+	display: flex;
+	align-items: center;
+}
+.active-bidder-current.img {
+	margin-left: 8px;
+	width: 46px;
+	height: 46px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	border-radius: 50%;
+	background-image: url("https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&q=60");
+}
+
+.activebid-bidder-actions.container {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+}
+
+.activebid-bidder-action {
+	background-color: #00c775;
+	padding: 7px 15px;
+	border-radius: 54px;
+	color: white;
+	cursor: pointer;
+}
+
+.activebids-list-title {
+	font-size: 16px;
+	font-weight: 600;
+	margin-top: 20px;
+}
