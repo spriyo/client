@@ -8,8 +8,10 @@ export function HighlightsComponent({ title, data = [] }) {
 				<p>{title}</p>
 			</div>
 			<div>
-				{data.slice(0, 6).map((e) => (
-					<UserCardComponent />
+				{data.slice(0, 6).map((e, i) => (
+					<div key={i}>
+						<UserCardComponent />
+					</div>
 				))}
 			</div>
 			{data.length > 5 ? (

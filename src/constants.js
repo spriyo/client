@@ -26,3 +26,5 @@ export const ChainsConfig = {
 		blockExplorerUrls: ["https://testnet.bscscan.com/"],
 	},
 };
+
+export const BASE_URL = "http://192.168.18.41:3000";

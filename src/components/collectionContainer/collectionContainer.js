@@ -9,8 +9,10 @@ export function CollectionContainer({ assets, title }) {
 
 			<div className="collection-cards-container">
 				<div className="cards-container">
-					{assets.slice(0, 6).map((el) => (
-						<Card backgroundImage={el} />
+					{assets.slice(0, 6).map((el, i) => (
+						<div key={i}>
+							<Card backgroundImage={el} />
+						</div>
 					))}
 				</div>
 			</div>

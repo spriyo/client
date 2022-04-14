@@ -1,4 +1,6 @@
 import axios from "axios";
+import { BASE_URL } from "../constants";
+import { resolve } from "../utils/resolver";
 
 export class AuthHttpService {
 	async signIn() {
@@ -6,8 +8,10 @@ export class AuthHttpService {
 		// getting address from which we will sign message
 		const address = await window.ethereum.selectedAddress;
 		console.log("Select address : " + address);
+		if (!address) throw new Error("Please connect your wallet to this site!");
+
 		const nonceResponse = await axios.post(
-			"http://192.168.18.41:3000/common/generateNonce",
+			`${BASE_URL}/common/generateNonce`,
 			{ address },
 			{
 				method: "POST",
@@ -25,31 +29,47 @@ export class AuthHttpService {
 		});
 		console.log("Sign : " + sign);
 
-		const signinResponse = await fetch(
-			"http://192.168.18.41:3000/website/v1/user/signin",
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					displayName: "Unnamed",
-					sign,
-					nonce,
-				}),
-			}
-		);
+		const signinResponse = await fetch(`${BASE_URL}/website/v1/user/signin`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				displayName: "Unnamed",
+				sign,
+				nonce,
+			}),
+		});
 		const formattedSigninResponse = await signinResponse.json();
 		console.log(formattedSigninResponse);
 		localStorage.setItem("token", formattedSigninResponse.token);
+		return formattedSigninResponse;
 	}
 
 	async getUser() {
 		// 3. Send the token whenever auth is required.
 		const token = localStorage.getItem("token");
-		const loginResponse = await axios.get("/website/v1/user", {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
-		console.log(loginResponse.data);
+		const resolved = await resolve(
+			axios.get(`${BASE_URL}/website/v1/user`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			})
+		);
+		console.log(resolved);
+		if (resolved.statusCode === 200) {
+			localStorage.setItem("user", JSON.stringify(resolved.data));
+		} else {
+			localStorage.removeItem("user");
+			localStorage.removeItem("token");
+		}
+		return resolved;
+	}
+
+	async signOut() {
+		try {
+			localStorage.removeItem("token");
+			localStorage.removeItem("user");
+		} catch (error) {
+			console.log(error);
+		}
 	}
 }

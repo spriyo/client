@@ -53,3 +53,12 @@ export async function getWalletAddress() {
 		console.log(error);
 	}
 }
+
+export async function getChainId() {
+	try {
+		let chainId = await window.ethereum.chainId;
+		return chainId;
+	} catch (error) {
+		console.log(error);
+	}
+}
