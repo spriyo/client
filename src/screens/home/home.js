@@ -1,5 +1,5 @@
 import "./home.css";
-import { NavBar } from "../../components/navBar/navBar";
+import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { SideNav } from "../../components/sidenav/sidenav";
 import { CollectionContainer } from "../../components/collectionContainer/collectionContainer";
 import { ActiveBidComponent } from "../../components/activeBid/activeBid";
@@ -19,7 +19,7 @@ function Home() {
 	return (
 		<div className="container">
 			<div className="navbar">
-				<NavBar />
+				<NavbarComponent />
 			</div>
 			<div className="body">
 				<div className="left">

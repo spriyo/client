@@ -1,23 +1,26 @@
-import { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./screens/home/home.js";
-import { TestScreen } from "./screens/test/test.js";
-
-import {
-	switchAccount,
-	switchChain as actionSwitchChain,
-} from "./state/actions/wallet";
-
 import { useDispatch } from "react-redux";
-import { AuthHttpService } from "./api/auth.js";
-import { login, logout } from "./state/actions/auth.js";
+import { login, logout } from "../state/actions/auth";
+import { AuthHttpService } from "../api/auth";
 import {
 	connectWalletToSite,
 	getChainId,
 	getWalletAddress,
-} from "./utils/wallet.js";
+} from "../utils/wallet";
+import {
+	switchAccount,
+	switchChain as actionSwitchChain,
+} from "../state/actions/wallet";
 
-function App() {
+const styles = {
+	backgroundColor: "#00c775",
+	color: "white",
+	borderRadius: "16px",
+	padding: "4px 8px",
+	margin: "0px 16px",
+	cursor: "pointer",
+};
+
+export function ConnectComponent() {
 	const authHttpService = new AuthHttpService();
 	const dispatch = useDispatch();
 	async function connectAndListenWallet() {
@@ -63,20 +66,15 @@ function App() {
 			dispatch(login({ user: response.data }));
 		}
 	}
-
-	useEffect(() => {
-		connectAndListenWallet();
-		fetchCurrentUser();
-	});
-
 	return (
-		<Router>
-			<Routes>
-				<Route path="/" exact element={<Home />} />
-				<Route path="/test" exact element={<TestScreen />} />
-			</Routes>
-		</Router>
+		<div
+			onClick={() => {
+				connectAndListenWallet();
+				fetchCurrentUser();
+			}}
+			style={styles}
+		>
+			<p>Connect Wallet</p>
+		</div>
 	);
 }
-
-export default App;

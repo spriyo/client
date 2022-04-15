@@ -10,5 +10,8 @@ export const login = ({ user }) => {
 export const logout = () => {
 	return {
 		type: "LOGOUT",
+		payload: {
+			user: null,
+		},
 	};
 };

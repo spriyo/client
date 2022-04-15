@@ -41,6 +41,7 @@ export class AuthHttpService {
 		const formattedSigninResponse = await signinResponse.json();
 		console.log(formattedSigninResponse);
 		localStorage.setItem("token", formattedSigninResponse.token);
+		localStorage.setItem("user", JSON.stringify(formattedSigninResponse.user));
 		return formattedSigninResponse;
 	}
 
