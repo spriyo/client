@@ -1,0 +1,132 @@
+.create-screen-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	width: 100vw;
+	background-image: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	/* background-clip: text; */
+	/* -webkit-background-clip: text; */
+	/* -webkit-text-fill-color: transparent; */
+	animation: hue 20s infinite linear;
+	-webkit-animation: hue 20s infinite linear;
+}
+
+/* @keyframes hue {
+	from {
+		-webkit-filter: hue-rotate(0deg);
+	}
+
+	to {
+		-webkit-filter: hue-rotate(-360deg);
+	}
+} */
+
+.create-screen-container-inner {
+	width: 80vw;
+	border-radius: 8px;
+	padding: 40px;
+	background-color: white;
+}
+
+.heading {
+	font-size: 20px;
+	font-weight: 600;
+}
+
+hr {
+	color: #c4c4c4;
+}
+
+.content-container {
+	display: flex;
+	margin: 20px 0px;
+}
+
+.image-container {
+	flex: 4;
+	padding-right: 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-size: 12px;
+}
+
+.image-container .title {
+	font-weight: 600;
+	font-size: 16px;
+}
+
+.image-container .image-dropper {
+	margin-top: 26px;
+	background-color: #efeff8;
+	border: 1px solid #b1b1b1;
+	border-style: dashed;
+	border-radius: 10px;
+	height: 280px;
+	width: 280px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #b1b1b1;
+	cursor: pointer;
+}
+
+.image-container .image-picker {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 8px 14px;
+	border-radius: 24px;
+	border: 1px solid #c4c4c4;
+	margin-top: 18px;
+	cursor: pointer;
+}
+
+.image-picker input[type="file"] {
+	display: none;
+}
+
+.data-container {
+	flex: 6;
+	padding-left: 8px;
+	/* display: flex;
+	flex-direction: column;
+	justify-content: center; */
+}
+
+.data-container-field p {
+	font-size: 12px;
+	font-weight: 500;
+	margin-bottom: 4px;
+}
+
+.data-container-field input,
+.data-container-field textarea {
+	background-color: #efeff8;
+	padding: 14px;
+	width: 100%;
+	border-radius: 12px;
+	border: none;
+	margin-bottom: 12px;
+	resize: none;
+}
+
+.data-container-field input:focus,
+.data-container-field textarea:focus {
+	outline: none;
+}
+
+.createscreen-create-button {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 24px;
+	color: white;
+}
+
+.createscreen-create-button p {
+	border-radius: 8px;
+	background-color: #00c775;
+	padding: 4px 8px;
+	cursor: pointer;
+}

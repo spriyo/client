@@ -5,17 +5,17 @@ import { CollectionContainer } from "../../components/collectionContainer/collec
 import { ActiveBidComponent } from "../../components/activeBid/activeBid";
 import { HighlightsComponent } from "../../components/highlights/hightlights";
 const assets = [
-	"https://f8n-production-collection-assets.imgix.net/0xCEcB7D3f6e6F5ac651E1dA21FA963a4c0022D69c/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
-	"https://f8n-production-collection-assets.imgix.net/0x2db77122C5971647aC67cdcD151DcA0EfCe3966f/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
-	"https://f8n-production-collection-assets.imgix.net/0xE8A41116E9c18c61F40a04784E402844D9D514f9/3/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
 	"https://f8n-production-collection-assets.imgix.net/0xf075134Cdca036ACf176e2B39e7490C9acB005C8/4/nft.png?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
 	"https://f8n-production-collection-assets.imgix.net/0xCEcB7D3f6e6F5ac651E1dA21FA963a4c0022D69c/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
 	"https://f8n-production-collection-assets.imgix.net/0x2db77122C5971647aC67cdcD151DcA0EfCe3966f/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
 	"https://f8n-production-collection-assets.imgix.net/0xE8A41116E9c18c61F40a04784E402844D9D514f9/3/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
+	"https://f8n-production-collection-assets.imgix.net/0xCEcB7D3f6e6F5ac651E1dA21FA963a4c0022D69c/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
 	"https://f8n-production-collection-assets.imgix.net/0xf075134Cdca036ACf176e2B39e7490C9acB005C8/4/nft.png?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
+	"https://f8n-production-collection-assets.imgix.net/0x2db77122C5971647aC67cdcD151DcA0EfCe3966f/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
+	"https://f8n-production-collection-assets.imgix.net/0xE8A41116E9c18c61F40a04784E402844D9D514f9/3/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680",
 ];
 
-function Home() {
+function HomeScreen() {
 	return (
 		<div className="container">
 			<div className="navbar">
@@ -52,4 +52,4 @@ function Home() {
 	);
 }
 
-export default Home;
+export default HomeScreen;

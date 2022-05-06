@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./screens/home/home.js";
-import { TestScreen } from "./screens/test/test.js";
+// import { TestScreen } from "./screens/test/test.js";
 
 import {
 	switchAccount,
@@ -16,6 +16,9 @@ import {
 	getChainId,
 	getWalletAddress,
 } from "./utils/wallet.js";
+import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
+import HomeScreen from "./screens/home/home.js";
+import { CreateScreen } from "./screens/create/CreateScreen.jsx";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -72,8 +75,10 @@ function App() {
 	return (
 		<Router>
 			<Routes>
-				<Route path="/" exact element={<Home />} />
-				<Route path="/test" exact element={<TestScreen />} />
+				<Route path="/" exact element={<HomeScreen />} />
+				{/* <Route path="/test" exact element={<TestScreen />} /> */}
+				<Route path="/asset" exact element={<AssetScreen />} />
+				<Route path="/create" exact element={<CreateScreen />} />
 			</Routes>
 		</Router>
 	);
