@@ -27,4 +27,5 @@ export const ChainsConfig = {
 	},
 };
 
-export const BASE_URL = "http://192.168.18.41:3000";
+export const BASE_URL = process.env.REACT_APP_BASE_URL;
+export const WEB_API_BASE_URL = `${BASE_URL}/website/v1`;
