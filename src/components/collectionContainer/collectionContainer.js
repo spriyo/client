@@ -1,4 +1,4 @@
-import { Card } from "../card/card";
+import { CardComponent } from "../card/CardComponent";
 import "./collectionContainer.css";
 
 export function CollectionContainer({ assets, title }) {
@@ -11,7 +11,7 @@ export function CollectionContainer({ assets, title }) {
 				<div className="cards-container">
 					{assets.slice(0, 6).map((el, i) => (
 						<div key={i}>
-							<Card backgroundImage={el} />
+							<CardComponent asset={el} />
 						</div>
 					))}
 				</div>

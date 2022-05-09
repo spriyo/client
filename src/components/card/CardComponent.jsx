@@ -1,32 +1,40 @@
 import "./card.css";
 
-export function Card({ backgroundImage, title, createdBy, price }) {
+export function CardComponent({ asset }) {
 	return (
 		<div
 			className="card-container"
 			style={{
-				backgroundImage: `url('${backgroundImage}')`,
+				backgroundImage: `url('${
+					asset.medias.length !== 0 ? asset.medias[0].path : ""
+				}')`,
 			}}
 		>
 			<div className="card-info">
-				<div className="card-info-profileimg"></div>
+				<div
+					className="card-info-profileimg"
+					style={{
+						backgroundImage: `url('${asset.owner.displayImage}')`,
+					}}
+				></div>
 				<div className="card-info-creator">
 					{/* created by */}
-					<p>Created : @Leostelon</p>
+					<p>Created : @{asset.created_by.displayName}</p>
 				</div>
 				<div className="card-info-top">
 					{/* title */}
 					<div className="card-info-title">
-						<p>Space Rex</p>
+						<p>{asset.name}</p>
 					</div>
 				</div>
 				<div className="card-info-bottom">
-					{/* price */}
+					<p></p>
+					{/* price
 					<div className="card-info-price">
 						<p>
 							Price <span>6 WRX($ 1234)</span>
 						</p>
-					</div>
+					</div> */}
 					{/* button */}
 					<div className="card-info-action">
 						<p>Buy now</p>
