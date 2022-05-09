@@ -3,16 +3,19 @@ import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { SideNav } from "../../components/sidenav/sidenav";
 import { CollectionContainer } from "../../components/collectionContainer/collectionContainer";
 import { ActiveBidComponent } from "../../components/activeBid/activeBid";
-import { HighlightsComponent } from "../../components/highlights/hightlights";
+import { HighlightsComponent } from "../../components/highlights/HighlightsComponent";
 import { useEffect, useState } from "react";
 import { AssetHttpService } from "../../api/asset";
 import { SaleHttpService } from "../../api/sale";
+import { DisplayHttpService } from "../../api/display";
 
 function HomeScreen() {
 	const assetHttpService = new AssetHttpService();
 	const saleHttpService = new SaleHttpService();
+	const displayHttpService = new DisplayHttpService();
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [onSaleItems, setOnSaleItems] = useState([]);
+	const [topCreators, setTopCreators] = useState([]);
 
 	async function getRecentlyAdded() {
 		const resolved = await assetHttpService.getRecentlyAdded();
@@ -24,9 +27,15 @@ function HomeScreen() {
 		setOnSaleItems(resolved.data.map((e) => e.asset_id));
 	}
 
+	async function getTopCollectors() {
+		const resolved = await displayHttpService.getTopCreators();
+		setTopCreators(resolved.data.map((e) => e.user));
+	}
+
 	useEffect(() => {
 		getRecentlyAdded();
 		getActiveSales();
+		getTopCollectors();
 	}, []);
 
 	return (
@@ -51,7 +60,7 @@ function HomeScreen() {
 						</div>
 						<div style={{ flex: 1, marginLeft: "24px" }}>
 							<HighlightsComponent
-								data={[1, 2, 3, 4, 5, 6]}
+								data={topCreators.slice(0, 8)}
 								title="Popular Creators"
 							/>
 						</div>
