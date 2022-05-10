@@ -20,4 +20,11 @@ export class AssetHttpService {
 		const resolved = await resolve(axios.get(`${WEB_API_BASE_URL}/assets`));
 		return resolved;
 	}
+
+	async getUserAssets(userid) {
+		const resolved = await resolve(
+			axios.get(`${WEB_API_BASE_URL}/assets/user/` + userid)
+		);
+		return resolved;
+	}
 }

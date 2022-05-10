@@ -1,0 +1,55 @@
+.profile-container {
+	background-color: #efeff8;
+}
+.profile-header {
+	position: relative;
+}
+
+.banner-image {
+	width: 95vw;
+	height: 30vh;
+	background-color: aquamarine;
+	margin: 32px;
+	border-radius: 10px;
+}
+
+.profile-details {
+	position: absolute;
+	top: 130px;
+	left: 30px;
+	background-color: white;
+	margin: 32px;
+	border-radius: 10px;
+	width: 40vw;
+	padding: 16px;
+	display: flex;
+	align-items: center;
+}
+
+.profile-details div:last-child {
+	flex: 1;
+	margin-left: 16px;
+}
+
+.profile-details-image {
+	height: 120px;
+	width: 120px;
+	background-color: #00c775;
+	border: 1px solid #00c775;
+	border-radius: 50%;
+	z-index: 1;
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+.assset-value {
+	display: flex;
+	flex: 1;
+	justify-content: space-around;
+}
+
+.profile-description {
+	margin: 32px;
+	margin-top: 96px;
+}

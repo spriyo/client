@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./screens/home/home.js";
 // import { TestScreen } from "./screens/test/test.js";
 
 import {
@@ -16,9 +15,10 @@ import {
 	getChainId,
 	getWalletAddress,
 } from "./utils/wallet.js";
-import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
-import HomeScreen from "./screens/home/home.js";
+// import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
+import HomeScreen from "./screens/home/HomeScreen";
 import { CreateScreen } from "./screens/create/CreateScreen.jsx";
+import { ProfileScreen } from "./screens/profile/ProfileScreen";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -61,10 +61,18 @@ function App() {
 	}
 
 	async function fetchCurrentUser() {
-		let response = await authHttpService.getUser();
-		if (!response.error) {
-			dispatch(login({ user: response.data }));
+		const user = localStorage.getItem("user");
+		const token = localStorage.getItem("token");
+		let response;
+		if (!user || !token) {
+			response = await authHttpService.fetchUser();
+			if (!response.error) {
+				dispatch(login({ user: response.data }));
+			}
+		} else {
+			dispatch(login({ user: JSON.parse(user) }));
 		}
+		console.log(localStorage);
 	}
 
 	useEffect(() => {
@@ -76,9 +84,11 @@ function App() {
 		<Router>
 			<Routes>
 				<Route path="/" exact element={<HomeScreen />} />
+				<Route path="/profile" exact element={<ProfileScreen />} />
 				{/* <Route path="/test" exact element={<TestScreen />} /> */}
-				<Route path="/asset" exact element={<AssetScreen />} />
+				{/* <Route path="/asset" exact element={<AssetScreen />} /> */}
 				<Route path="/create" exact element={<CreateScreen />} />
+				<Route path="*" exact element={<p>Invalid route</p>} />
 			</Routes>
 		</Router>
 	);
