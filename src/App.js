@@ -15,10 +15,12 @@ import {
 	getChainId,
 	getWalletAddress,
 } from "./utils/wallet.js";
-// import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
+import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
 import HomeScreen from "./screens/home/HomeScreen";
 import { CreateScreen } from "./screens/create/CreateScreen.jsx";
 import { ProfileScreen } from "./screens/profile/ProfileScreen";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "./theme";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -81,16 +83,18 @@ function App() {
 	});
 
 	return (
-		<Router>
-			<Routes>
-				<Route path="/" exact element={<HomeScreen />} />
-				<Route path="/profile" exact element={<ProfileScreen />} />
-				{/* <Route path="/test" exact element={<TestScreen />} /> */}
-				{/* <Route path="/asset" exact element={<AssetScreen />} /> */}
-				<Route path="/create" exact element={<CreateScreen />} />
-				<Route path="*" exact element={<p>Invalid route</p>} />
-			</Routes>
-		</Router>
+		<ThemeProvider theme={theme}>
+			<Router>
+				<Routes>
+					<Route path="/" exact element={<HomeScreen />} />
+					<Route path="/profile" exact element={<ProfileScreen />} />
+					{/* <Route path="/test" exact element={<TestScreen />} /> */}
+					<Route path="/asset" exact element={<AssetScreen />} />
+					<Route path="/create" exact element={<CreateScreen />} />
+					<Route path="*" exact element={<p>Invalid route</p>} />
+				</Routes>
+			</Router>
+		</ThemeProvider>
 	);
 }
 
