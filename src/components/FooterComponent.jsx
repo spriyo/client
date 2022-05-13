@@ -13,7 +13,12 @@ export const FooterComponent = () => {
 
 	return (
 		<Box p={2} bgcolor={"white"}>
-			<Stack sx={{ flex: { xs: "column", md: "row" }, alignItems: "center" }}>
+			<Stack
+				sx={{
+					flexDirection: { xs: "column", md: "row" },
+					alignItems: "start",
+				}}
+			>
 				<Box flex={2}>
 					<div style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
 						<img src="spriyo.png" alt="logo" height={36} />
@@ -46,7 +51,7 @@ export const FooterComponent = () => {
 				<br />
 				<Box flex={1}>
 					<Typography variant="h2">Community</Typography>
-					<Stack direction={"row"} justifyContent="space-between">
+					<Stack direction={"row"}>
 						<FastLink
 							target={"_blank"}
 							href="https://instagram.com/spriyo.xyz"
