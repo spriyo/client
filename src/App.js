@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import { TestScreen } from "./screens/test/test.js";
 
 import {
 	switchAccount,
@@ -63,16 +62,9 @@ function App() {
 	}
 
 	async function fetchCurrentUser() {
-		const user = localStorage.getItem("user");
-		const token = localStorage.getItem("token");
-		let response;
-		if (!user || !token) {
-			response = await authHttpService.fetchUser();
-			if (!response.error) {
-				dispatch(login({ user: response.data }));
-			}
-		} else {
-			dispatch(login({ user: JSON.parse(user) }));
+		let response = await authHttpService.getUser();
+		if (!response.error) {
+			dispatch(login({ user: response.data }));
 		}
 		console.log(localStorage);
 	}
