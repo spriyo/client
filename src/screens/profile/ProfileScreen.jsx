@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { AssetHttpService } from "../../api/asset";
 import { CollectionContainer } from "../../components/collectionContainer/collectionContainer";
@@ -10,9 +11,9 @@ export function ProfileScreen(params) {
 	const [user, setUser] = useState({});
 
 	async function getUserAssets() {
-		const localUser = JSON.parse(localStorage.getItem("user"));
+		const localUser = await JSON.parse(localStorage.getItem("user"));
 		setUser(localUser);
-		const resolved = await assetHttpService.getUserAssets(user._id);
+		const resolved = await assetHttpService.getUserAssets(localUser._id);
 		setAssets(resolved.data);
 	}
 
@@ -66,7 +67,7 @@ export function ProfileScreen(params) {
 				</p>
 			</div>
 			<div style={{ margin: "32px" }}>
-				<CollectionContainer title={"Collections"} assets={assets} />
+				<CollectionContainer title={"Your NFTs"} assets={assets} />
 			</div>
 
 			<div style={{ marginBottom: "64px" }}>.</div>
