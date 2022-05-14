@@ -1,9 +1,22 @@
+import { Box } from "@mui/material";
 import { ActivityCardComponent } from "../activityCard/activityCard";
 import "./activeBid.css";
 
 export function ActiveBidComponent() {
 	return (
-		<div className="activebid-container">
+		<Box
+			className="activebid-container"
+			sx={{
+				flexDirection: { xs: "column", md: "row" },
+			}}
+		>
+			<Box
+				className="activebid-img-container"
+				sx={{
+					minHeight: { xs: "50vh", md: "auto" },
+					marginRight: { xs: "0", md: "10px" },
+				}}
+			></Box>
 			<div className="activebid-body">
 				{/* Title */}
 				<div className="activebid-title">
@@ -53,7 +66,6 @@ export function ActiveBidComponent() {
 					</div>
 				</div>
 			</div>
-			<div className="activebid-img-container"></div>
-		</div>
+		</Box>
 	);
 }

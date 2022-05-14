@@ -62,9 +62,6 @@
 .activebid-img-container {
 	flex: 1;
 	cursor: pointer;
-	margin-right: 10px;
-	margin-left: 24px;
-	height: 416px;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
