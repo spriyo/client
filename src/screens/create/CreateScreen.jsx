@@ -7,6 +7,7 @@ import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress, getChainId } from "../../utils/wallet";
 import { uploadFileToIpfs, uploadJsonToIpfs } from "../../utils/ipfs";
 import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
@@ -108,7 +109,10 @@ export function CreateScreen({ closeModal }) {
 				<div className="heading">Create NFT</div>
 				<hr />
 				{/* Content */}
-				<div className="content-container">
+				<Box
+					className="content-container"
+					sx={{ flexDirection: { xs: "column", md: "row" } }}
+				>
 					{/* Image */}
 					<div className="image-container">
 						<div className="title">
@@ -201,7 +205,7 @@ export function CreateScreen({ closeModal }) {
 							</div>
 						</div>
 					</div>
-				</div>
+				</Box>
 				<hr />
 			</div>
 		</div>
