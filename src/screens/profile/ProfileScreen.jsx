@@ -1,7 +1,9 @@
+import { Box } from "@mui/system";
 import React from "react";
 import { useEffect, useState } from "react";
 import { AssetHttpService } from "../../api/asset";
 import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
+import { FooterComponent } from "../../components/FooterComponent";
 import "./ProfileScreen.css";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
@@ -24,9 +26,18 @@ export function ProfileScreen(params) {
 	return (
 		<div className="profile-container">
 			<NavbarComponent></NavbarComponent>
-			<div className="profile-header">
+			<Box
+				className="profile-header"
+				sx={{ display: "flex", justifyContent: "center" }}
+			>
 				<div className="banner-image"></div>
-				<div className="profile-details">
+				<Box
+					className="profile-details"
+					sx={{
+						width: { xs: "auto", md: "40vw" },
+						left: { xs: "auto", md: "60px" },
+					}}
+				>
 					<div
 						className="profile-details-image"
 						style={{ backgroundImage: `url(${user.displayImage})` }}
@@ -55,8 +66,8 @@ export function ProfileScreen(params) {
 							</div>
 						</div>
 					</div> */}
-				</div>
-			</div>
+				</Box>
+			</Box>
 
 			{/* Description */}
 			<div className="profile-description">
@@ -71,6 +82,7 @@ export function ProfileScreen(params) {
 			</div>
 
 			<div style={{ marginBottom: "64px" }}>.</div>
+			<FooterComponent />
 		</div>
 	);
 }
