@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { AssetHttpService } from "../../api/asset";
-import { CollectionContainer } from "../../components/collectionContainer/collectionContainer";
+import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
 import "./ProfileScreen.css";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 

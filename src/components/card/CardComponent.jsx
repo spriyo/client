@@ -5,11 +5,19 @@ export function CardComponent({ asset }) {
 		<div
 			className="card-container"
 			style={{
-				backgroundImage: `url('${
-					asset.medias.length !== 0 ? asset.medias[0].path : ""
-				}')`,
+				backgroundImage:
+					asset.type === "video"
+						? "none"
+						: `url('${asset.medias.length !== 0 ? asset.medias[0].path : ""}')`,
 			}}
 		>
+			{asset.type === "video" ? (
+				<video className="video-component" autoPlay muted loop>
+					<source src={asset.medias[0].path} type="video/mp4" />
+				</video>
+			) : (
+				<div></div>
+			)}
 			<div className="card-info">
 				<div
 					className="card-info-profileimg"
@@ -28,7 +36,16 @@ export function CardComponent({ asset }) {
 					</div>
 				</div>
 				<div className="card-info-bottom">
-					<p></p>
+					{/* Event */}
+					<div className="card-info-price">
+						<p>
+							{asset.events
+								? asset.events.length === 0
+									? "" // no events
+									: asset.events[0].event_type.replace("_", " ").toUpperCase()
+								: "Events Not present"}
+						</p>
+					</div>
 					{/* price
 					<div className="card-info-price">
 						<p>
@@ -36,9 +53,9 @@ export function CardComponent({ asset }) {
 						</p>
 					</div> */}
 					{/* button */}
-					<div className="card-info-action">
+					{/* <div className="card-info-action">
 						<p>Buy now</p>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

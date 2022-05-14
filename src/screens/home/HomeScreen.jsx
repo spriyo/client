@@ -1,7 +1,7 @@
 import "./home.css";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { SideNav } from "../../components/sidenav/sidenav";
-import { CollectionContainer } from "../../components/collectionContainer/collectionContainer";
+import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
 import { ActiveBidComponent } from "../../components/activeBid/activeBid";
 import { HighlightsComponent } from "../../components/highlights/HighlightsComponent";
 import { useEffect, useState } from "react";

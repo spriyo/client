@@ -1,7 +1,10 @@
+import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { CardComponent } from "../card/CardComponent";
 import "./collectionContainer.css";
 
 export function CollectionContainer({ assets, title }) {
+	const navigate = useNavigate();
 	return (
 		<div className="collectionContainer">
 			{/* Title */}
@@ -11,7 +14,9 @@ export function CollectionContainer({ assets, title }) {
 				<div className="cards-container">
 					{assets.slice(0, 6).map((el, i) => (
 						<div key={i}>
-							<CardComponent asset={el} />
+							<Box onClick={() => navigate("/asset/" + el._id)}>
+								<CardComponent asset={el} />
+							</Box>
 						</div>
 					))}
 				</div>

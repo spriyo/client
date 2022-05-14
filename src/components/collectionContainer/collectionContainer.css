@@ -15,8 +15,8 @@
 	grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
 	justify-items: center;
 	align-items: center;
-	row-gap: 16px;
-	column-gap: 16px;
+	row-gap: 18px;
+	column-gap: 18px;
 }
 
 .collection-action {
