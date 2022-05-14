@@ -2,19 +2,12 @@ import axios from "axios";
 import { WEB_API_BASE_URL } from "../constants";
 import { resolve } from "../utils/resolver";
 
-export class SaleHttpService {
+export class OfferHttpService {
 	token = localStorage.getItem("token");
 
-	async getActiveSales() {
+	async createOffer(data) {
 		const resolved = await resolve(
-			axios.get(`${WEB_API_BASE_URL}/display/activesales`)
-		);
-		return resolved;
-	}
-
-	async createSale(data) {
-		const resolved = await resolve(
-			axios.post(`${WEB_API_BASE_URL}/sales`, data, {
+			axios.post(`${WEB_API_BASE_URL}/offers`, data, {
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 					"Content-Type": "application/json",
@@ -24,22 +17,10 @@ export class SaleHttpService {
 		return resolved;
 	}
 
-	async updateSale(saleId, data) {
-		const resolved = await resolve(
-			axios.patch(`${WEB_API_BASE_URL}/sales/update/${saleId}`, data, {
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-					"Content-Type": "application/json",
-				},
-			})
-		);
-		return resolved;
-	}
-
-	async cancelSale(saleId) {
+	async cancelOffer(offerId) {
 		const resolved = await resolve(
 			axios.patch(
-				`${WEB_API_BASE_URL}/sales/cancel/${saleId}`,
+				`${WEB_API_BASE_URL}/offers/cancel/${offerId}`,
 				{},
 				{
 					headers: {
@@ -52,10 +33,10 @@ export class SaleHttpService {
 		return resolved;
 	}
 
-	async buySale(saleId) {
+	async acceptOffer(offerId) {
 		const resolved = await resolve(
 			axios.patch(
-				`${WEB_API_BASE_URL}/sales/buy/${saleId}`,
+				`${WEB_API_BASE_URL}/offers/accept/${offerId}`,
 				{},
 				{
 					headers: {
