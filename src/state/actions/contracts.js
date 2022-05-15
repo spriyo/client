@@ -6,3 +6,12 @@ export const initMarketContract = (marketContract) => {
 		},
 	};
 };
+
+export const initNFTContract = (nftContract) => {
+	return {
+		type: "INIT_NFT_CONTRACT",
+		payload: {
+			nftContract,
+		},
+	};
+};

@@ -20,6 +20,12 @@ import { CreateScreen } from "./screens/create/CreateScreen.jsx";
 import { ProfileScreen } from "./screens/profile/ProfileScreen";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
+import marketJsonInterface from "./contracts/Market.json";
+import nftJsonInterface from "./contracts/NFT.json";
+import {
+	initMarketContract,
+	initNFTContract,
+} from "./state/actions/contracts.js";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -31,6 +37,9 @@ function App() {
 				let walletAddress = await getWalletAddress();
 				let chainId = await getChainId();
 				dispatch(actionSwitchChain(chainId));
+				// Load contracts
+				await initializeMarketContract();
+				await initializeNftContract();
 
 				// Login to account if not logged
 				const token = localStorage.getItem("token");
@@ -69,6 +78,28 @@ function App() {
 		console.log(localStorage);
 	}
 
+	async function initializeMarketContract() {
+		const currentChainIdHex = await getChainId();
+		const currentChainId = window.web3.utils.hexToNumber(currentChainIdHex);
+
+		const contract = new window.web3.eth.Contract(
+			marketJsonInterface.abi,
+			marketJsonInterface.networks[currentChainId].address
+		);
+		dispatch(initMarketContract(contract));
+	}
+
+	async function initializeNftContract() {
+		const currentChainIdHex = await getChainId();
+		const currentChainId = window.web3.utils.hexToNumber(currentChainIdHex);
+
+		const contract = new window.web3.eth.Contract(
+			nftJsonInterface.abi,
+			nftJsonInterface.networks[currentChainId].address
+		);
+		dispatch(initNFTContract(contract));
+	}
+
 	useEffect(() => {
 		connectAndListenWallet();
 		fetchCurrentUser();
@@ -81,7 +112,7 @@ function App() {
 					<Route path="/" exact element={<HomeScreen />} />
 					<Route path="/profile" exact element={<ProfileScreen />} />
 					{/* <Route path="/test" exact element={<TestScreen />} /> */}
-					<Route path="/asset" exact element={<AssetScreen />} />
+					<Route path="/asset/:id" exact element={<AssetScreen />} />
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />
 				</Routes>
