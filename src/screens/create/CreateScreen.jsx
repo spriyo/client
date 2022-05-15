@@ -63,7 +63,8 @@ export function CreateScreen({ closeModal }) {
 			console.log(transaction);
 			await uploadToServer(
 				transaction.to,
-				parseInt(transaction.events.Transfer.returnValues.tokenId)
+				parseInt(transaction.events.Transfer.returnValues.tokenId),
+				metaDataUrl
 			);
 		} catch (error) {
 			alert(error.message);
@@ -71,7 +72,7 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
-	async function uploadToServer(contractAddress, itemId) {
+	async function uploadToServer(contractAddress, itemId, metaDataUrl) {
 		// 2. Upload data to ipfs
 		const { title, description } = formInput;
 		if (!title || !description || !file)
@@ -86,8 +87,9 @@ export function CreateScreen({ closeModal }) {
 		formData.set("name", title);
 		formData.set("description", description);
 		formData.set("chainId", chainId);
-		formData.set("contractAddress", contractAddress);
-		formData.set("itemId", itemId);
+		formData.set("contract_address", contractAddress);
+		formData.set("item_id", itemId);
+		formData.set("metadata_url", metaDataUrl);
 
 		await assetHttpService.createAsset(formData);
 	}
