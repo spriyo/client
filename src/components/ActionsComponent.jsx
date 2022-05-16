@@ -40,9 +40,7 @@ export const ActionsComponent = ({ asset }) => {
 								},
 								{
 									title: "Auction",
-									action: function () {
-										alert("Auction placed!");
-									},
+									action: () => alert("Auction feature coming soon!"),
 								},
 						  ]
 						: [
