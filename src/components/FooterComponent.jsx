@@ -1,6 +1,10 @@
 import React from "react";
 import { Box, Divider, Link, Stack, styled, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import instagramLogo from "../assets/instagram.png";
+import discordLogo from "../assets/discord.png";
+import twitterLogo from "../assets/twitter.png";
+import spriyoLogo from "../assets/spriyo.png";
 
 export const FooterComponent = () => {
 	const navigate = useNavigate();
@@ -21,7 +25,7 @@ export const FooterComponent = () => {
 			>
 				<Box flex={2}>
 					<div style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-						<img src="spriyo.png" alt="logo" height={36} />
+						<img src={spriyoLogo} alt="logo" height={36} />
 					</div>
 					<br />
 					<Typography variant="body2">
@@ -57,13 +61,13 @@ export const FooterComponent = () => {
 							href="https://instagram.com/spriyo.xyz"
 							mr={2}
 						>
-							<img src="instagram.png" alt="instagram" />
+							<img src={instagramLogo} alt="instagram" />
 						</FastLink>
 						<FastLink href="#" mr={2}>
-							<img src="twitter.png" alt="twitter" />
+							<img src={twitterLogo} alt="twitter" />
 						</FastLink>
 						<FastLink href="#" mr={2}>
-							<img src="discord.png" alt="Discord" />
+							<img src={discordLogo} alt="Discord" />
 						</FastLink>
 					</Stack>
 				</Box>

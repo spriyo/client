@@ -1,7 +1,7 @@
 import "./navBar.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { SearchComponent } from "../search/search";
+import { SearchComponent } from "../search/SearchComponent";
 import { ButtonComponent } from "../ButtonComponent";
 import { ConnectComponent } from "../ConnectComponent";
 import { CircularProfile } from "../circularProfile/circularProfile";
