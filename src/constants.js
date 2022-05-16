@@ -10,6 +10,7 @@ export const ChainsConfig = {
 			symbol: "tMATIC", // 2-6 characters long
 			decimals: 18,
 		},
+		blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
 	},
 	POLYGON_MAINNET: {
 		chainId: Web3Utils.toHex("137"), // 137

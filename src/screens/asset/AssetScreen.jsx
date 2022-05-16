@@ -1,5 +1,5 @@
 import "./asset.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import {
 	Avatar,
@@ -12,163 +12,249 @@ import {
 	styled,
 	Typography,
 } from "@mui/material";
-import { ButtonComponent } from "../../components/ButtonComponent";
 import { FooterComponent } from "../../components/FooterComponent";
+import { useParams } from "react-router-dom";
+import { AssetHttpService } from "../../api/asset";
+import { BiLinkExternal } from "react-icons/bi";
+import { ChainsConfig } from "../../constants";
+import { useSelector } from "react-redux";
+import Web3 from "web3";
+import { ActionsComponent } from "../../components/ActionsComponent";
 
 export function AssetScreen() {
+	const { id } = useParams();
+	const [asset, setAsset] = useState(null);
+	const assetHttpService = new AssetHttpService();
 	const [imageFilled, setImageFilled] = useState(true);
+	const chainId = useSelector((state) => state.walletReducer.chainId);
+	const user = useSelector((state) => state.authReducer.user);
 
 	const TagChip = styled(Chip)({
 		margin: "4px",
 	});
+
+	const getAsset = async function () {
+		const resolved = await assetHttpService.getAssetById(id);
+		if (!resolved.error) {
+			const fetchedAsset = resolved.data;
+			setAsset(fetchedAsset);
+			if (
+				fetchedAsset.events.length !== 0 &&
+				(fetchedAsset.events[0].event_type === "bid" ||
+					fetchedAsset.events[0].event_type === "auction_create")
+			) {
+				getCurrentAuction(fetchedAsset.events);
+			}
+		}
+	};
+
+	function getCurrentAuction(events) {
+		const currentAuction = events.find(
+			(event) => event.event_type === "auction_create"
+		);
+	}
+
+	function handleExploreClick() {
+		const chainID = Web3.utils.numberToHex(chainId);
+		let chain;
+		for (const c in ChainsConfig) {
+			if (chainID === ChainsConfig[c].chainId) {
+				chain = ChainsConfig[c];
+			}
+		}
+		const url = `${chain.blockExplorerUrls[0]}token/${asset.contract_address}?a=${asset.item_id}`;
+		window.open(url);
+	}
+
+	useEffect(() => {
+		getAsset();
+	}, []);
 
 	return (
 		<Box sx={{ backgroundColor: "#efeff8" }}>
 			<Box>
 				<NavbarComponent />
 			</Box>
-			<Box sx={{ margin: { xs: "12px", md: "16px 32px" } }}>
-				<Box p={2} bgcolor="white" borderRadius="10px">
-					<Stack
-						sx={{
-							flexDirection: { xs: "column", md: "row" },
-							height: { xs: "auto", md: "80vh" },
-						}}
-					>
-						{/* Image */}
-						<Box
-							flex={1}
-							overflow="auto"
-							height="auto"
-							display={"flex"}
-							justifyContent="center"
-							borderRadius={"10px"}
-							onClick={() => setImageFilled(!imageFilled)}
-							m={1}
+			{asset ? (
+				<Box sx={{ margin: { xs: "12px", md: "16px 32px" } }}>
+					<Box p={2} bgcolor="white" borderRadius="10px">
+						<Stack
+							sx={{
+								flexDirection: { xs: "column", md: "row" },
+								height: { xs: "auto", md: "80vh" },
+							}}
 						>
-							<img
-								src="https://f8n-production-collection-assets.imgix.net/0xE71654E099B44ea1289b95Fa123EE5F1a968ADb9/27/nft.jpg"
-								alt="nft"
-								width={imageFilled ? "100%" : "none"}
+							{/* Image */}
+							<Box
+								flex={1}
+								overflow="auto"
 								height="auto"
-								className="main-image"
-							/>
-						</Box>
-						{/* Details */}
-						<Box flex={1} m={1}>
-							<Typography variant="h1">Storm NFT</Typography>
-							<Typography
-								variant="subtitle2"
-								color={"text.secondary"}
-								component="p"
+								display={"flex"}
+								justifyContent="center"
+								borderRadius={"10px"}
+								onClick={() => setImageFilled(!imageFilled)}
+								m={1}
 							>
-								NFT ID : 5643
-							</Typography>
-							<Typography
-								variant="body2"
-								color={"text.secondary"}
-								component="p"
-							>
-								Owner
-							</Typography>
-							<ListItem>
-								<ListItemAvatar>
-									<Avatar src=""></Avatar>
-								</ListItemAvatar>
-								<ListItemText
-									primary="Leo Stelon"
-									secondary="10 JUL 2021, 09:18 PM"
+								<img
+									src={asset.medias[0].path}
+									alt="nft"
+									width={imageFilled ? "100%" : "none"}
+									height="auto"
+									className="main-image"
 								/>
-							</ListItem>
-							{/* Timing */}
-							<ListItem
-								secondaryAction={
-									<ButtonComponent
-										rounded={true}
-										filled={true}
-										text="Place Bid"
-									/>
-								}
-							>
-								<ListItemText
-									primary="Ending in"
-									secondary="02h 23m 23s"
-									secondaryTypographyProps={{
-										fontSize: 20,
-										fontWeight: 600,
-										color: "text.primary",
-									}}
-								/>
-							</ListItem>
-							{/* Current Bidder */}
-							<Typography variant="h6">Current Bid</Typography>
-							<ListItem>
-								<ListItemAvatar>
-									<Avatar src=""></Avatar>
-								</ListItemAvatar>
-								<ListItemText primary="John Doe" secondary="@john" />
-							</ListItem>
-							{/* Bid History */}
-							<Typography variant="h3" component="p">
-								Bid History
-							</Typography>
-							<Box>
-								<Box>
-									<ListItem
-										secondaryAction={
-											<Stack direction={"row"}>
-												<Typography variant="h6">0.3 ETH</Typography>
-												<Typography variant="h6" color={"text.secondary"}>
-													&nbsp;= Rs 3000
-												</Typography>
-											</Stack>
-										}
-									>
-										<ListItemAvatar>
-											<Avatar src=""></Avatar>
-										</ListItemAvatar>
-										<ListItemText primary="John Doe" secondary="@john" />
-									</ListItem>
-
-									<ListItem
-										secondaryAction={
-											<Stack direction={"row"}>
-												<Typography variant="h6">0.3 ETH</Typography>
-												<Typography variant="h6" color={"text.secondary"}>
-													&nbsp;= Rs 3000
-												</Typography>
-											</Stack>
-										}
-									>
-										<ListItemAvatar>
-											<Avatar src=""></Avatar>
-										</ListItemAvatar>
-										<ListItemText primary="John Doe" secondary="@john" />
-									</ListItem>
-								</Box>
 							</Box>
-						</Box>
-					</Stack>
-				</Box>
-				<br />
-				{/* Meta Details */}
-				<Box>
-					<Typography variant="h1">Description</Typography>
-					<Typography variant="body1">
-						BearX is a limited NFT collection of Genesis and Mini Bears created
-						on Ethereum blockchain. After being banished from their own land,
-						only some Bears survived.
-					</Typography>
+							{/* Details */}
+							<Box flex={1} m={1}>
+								<Typography variant="h1">{asset.name}</Typography>
+								<Typography
+									variant="subtitle2"
+									color={"text.secondary"}
+									component="p"
+								>
+									NFT ID : {asset.item_id}
+								</Typography>
+								<Typography
+									variant="body2"
+									color={"text.secondary"}
+									component="p"
+								>
+									Owner
+								</Typography>
+								<ListItem>
+									<ListItemAvatar>
+										<Avatar src={asset.owner.displayImage}></Avatar>
+									</ListItemAvatar>
+									{user ? (
+										<ListItemText
+											primary={asset.owner.displayName}
+											secondary={`@${
+												user.username.length > 20
+													? `${user.username.substring(
+															0,
+															4
+													  )}...${user.username.slice(-4)}`
+													: user.username
+											}`}
+										/>
+									) : (
+										""
+									)}
+								</ListItem>
+								{asset.events.length === 0 ? (
+									<Typography variant="body1">No Activity</Typography>
+								) : (
+									<Box>
+										<ActionsComponent asset={asset} />
+										{/* Activity */}
+										<Typography variant="h3" component="p">
+											Activity
+										</Typography>
+										<Box>
+											<Box>
+												{asset.events.slice(0, 2).map((e, i) => (
+													<ListItem
+														key={i}
+														secondaryAction={
+															<Stack direction={"row"}>
+																<Typography variant="h6">0.3 ETH</Typography>
+																<Typography
+																	variant="h6"
+																	color={"text.secondary"}
+																>
+																	&nbsp;= Rs 3000
+																</Typography>
+															</Stack>
+														}
+													>
+														<ListItemAvatar>
+															<Avatar src={e.user_id.displayImage}></Avatar>
+														</ListItemAvatar>
+														<ListItemText
+															primary={e.user_id.displayName}
+															// secondary={e.user_id.username}
+															secondary={e.event_type
+																.replace("_", " ")
+																.toUpperCase()}
+														/>
+													</ListItem>
+												))}
+											</Box>
+										</Box>
+									</Box>
+								)}
+							</Box>
+						</Stack>
+					</Box>
 					<br />
-					<Typography variant="h1">Tags</Typography>
-					<TagChip label="Meta"></TagChip>
-					<TagChip label="Metaverse"></TagChip>
-					<TagChip label="Drawing"></TagChip>
-					<TagChip label="Painting"></TagChip>
-					<TagChip label="Pencil"></TagChip>
+					{/* Meta Details */}
+					<Box>
+						<Typography variant="h1">Description</Typography>
+						<Typography variant="body1">{asset.description}</Typography>
+						<br />
+						<Typography variant="h1">Tags</Typography>
+						<TagChip label="Meta"></TagChip>
+						<TagChip label="Metaverse"></TagChip>
+						<TagChip label="Drawing"></TagChip>
+						<TagChip label="Painting"></TagChip>
+						<TagChip label="Pencil"></TagChip>
+						{/* Meta */}
+						<br />
+						<br />
+						<Typography variant="h1">Details</Typography>
+						<Chip
+							label="View on Explorer"
+							onClick={handleExploreClick}
+							icon={<BiLinkExternal />}
+							style={{ fontWeight: 600 }}
+						/>
+					</Box>
 				</Box>
-			</Box>
+			) : (
+				<p>loading</p>
+			)}
 			<FooterComponent />
 		</Box>
 	);
 }
+
+// ///
+// <Box>
+// 	{/* Timing */}
+// 	<ListItem
+// 		secondaryAction={
+// 			<ButtonComponent
+// 				rounded={true}
+// 				filled={true}
+// 				text="Place Bid"
+// 			/>
+// 		}
+// 	>
+// 		<ListItemText
+// 			primary="Ending in"
+// 			secondary="02h 23m 23s"
+// 			secondaryTypographyProps={{
+// 				fontSize: 20,
+// 				fontWeight: 600,
+// 				color: "text.primary",
+// 			}}
+// 		/>
+// 	</ListItem>
+// 	{/* Current Bidder */}
+// 	<Box>
+// 		<Typography variant="h3" component="p">
+// 			Current Bid
+// 		</Typography>
+// 		<ListItem>
+// 			<ListItemAvatar>
+// 				<Avatar
+// 					src={asset.events[0].user_id.displayImage}
+// 				></Avatar>
+// 			</ListItemAvatar>
+// 			<ListItemText
+// 				primary={asset.events[0].user_id.displayName}
+// 				secondary={`@${asset.events[0].user_id.username}`}
+// 			/>
+// 		</ListItem>
+// 	</Box>
+// </Box>
+// ///

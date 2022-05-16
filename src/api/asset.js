@@ -27,4 +27,11 @@ export class AssetHttpService {
 		);
 		return resolved;
 	}
+
+	async getAssetById(assetId) {
+		const resolved = await resolve(
+			axios.get(`${WEB_API_BASE_URL}/assets/` + assetId)
+		);
+		return resolved;
+	}
 }
