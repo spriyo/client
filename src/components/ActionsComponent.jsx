@@ -67,6 +67,7 @@ export const ActionsComponent = ({ asset }) => {
 						  ];
 				break;
 			case "sale_created":
+			case "sale_update_price":
 				actions =
 					event.user_id._id !== user._id
 						? [
@@ -78,9 +79,7 @@ export const ActionsComponent = ({ asset }) => {
 						: [
 								{
 									title: "Update Price",
-									action: function () {
-										alert("Buy Price Updated");
-									},
+									action: () => loadMiddleware(updateAsset),
 								},
 								{
 									title: "Cancel Sale",
@@ -170,6 +169,35 @@ export const ActionsComponent = ({ asset }) => {
 		console.log(resolved);
 	}
 
+	async function updateAsset() {
+		const amount = prompt(
+			"Please enter the amount in Matic to update the sale price."
+		);
+		if (isNaN(parseFloat(amount))) return;
+
+		const convertedAmount = window.web3.utils.toWei(amount);
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+		console.log(asset);
+
+		const tx = await marketContract.methods
+			.updateBuyPrice(asset.events[0].data.sale_id, convertedAmount)
+			.send({
+				from: currentAddress,
+			});
+		console.log(tx);
+
+		// Server Event
+		const resolved = await saleHttpService.updateSale(
+			asset.events[0].data._id,
+			{ amount: convertedAmount }
+		);
+		if (!resolved.error) {
+			// window.location.reload();
+		}
+		console.log(resolved);
+	}
+
 	async function checkApproval() {
 		let isApproved = false;
 		try {
@@ -202,6 +230,12 @@ export const ActionsComponent = ({ asset }) => {
 		setLoading(true);
 		const isApproved = await checkApproval();
 		if (!isApproved) return setLoading(false);
+		await callback();
+		setLoading(false);
+	}
+
+	async function loadMiddleware(callback) {
+		setLoading(true);
 		await callback();
 		setLoading(false);
 	}
