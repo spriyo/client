@@ -30,6 +30,7 @@ export const ActionsComponent = ({ asset }) => {
 		if (!user) return actions;
 		switch (event.event_type) {
 			case "sale_accepted":
+			case "sale_canceled":
 			case "mint":
 				actions =
 					event.user_id._id === user._id
@@ -83,9 +84,7 @@ export const ActionsComponent = ({ asset }) => {
 								},
 								{
 									title: "Cancel Sale",
-									action: function () {
-										alert("Sale Canceled");
-									},
+									action: () => loadMiddleware(cancelSale),
 								},
 						  ];
 				break;
@@ -192,6 +191,31 @@ export const ActionsComponent = ({ asset }) => {
 			asset.events[0].data._id,
 			{ amount: convertedAmount }
 		);
+		if (!resolved.error) {
+			// window.location.reload();
+		}
+		console.log(resolved);
+	}
+
+	async function cancelSale() {
+		const confirmed = window.confirm(
+			"Are you sure you want to cancel this sale?"
+		);
+		if (!confirmed) return;
+
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+		console.log(asset);
+
+		const tx = await marketContract.methods
+			.cancelBuyPrice(asset.events[0].data.sale_id)
+			.send({
+				from: currentAddress,
+			});
+		console.log(tx);
+
+		// Server Event
+		const resolved = await saleHttpService.cancelSale(asset.events[0].data._id);
 		if (!resolved.error) {
 			// window.location.reload();
 		}
