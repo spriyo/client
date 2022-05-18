@@ -74,7 +74,7 @@ export const ActionsComponent = ({ asset }) => {
 						? [
 								{
 									title: "Buy",
-									action: () => buyAsset(),
+									action: () => loadMiddleware(buyAsset),
 								},
 						  ]
 						: [
@@ -152,18 +152,29 @@ export const ActionsComponent = ({ asset }) => {
 		const currentAddress = await getWalletAddress();
 		window.web3.eth.handleRevert = true;
 
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.buy(asset.contract_address, asset.item_id, asset.events[0].data.sale_id)
+			.estimateGas({
+				from: currentAddress,
+				value: asset.events[0].data.amount,
+			});
+
 		const tx = await marketContract.methods
 			.buy(asset.contract_address, asset.item_id, asset.events[0].data.sale_id)
 			.send({
 				from: currentAddress,
 				value: asset.events[0].data.amount,
+				gasPrice,
+				gas,
 			});
 		console.log(tx);
 
 		// Server Event
 		const resolved = await saleHttpService.buySale(asset.events[0].data._id);
 		if (!resolved.error) {
-			// window.location.reload();
+			window.location.reload();
 		}
 		console.log(resolved);
 	}
@@ -251,17 +262,25 @@ export const ActionsComponent = ({ asset }) => {
 	}
 
 	async function approveMiddleware(callback) {
-		setLoading(true);
-		const isApproved = await checkApproval();
-		if (!isApproved) return setLoading(false);
-		await callback();
-		setLoading(false);
+		try {
+			setLoading(true);
+			const isApproved = await checkApproval();
+			if (!isApproved) return setLoading(false);
+			await callback();
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+		}
 	}
 
 	async function loadMiddleware(callback) {
-		setLoading(true);
-		await callback();
-		setLoading(false);
+		try {
+			setLoading(true);
+			await callback();
+			setLoading(false);
+		} catch (e) {
+			setLoading(false);
+		}
 	}
 
 	return loading ? (
