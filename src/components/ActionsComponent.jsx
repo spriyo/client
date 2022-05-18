@@ -30,6 +30,7 @@ export const ActionsComponent = ({ asset }) => {
 		if (!user) return actions;
 		switch (event.event_type) {
 			case "sale_accepted":
+			case "sale_canceled":
 			case "mint":
 				actions =
 					event.user_id._id === user._id
@@ -67,26 +68,23 @@ export const ActionsComponent = ({ asset }) => {
 						  ];
 				break;
 			case "sale_created":
+			case "sale_update_price":
 				actions =
 					event.user_id._id !== user._id
 						? [
 								{
 									title: "Buy",
-									action: () => buyAsset(),
+									action: () => loadMiddleware(buyAsset),
 								},
 						  ]
 						: [
 								{
 									title: "Update Price",
-									action: function () {
-										alert("Buy Price Updated");
-									},
+									action: () => loadMiddleware(updateAsset),
 								},
 								{
 									title: "Cancel Sale",
-									action: function () {
-										alert("Sale Canceled");
-									},
+									action: () => loadMiddleware(cancelSale),
 								},
 						  ];
 				break;
@@ -154,16 +152,81 @@ export const ActionsComponent = ({ asset }) => {
 		const currentAddress = await getWalletAddress();
 		window.web3.eth.handleRevert = true;
 
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.buy(asset.contract_address, asset.item_id, asset.events[0].data.sale_id)
+			.estimateGas({
+				from: currentAddress,
+				value: asset.events[0].data.amount,
+			});
+
 		const tx = await marketContract.methods
 			.buy(asset.contract_address, asset.item_id, asset.events[0].data.sale_id)
 			.send({
 				from: currentAddress,
 				value: asset.events[0].data.amount,
+				gasPrice,
+				gas,
 			});
 		console.log(tx);
 
 		// Server Event
 		const resolved = await saleHttpService.buySale(asset.events[0].data._id);
+		if (!resolved.error) {
+			window.location.reload();
+		}
+		console.log(resolved);
+	}
+
+	async function updateAsset() {
+		const amount = prompt(
+			"Please enter the amount in Matic to update the sale price."
+		);
+		if (isNaN(parseFloat(amount))) return;
+
+		const convertedAmount = window.web3.utils.toWei(amount);
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+		console.log(asset);
+
+		const tx = await marketContract.methods
+			.updateBuyPrice(asset.events[0].data.sale_id, convertedAmount)
+			.send({
+				from: currentAddress,
+			});
+		console.log(tx);
+
+		// Server Event
+		const resolved = await saleHttpService.updateSale(
+			asset.events[0].data._id,
+			{ amount: convertedAmount }
+		);
+		if (!resolved.error) {
+			// window.location.reload();
+		}
+		console.log(resolved);
+	}
+
+	async function cancelSale() {
+		const confirmed = window.confirm(
+			"Are you sure you want to cancel this sale?"
+		);
+		if (!confirmed) return;
+
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+		console.log(asset);
+
+		const tx = await marketContract.methods
+			.cancelBuyPrice(asset.events[0].data.sale_id)
+			.send({
+				from: currentAddress,
+			});
+		console.log(tx);
+
+		// Server Event
+		const resolved = await saleHttpService.cancelSale(asset.events[0].data._id);
 		if (!resolved.error) {
 			// window.location.reload();
 		}
@@ -199,11 +262,25 @@ export const ActionsComponent = ({ asset }) => {
 	}
 
 	async function approveMiddleware(callback) {
-		setLoading(true);
-		const isApproved = await checkApproval();
-		if (!isApproved) return setLoading(false);
-		await callback();
-		setLoading(false);
+		try {
+			setLoading(true);
+			const isApproved = await checkApproval();
+			if (!isApproved) return setLoading(false);
+			await callback();
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+		}
+	}
+
+	async function loadMiddleware(callback) {
+		try {
+			setLoading(true);
+			await callback();
+			setLoading(false);
+		} catch (e) {
+			setLoading(false);
+		}
 	}
 
 	return loading ? (
