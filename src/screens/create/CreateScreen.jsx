@@ -1,7 +1,7 @@
 import "./CreateScreen.css";
 import nftJsonInterface from "../../contracts/NFT.json";
 
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress, getChainId } from "../../utils/wallet";
@@ -104,6 +104,11 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
+	const [imageUrl, setImageUrl] = useState();
+	useEffect(() => {
+		if (file) setImageUrl(URL.createObjectURL(file));
+	}, [file]);
+
 	return (
 		<div className="create-screen-container">
 			<div onClick={closeModal} className="create-screen-container-inner">
@@ -126,17 +131,13 @@ export function CreateScreen({ closeModal }) {
 						<div
 							className="image-dropper"
 							style={{
-								backgroundImage: `url(${
-									file ? URL.createObjectURL(file) : ""
-								})`,
+								backgroundImage: `url(${file ? imageUrl : ""})`,
 								backgroundPosition: "center",
 								backgroundSize: "cover",
 								backgroundRepeat: "no-repeat",
 								height: "200px",
 							}}
-							onClick={(e) =>
-								file ? window.open(URL.createObjectURL(file), "_blank") : ""
-							}
+							onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
 						>
 							{file ? "" : "Click below button to upload your asset"}
 						</div>
