@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { ActivityCardComponent } from "../activityCard/activityCard";
+import { ActivityCardComponent } from "../activityCard/ActivityCard";
 import "./activeBid.css";
 
 export function ActiveBidComponent() {

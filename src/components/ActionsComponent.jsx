@@ -64,9 +64,17 @@ export const ActionsComponent = ({ asset }) => {
 					user._id === asset.owner._id
 						? [
 								{
-									title: "Accept Offer",
-									action: () => approveMiddleware(acceptOffer),
+									title: "Sell",
+									action: () => approveMiddleware(sellAsset),
 								},
+								{
+									title: "Auction",
+									action: () => alert("Auction feature coming soon!"),
+								},
+								// {
+								// 	title: "Accept Offer",
+								// 	action: () => approveMiddleware(acceptOffer),
+								// },
 						  ]
 						: event.user_id._id === user._id
 						? [
@@ -192,29 +200,29 @@ export const ActionsComponent = ({ asset }) => {
 		}
 	}
 
-	async function acceptOffer() {
-		const confirm = window.confirm(
-			"Are you sure you want to accept the offer?"
-		);
-		if (!confirm) return;
+	// async function acceptOffer() {
+	// 	const confirm = window.confirm(
+	// 		"Are you sure you want to accept the offer?"
+	// 	);
+	// 	if (!confirm) return;
 
-		const currentAddress = await getWalletAddress();
-		const transaction = await marketContract.methods
-			.acceptOffer(asset.events[0].data.offer_id)
-			.send({
-				from: currentAddress,
-			});
-		console.log(transaction);
+	// 	const currentAddress = await getWalletAddress();
+	// 	const transaction = await marketContract.methods
+	// 		.acceptOffer(asset.events[0].data.offer_id)
+	// 		.send({
+	// 			from: currentAddress,
+	// 		});
+	// 	console.log(transaction);
 
-		// Server Event
-		const resolved = await offerHttpService.acceptOffer(
-			asset.events[0].data._id
-		);
-		console.log(resolved);
-		if (!resolved.error) {
-			window.location.reload();
-		}
-	}
+	// 	// Server Event
+	// 	const resolved = await offerHttpService.acceptOffer(
+	// 		asset.events[0].data._id
+	// 	);
+	// 	console.log(resolved);
+	// 	if (!resolved.error) {
+	// 		window.location.reload();
+	// 	}
+	// }
 
 	// async function createAuction() {
 	// 	alert("Create Auction coming soon!");

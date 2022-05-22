@@ -24,7 +24,7 @@ export const theme = createTheme({
 		},
 		fontFamily: ["Poppins", "sans-serif"].join(","),
 	},
-	shadows: { 0: "rgba(149, 157, 165, 0.2) 0px 8px 24px" },
+	shadows: { 0: "rgba(149, 157, 165, 0.2) 0px 4px 24px" },
 	palette: {
 		primary: { main: "#00c775" },
 		text: {

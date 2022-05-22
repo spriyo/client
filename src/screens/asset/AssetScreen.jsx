@@ -20,6 +20,7 @@ import { ChainsConfig } from "../../constants";
 import { useSelector } from "react-redux";
 import Web3 from "web3";
 import { ActionsComponent } from "../../components/ActionsComponent";
+import { ActivityCardComponent } from "../../components/activityCard/ActivityCard";
 
 export function AssetScreen() {
 	const { id } = useParams();
@@ -55,10 +56,10 @@ export function AssetScreen() {
 	}
 
 	function handleExploreClick() {
-		const chainID = Web3.utils.numberToHex(chainId);
+		const cid = Web3.utils.numberToHex(chainId);
 		let chain;
 		for (const c in ChainsConfig) {
-			if (chainID === ChainsConfig[c].chainId) {
+			if (cid === ChainsConfig[c].chainId) {
 				chain = ChainsConfig[c];
 			}
 		}
@@ -92,7 +93,8 @@ export function AssetScreen() {
 								display={"flex"}
 								justifyContent="center"
 								borderRadius={"10px"}
-								onClick={() => setImageFilled(!imageFilled)}
+								// onClick={() => setImageFilled(!imageFilled)}
+								onClick={() => window.open(asset.medias[0].path, "_blank")}
 								m={1}
 							>
 								<img
@@ -128,12 +130,12 @@ export function AssetScreen() {
 										<ListItemText
 											primary={asset.owner.displayName}
 											secondary={`@${
-												user.username.length > 20
-													? `${user.username.substring(
+												asset.owner.username.length > 20
+													? `${asset.owner.username.substring(
 															0,
 															4
-													  )}...${user.username.slice(-4)}`
-													: user.username
+													  )}...${asset.owner.username.slice(-4)}`
+													: asset.owner.username
 											}`}
 										/>
 									) : (
@@ -150,35 +152,11 @@ export function AssetScreen() {
 											Activity
 										</Typography>
 										<Box>
-											<Box>
-												{asset.events.slice(0, 2).map((e, i) => (
-													<ListItem
-														key={i}
-														secondaryAction={
-															<Stack direction={"row"}>
-																<Typography variant="h6">0.3 ETH</Typography>
-																<Typography
-																	variant="h6"
-																	color={"text.secondary"}
-																>
-																	&nbsp;= Rs 3000
-																</Typography>
-															</Stack>
-														}
-													>
-														<ListItemAvatar>
-															<Avatar src={e.user_id.displayImage}></Avatar>
-														</ListItemAvatar>
-														<ListItemText
-															primary={e.user_id.displayName}
-															// secondary={e.user_id.username}
-															secondary={e.event_type
-																.replace("_", " ")
-																.toUpperCase()}
-														/>
-													</ListItem>
-												))}
-											</Box>
+											{asset.events.slice(0, 2).map((e, i) => (
+												<Box key={i}>
+													<ActivityCardComponent event={e} asset={asset} />
+												</Box>
+											))}
 										</Box>
 									</Box>
 								)}
@@ -216,45 +194,3 @@ export function AssetScreen() {
 		</Box>
 	);
 }
-
-// ///
-// <Box>
-// 	{/* Timing */}
-// 	<ListItem
-// 		secondaryAction={
-// 			<ButtonComponent
-// 				rounded={true}
-// 				filled={true}
-// 				text="Place Bid"
-// 			/>
-// 		}
-// 	>
-// 		<ListItemText
-// 			primary="Ending in"
-// 			secondary="02h 23m 23s"
-// 			secondaryTypographyProps={{
-// 				fontSize: 20,
-// 				fontWeight: 600,
-// 				color: "text.primary",
-// 			}}
-// 		/>
-// 	</ListItem>
-// 	{/* Current Bidder */}
-// 	<Box>
-// 		<Typography variant="h3" component="p">
-// 			Current Bid
-// 		</Typography>
-// 		<ListItem>
-// 			<ListItemAvatar>
-// 				<Avatar
-// 					src={asset.events[0].user_id.displayImage}
-// 				></Avatar>
-// 			</ListItemAvatar>
-// 			<ListItemText
-// 				primary={asset.events[0].user_id.displayName}
-// 				secondary={`@${asset.events[0].user_id.username}`}
-// 			/>
-// 		</ListItem>
-// 	</Box>
-// </Box>
-// ///
