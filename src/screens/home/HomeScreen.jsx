@@ -2,7 +2,7 @@ import "./home.css";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { SideNav } from "../../components/sidenav/sidenav";
 import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
-import { ActiveBidComponent } from "../../components/activeBid/activeBid";
+import { ActiveSaleComponent } from "../../components/activeSale/ActiveSale";
 import { HighlightsComponent } from "../../components/highlights/HighlightsComponent";
 import { useEffect, useState } from "react";
 import { AssetHttpService } from "../../api/asset";
@@ -66,7 +66,9 @@ function HomeScreen() {
 						}}
 					>
 						<div style={{ flex: 2 }}>
-							<ActiveBidComponent />
+							{onSaleItems.length > 0 && (
+								<ActiveSaleComponent asset={onSaleItems[0]} />
+							)}
 						</div>
 						<Box
 							sx={{
@@ -81,9 +83,12 @@ function HomeScreen() {
 							/>
 						</Box>
 					</Box>
-					<CollectionContainer title={"Trending"} assets={recentlyAddedItems} />
+					<CollectionContainer
+						title={"Newly Added"}
+						assets={recentlyAddedItems}
+					/>
 					<div style={{ margin: "20px" }}></div>
-					<CollectionContainer title={"Collections"} assets={onSaleItems} />
+					<CollectionContainer title={"On Sale"} assets={onSaleItems} />
 				</Box>
 			</Box>
 			<Box sx={{ display: { xs: "block", md: "none" } }}>
