@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { CardComponent } from "../card/CardComponent";
 import "./collectionContainer.css";
@@ -16,15 +16,19 @@ export function CollectionContainer({ assets, title }) {
 						Nothing to show here :(
 					</Box>
 				) : (
-					<div className="cards-container">
-						{assets.slice(0, 6).map((el, i) => (
-							<div key={i}>
-								<Box onClick={() => navigate("/asset/" + el._id)}>
-									<CardComponent asset={el} />
+					<Grid
+						container
+						spacing={{ xs: 2, md: 3 }}
+						columns={{ xs: 4, sm: 8, md: 12 }}
+					>
+						{assets.slice(0, 6).map((asset, index) => (
+							<Grid item xs={12} sm={4} md={4} key={index}>
+								<Box onClick={() => navigate("/asset/" + asset._id)}>
+									<CardComponent asset={asset} />
 								</Box>
-							</div>
+							</Grid>
 						))}
-					</div>
+					</Grid>
 				)}
 			</div>
 			{assets.length === 0 ? (
