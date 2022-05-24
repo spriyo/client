@@ -65,11 +65,17 @@ export function ActivityCardComponent({ event, asset }) {
 		if (loading) return;
 		setLoading(true);
 		const isApproved = await checkApproval();
-		if (!isApproved) return;
+		if (!isApproved) {
+			setLoading(false);
+			return;
+		}
 		const confirm = window.confirm(
 			"Are you sure you want to accept the offer?"
 		);
-		if (!confirm) return;
+		if (!confirm) {
+			setLoading(false);
+			return;
+		}
 		try {
 			const currentAddress = await getWalletAddress();
 			const transaction = await marketContract.methods
@@ -130,9 +136,11 @@ export function ActivityCardComponent({ event, asset }) {
 			<Stack>
 				<ListItem
 					secondaryAction={
-						<Typography variant="h5" color={"text.primary"}>
-							{`${window.web3.utils.fromWei(event.data.amount)} MATIC`}
-						</Typography>
+						event.data.amount && (
+							<Typography variant="h5" color={"text.primary"}>
+								{`${window.web3.utils.fromWei(event.data.amount)} MATIC`}
+							</Typography>
+						)
 					}
 				>
 					<ListItemAvatar>
@@ -173,7 +181,7 @@ export function ActivityCardComponent({ event, asset }) {
 							onClick={() =>
 								isOfferExpired(event.data.expireAt)
 									? alert("Offer Expired Already!")
-									: acceptOffer
+									: acceptOffer()
 							}
 							sx={{ cursor: "pointer" }}
 						>

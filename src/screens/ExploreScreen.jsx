@@ -36,12 +36,11 @@ export const ExploreScreen = ({ listen }) => {
 			setRecentlyAddedItems(recentlyAddedItemsRef.current);
 		}
 		const resolved = await displayHttpService.searchAssets({
-			limit: 2,
 			skip: skip.current,
 			createdAt: createdAtRef.current,
 			query: query || "",
 		});
-		skip.current += 2;
+		skip.current += 10;
 		recentlyAddedItemsRef.current = [
 			...recentlyAddedItemsRef.current,
 			...resolved.data,
