@@ -15,14 +15,19 @@ import { CardComponent } from "../components/card/CardComponent";
 import { FooterComponent } from "../components/FooterComponent";
 import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useLocationChange } from "../utils/useLocationChange";
 
-export const ExploreScreen = () => {
+export const ExploreScreen = ({ listen }) => {
 	const displayHttpService = new DisplayHttpService();
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [createdAt, setCreatedAt] = useState("desc");
 	let skip = useRef(0);
 	let createdAtRef = useRef("desc");
 	let recentlyAddedItemsRef = useRef([]);
+	const search = useLocation().search;
+	const query = new URLSearchParams(search).get("query");
+	const navigate = useNavigate();
 
 	async function getRecentlyAdded(sorted = false) {
 		if (sorted) {
@@ -34,6 +39,7 @@ export const ExploreScreen = () => {
 			limit: 2,
 			skip: skip.current,
 			createdAt: createdAtRef.current,
+			query: query || "",
 		});
 		skip.current += 2;
 		recentlyAddedItemsRef.current = [
@@ -42,6 +48,12 @@ export const ExploreScreen = () => {
 		];
 		setRecentlyAddedItems(recentlyAddedItemsRef.current);
 	}
+
+	useLocationChange((location, prevLocation) => {
+		if (prevLocation && location.search !== prevLocation.search) {
+			getRecentlyAdded(true);
+		}
+	});
 
 	useEffect(() => {
 		getRecentlyAdded();
@@ -95,7 +107,9 @@ export const ExploreScreen = () => {
 						>
 							{recentlyAddedItems.map((asset, index) => (
 								<Grid item xs={12} sm={4} md={4} key={index}>
-									<CardComponent asset={asset} />
+									<Box onClick={() => navigate("/asset/" + asset._id)}>
+										<CardComponent asset={asset} />
+									</Box>
 								</Grid>
 							))}
 						</Grid>
