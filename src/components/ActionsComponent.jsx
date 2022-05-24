@@ -2,8 +2,10 @@ import { Box } from "@mui/material";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { SaleHttpService } from "../api/sale";
+import { OfferHttpService } from "../api/offer";
 import { getWalletAddress } from "../utils/wallet";
 import { ButtonComponent } from "./ButtonComponent";
+import { ConnectComponent } from "./ConnectComponent";
 
 const loaderStyle = {
 	backgroundImage:
@@ -19,11 +21,13 @@ const loaderStyle = {
 export const ActionsComponent = ({ asset }) => {
 	const [loading, setLoading] = useState(false);
 	const saleHttpService = new SaleHttpService();
+	const offerHttpService = new OfferHttpService();
+
 	const marketContract = useSelector(
 		(state) => state.contractReducer.marketContract
 	);
-	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 	const user = useSelector((state) => state.authReducer.user);
+	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 
 	function getActions(event) {
 		let actions = [];
@@ -31,9 +35,13 @@ export const ActionsComponent = ({ asset }) => {
 		switch (event.event_type) {
 			case "sale_accepted":
 			case "sale_canceled":
+			case "offer_canceled":
+			case "offer_accepted":
 			case "mint":
 				actions =
-					event.user_id._id === user._id
+					user._id === asset.owner._id ||
+					(event.event_type === "offer_canceled" &&
+						user._id === asset.owner._id)
 						? [
 								{
 									title: "Sell",
@@ -47,9 +55,38 @@ export const ActionsComponent = ({ asset }) => {
 						: [
 								{
 									title: "Make Offer",
-									action: function () {
-										alert("Offer Place");
-									},
+									action: () => loadMiddleware(makeOffer),
+								},
+						  ];
+				break;
+			case "offer_created":
+				actions =
+					user._id === asset.owner._id
+						? [
+								{
+									title: "Sell",
+									action: () => approveMiddleware(sellAsset),
+								},
+								{
+									title: "Auction",
+									action: () => alert("Auction feature coming soon!"),
+								},
+								// {
+								// 	title: "Accept Offer",
+								// 	action: () => approveMiddleware(acceptOffer),
+								// },
+						  ]
+						: event.user_id._id === user._id
+						? [
+								{
+									title: "Cancel Offer",
+									action: () => loadMiddleware(cancelOffer),
+								},
+						  ]
+						: [
+								{
+									title: "Make Offer",
+									action: () => loadMiddleware(makeOffer),
 								},
 						  ];
 				break;
@@ -102,22 +139,89 @@ export const ActionsComponent = ({ asset }) => {
 		return actions;
 	}
 
-	// async function makeOffer() {
-	// 	const value = prompt("Please enter the amount in Matic");
-	// 	if (typeof parseFloat(value) !== "number") return;
+	async function makeOffer() {
+		const amount = prompt("Please enter the amount in Matic");
+		if (isNaN(parseFloat(amount))) return;
+
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.makeOffer(asset.contract_address, asset.item_id, convertedAmount)
+			.estimateGas({
+				from: currentAddress,
+				value: convertedAmount,
+			});
+
+		const transaction = await marketContract.methods
+			.makeOffer(asset.contract_address, asset.item_id, convertedAmount)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+				value: convertedAmount,
+			});
+		console.log(transaction);
+
+		// Server Event
+		const resolved = await offerHttpService.createOffer({
+			asset_id: asset._id,
+			amount: convertedAmount,
+			offer_id: parseInt(transaction.events.EventOffer.returnValues.id),
+		});
+		console.log(resolved);
+		if (!resolved.error) {
+			window.location.reload();
+		}
+	}
+
+	async function cancelOffer() {
+		const confirm = window.confirm(
+			"Are you sure you want to cancel the offer?"
+		);
+		if (!confirm) return;
+
+		const currentAddress = await getWalletAddress();
+		const transaction = await marketContract.methods
+			.cancelOffer(asset.events[0].data.offer_id)
+			.send({
+				from: currentAddress,
+			});
+		console.log(transaction);
+
+		// Server Event
+		const resolved = await offerHttpService.cancelOffer(
+			asset.events[0].data._id
+		);
+		console.log(resolved);
+		if (!resolved.error) {
+			window.location.reload();
+		}
+	}
+
+	// async function acceptOffer() {
+	// 	const confirm = window.confirm(
+	// 		"Are you sure you want to accept the offer?"
+	// 	);
+	// 	if (!confirm) return;
 
 	// 	const currentAddress = await getWalletAddress();
 	// 	const transaction = await marketContract.methods
-	// 		.makeOffer(asset.contract_address, asset.item_id, "1000")
-	// 		.send({ from: currentAddress });
+	// 		.acceptOffer(asset.events[0].data.offer_id)
+	// 		.send({
+	// 			from: currentAddress,
+	// 		});
 	// 	console.log(transaction);
 
 	// 	// Server Event
-	// 	const resolved = await offerHttpService.createOffer({
-	// 		asset_id: asset._id,
-	// 		amount: "1000",
-	// 	});
+	// 	const resolved = await offerHttpService.acceptOffer(
+	// 		asset.events[0].data._id
+	// 	);
 	// 	console.log(resolved);
+	// 	if (!resolved.error) {
+	// 		window.location.reload();
+	// 	}
 	// }
 
 	// async function createAuction() {
@@ -285,6 +389,10 @@ export const ActionsComponent = ({ asset }) => {
 
 	return loading ? (
 		<Box sx={loaderStyle}>loading</Box>
+	) : !user ? (
+		<Box p={2} display="flex" justifyContent="center">
+			<ConnectComponent />
+		</Box>
 	) : (
 		<Box display={"flex"} sx={{ justifyContent: { xs: "center", md: "end" } }}>
 			{getActions(asset.events[0]).map((e, i) => (

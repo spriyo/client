@@ -26,6 +26,7 @@ import {
 	initMarketContract,
 	initNFTContract,
 } from "./state/actions/contracts.js";
+import { ExploreScreen } from "./screens/ExploreScreen";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -114,6 +115,7 @@ function App() {
 					{/* <Route path="/test" exact element={<TestScreen />} /> */}
 					<Route path="/asset/:id" exact element={<AssetScreen />} />
 					<Route path="/create" exact element={<CreateScreen />} />
+					<Route path="/explore" exact element={<ExploreScreen />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />
 				</Routes>
 			</Router>

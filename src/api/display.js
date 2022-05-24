@@ -9,4 +9,13 @@ export class DisplayHttpService {
 		);
 		return resolved;
 	}
+
+	async searchAssets({ createdAt = "desc", limit = 10, skip = 0, query = "" }) {
+		const resolved = await resolve(
+			axios.get(
+				`${WEB_API_BASE_URL}/display/search?createdAt=${createdAt}&limit=${limit}&skip=${skip}&query=${query}`
+			)
+		);
+		return resolved;
+	}
 }
