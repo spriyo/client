@@ -10,6 +10,7 @@ import {
 	Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { DisplayHttpService } from "../api/display";
 import { CardComponent } from "../components/card/CardComponent";
 import { FooterComponent } from "../components/FooterComponent";
@@ -17,6 +18,7 @@ import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLocationChange } from "../utils/useLocationChange";
+import Web3Utils from "web3-utils";
 
 export const ExploreScreen = ({ listen }) => {
 	const displayHttpService = new DisplayHttpService();
@@ -28,6 +30,7 @@ export const ExploreScreen = ({ listen }) => {
 	const search = useLocation().search;
 	const query = new URLSearchParams(search).get("query");
 	const navigate = useNavigate();
+	const chainId = useSelector((state) => state.walletReducer.chainId);
 
 	async function getRecentlyAdded(sorted = false) {
 		if (sorted) {
@@ -39,6 +42,7 @@ export const ExploreScreen = ({ listen }) => {
 			skip: skip.current,
 			createdAt: createdAtRef.current,
 			query: query || "",
+			chainId: Web3Utils.toHex(chainId),
 		});
 		skip.current += 10;
 		recentlyAddedItemsRef.current = [
@@ -55,8 +59,14 @@ export const ExploreScreen = ({ listen }) => {
 	});
 
 	useEffect(() => {
-		getRecentlyAdded();
-	}, []);
+		console.log("New value", chainId);
+		if (chainId) {
+			getRecentlyAdded(true);
+		}
+		return () => {
+			console.log("Prev value", chainId);
+		};
+	}, [chainId]);
 
 	return (
 		<Stack>

@@ -5,9 +5,11 @@ import { resolve } from "../utils/resolver";
 export class SaleHttpService {
 	token = localStorage.getItem("token");
 
-	async getActiveSales() {
+	async getActiveSales({ chainId }) {
 		const resolved = await resolve(
-			axios.get(`${WEB_API_BASE_URL}/display/activesales`)
+			axios.get(
+				`${WEB_API_BASE_URL}/display/activesales?chainId=${chainId ?? ""}`
+			)
 		);
 		return resolved;
 	}

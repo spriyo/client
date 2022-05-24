@@ -1,11 +1,9 @@
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ActivityCardComponent } from "../activityCard/ActivityCard";
-import { BiLinkExternal } from "react-icons/bi";
 import "./activeBid.css";
 
 export function ActiveSaleComponent({ asset }) {
-	console.log(asset);
 	const navigate = useNavigate();
 	return (
 		<Box
