@@ -27,6 +27,7 @@ import {
 	initNFTContract,
 } from "./state/actions/contracts.js";
 import { ExploreScreen } from "./screens/ExploreScreen";
+import { BlogScreen } from "./screens/BlogScreen";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -116,6 +117,7 @@ function App() {
 					<Route path="/asset/:id" exact element={<AssetScreen />} />
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
+					<Route path="/blogs/:name" exact element={<BlogScreen />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />
 				</Routes>
 			</Router>

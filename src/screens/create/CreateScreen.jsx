@@ -7,7 +7,9 @@ import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress, getChainId } from "../../utils/wallet";
 import { uploadFileToIpfs, uploadJsonToIpfs } from "../../utils/ipfs";
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { ChainsConfig } from "../../constants";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
@@ -18,6 +20,18 @@ export function CreateScreen({ closeModal }) {
 		title: "",
 		description: "",
 	});
+	const [chainName, setChainName] = useState("");
+	const chainId = useSelector((state) => state.walletReducer.chainId);
+	async function getChainName() {
+		let foundChain;
+		const currentChainIdHex = await getChainId();
+		for (var key in ChainsConfig) {
+			if (ChainsConfig[key].chainId === currentChainIdHex) {
+				foundChain = ChainsConfig[key].chainName;
+			}
+		}
+		setChainName(foundChain);
+	}
 
 	async function uploadToIpfs() {
 		if (loading) return;
@@ -107,7 +121,8 @@ export function CreateScreen({ closeModal }) {
 	const [imageUrl, setImageUrl] = useState();
 	useEffect(() => {
 		if (file) setImageUrl(URL.createObjectURL(file));
-	}, [file]);
+		getChainName();
+	}, [file, chainId]);
 
 	return (
 		<div className="create-screen-container">
@@ -202,14 +217,33 @@ export function CreateScreen({ closeModal }) {
 							/>
 						</div> */}
 						{/* Create Button */}
-						<div className="createscreen-create-button">
-							<div onClick={uploadToIpfs}>
-								<p>{!loading ? "Create" : "loading..."}</p>
+						<Box className="createscreen-create-button">
+							<div
+								onClick={() => {
+									if (!chainName) return;
+									uploadToIpfs();
+								}}
+							>
+								<p style={{ cursor: chainName ? "pointer" : "not-allowed" }}>
+									{!loading ? "Create" : "loading..."}
+								</p>
 							</div>
-						</div>
+						</Box>
 					</div>
 				</Box>
 				<hr />
+				<Box>
+					{chainName ? (
+						<Typography variant="h6">
+							Your currently on <u>{chainName}</u>, Minting takes place in{" "}
+							{chainName}.
+						</Typography>
+					) : (
+						<Typography variant="h6" sx={{ color: "red" }}>
+							Unsupported Network, change network in metamask
+						</Typography>
+					)}
+				</Box>
 			</div>
 		</div>
 	);
