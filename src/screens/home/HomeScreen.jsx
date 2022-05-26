@@ -43,6 +43,8 @@ function HomeScreen() {
 
 	useEffect(() => {
 		getTopCollectors();
+		getRecentlyAdded();
+		getActiveSales();
 		if (chainId) {
 			getRecentlyAdded();
 			getActiveSales();
