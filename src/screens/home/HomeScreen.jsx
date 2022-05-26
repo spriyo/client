@@ -75,9 +75,12 @@ function HomeScreen() {
 						}}
 					>
 						<div style={{ flex: 2 }}>
-							{onSaleItems.length > 0 && (
+							{(onSaleItems.length > 0 && (
 								<ActiveSaleComponent asset={onSaleItems[0]} />
-							)}
+							)) ||
+								(recentlyAddedItems.length > 0 && (
+									<ActiveSaleComponent asset={recentlyAddedItems[0]} />
+								))}
 						</div>
 						<Box
 							sx={{

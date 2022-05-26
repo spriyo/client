@@ -188,7 +188,14 @@ export function AssetScreen() {
 					</Box>
 				</Box>
 			) : (
-				<p>loading</p>
+				<Box
+					height="50vh"
+					display="flex"
+					justifyContent="center"
+					alignItems="center"
+				>
+					{/* <p>loading</p> */}
+				</Box>
 			)}
 			<FooterComponent />
 		</Box>

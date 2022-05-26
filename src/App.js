@@ -28,6 +28,7 @@ import {
 } from "./state/actions/contracts.js";
 import { ExploreScreen } from "./screens/ExploreScreen";
 import { BlogScreen } from "./screens/BlogScreen";
+import Web3 from "web3";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -64,7 +65,7 @@ function App() {
 				});
 
 				window.ethereum.on("networkChanged", function (networkId) {
-					dispatch(actionSwitchChain(networkId));
+					dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
 				});
 			}
 		} catch (error) {

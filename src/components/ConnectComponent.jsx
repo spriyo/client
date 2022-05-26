@@ -10,6 +10,7 @@ import {
 	switchAccount,
 	switchChain as actionSwitchChain,
 } from "../state/actions/wallet";
+import Web3 from "web3";
 
 const styles = {
 	backgroundColor: "#00c775",
@@ -52,7 +53,7 @@ export function ConnectComponent() {
 				});
 
 				window.ethereum.on("networkChanged", function (networkId) {
-					dispatch(actionSwitchChain(networkId));
+					dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
 				});
 			}
 		} catch (error) {
