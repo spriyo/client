@@ -8,6 +8,7 @@ import {
 	styled,
 	Typography,
 } from "@mui/material";
+import web3 from "web3";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { OfferHttpService } from "../../api/offer";
@@ -138,7 +139,7 @@ export function ActivityCardComponent({ event, asset }) {
 					secondaryAction={
 						event.data.amount && (
 							<Typography variant="h5" color={"text.primary"}>
-								{`${window.web3.utils.fromWei(event.data.amount)} MATIC`}
+								{`${web3.utils.fromWei(event.data.amount)} MATIC`}
 							</Typography>
 						)
 					}
@@ -172,6 +173,7 @@ export function ActivityCardComponent({ event, asset }) {
 					/>
 				</ListItem>
 				{event.event_type === "offer_created" &&
+					user &&
 					user._id === asset.owner._id &&
 					event.data.sold === false && (
 						<Box

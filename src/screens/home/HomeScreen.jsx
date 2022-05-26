@@ -10,22 +10,29 @@ import { SaleHttpService } from "../../api/sale";
 import { DisplayHttpService } from "../../api/display";
 import { Box } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
+import { useSelector } from "react-redux";
+import Web3Utils from "web3-utils";
 
 function HomeScreen() {
 	const assetHttpService = new AssetHttpService();
 	const saleHttpService = new SaleHttpService();
 	const displayHttpService = new DisplayHttpService();
+	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [onSaleItems, setOnSaleItems] = useState([]);
 	const [topCreators, setTopCreators] = useState([]);
 
 	async function getRecentlyAdded() {
-		const resolved = await assetHttpService.getRecentlyAdded();
+		const resolved = await assetHttpService.getRecentlyAdded({
+			chainId: Web3Utils.toHex(chainId),
+		});
 		setRecentlyAddedItems(resolved.data);
 	}
 
 	async function getActiveSales() {
-		const resolved = await saleHttpService.getActiveSales();
+		const resolved = await saleHttpService.getActiveSales({
+			chainId: Web3Utils.toHex(chainId),
+		});
 		setOnSaleItems(resolved.data.map((e) => e.asset_id));
 	}
 
@@ -35,10 +42,12 @@ function HomeScreen() {
 	}
 
 	useEffect(() => {
-		getRecentlyAdded();
-		getActiveSales();
 		getTopCollectors();
-	}, []);
+		if (chainId) {
+			getRecentlyAdded();
+			getActiveSales();
+		}
+	}, [chainId]);
 
 	return (
 		<div className="container">
@@ -66,9 +75,12 @@ function HomeScreen() {
 						}}
 					>
 						<div style={{ flex: 2 }}>
-							{onSaleItems.length > 0 && (
+							{(onSaleItems.length > 0 && (
 								<ActiveSaleComponent asset={onSaleItems[0]} />
-							)}
+							)) ||
+								(recentlyAddedItems.length > 0 && (
+									<ActiveSaleComponent asset={recentlyAddedItems[0]} />
+								))}
 						</div>
 						<Box
 							sx={{

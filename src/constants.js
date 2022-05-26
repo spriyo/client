@@ -12,19 +12,26 @@ export const ChainsConfig = {
 		},
 		blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
 	},
-	POLYGON_MAINNET: {
-		chainId: Web3Utils.toHex("137"), // 137
-		chainName: "Matic(Polygon) Mainnet",
-		nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-		rpcUrls: ["https://polygon-rpc.com"],
-		blockExplorerUrls: ["https://www.polygonscan.com/"],
-	},
+	// POLYGON_MAINNET: {
+	// 	chainId: Web3Utils.toHex("137"), // 137
+	// 	chainName: "Matic(Polygon) Mainnet",
+	// 	nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+	// 	rpcUrls: ["https://polygon-rpc.com"],
+	// 	blockExplorerUrls: ["https://www.polygonscan.com/"],
+	// },
 	BINANCE_TESTNET: {
 		chainId: Web3Utils.toHex("97"), // 137
 		chainName: "BNB Smart Chain Testnet",
 		nativeCurrency: { name: "BNB", symbol: "tBNB", decimals: 18 },
 		rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
 		blockExplorerUrls: ["https://testnet.bscscan.com/"],
+	},
+	SHARDEUM_LIBERTY: {
+		chainId: Web3Utils.toHex("8080"), // 137
+		chainName: "Shardeum Liberty 1.0",
+		nativeCurrency: { name: "Shardeum", symbol: "SHM", decimals: 18 },
+		rpcUrls: ["https://liberty10.shardeum.org/"],
+		blockExplorerUrls: ["https://explorer.liberty10.shardeum.org/"],
 	},
 };
 

@@ -27,6 +27,8 @@ import {
 	initNFTContract,
 } from "./state/actions/contracts.js";
 import { ExploreScreen } from "./screens/ExploreScreen";
+import { BlogScreen } from "./screens/BlogScreen";
+import Web3 from "web3";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -63,7 +65,7 @@ function App() {
 				});
 
 				window.ethereum.on("networkChanged", function (networkId) {
-					dispatch(actionSwitchChain(networkId));
+					dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
 				});
 			}
 		} catch (error) {
@@ -116,6 +118,7 @@ function App() {
 					<Route path="/asset/:id" exact element={<AssetScreen />} />
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
+					<Route path="/blogs/:name" exact element={<BlogScreen />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />
 				</Routes>
 			</Router>

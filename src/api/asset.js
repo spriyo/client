@@ -16,8 +16,10 @@ export class AssetHttpService {
 		console.log(resolved);
 	}
 
-	async getRecentlyAdded() {
-		const resolved = await resolve(axios.get(`${WEB_API_BASE_URL}/assets`));
+	async getRecentlyAdded({ chainId }) {
+		const resolved = await resolve(
+			axios.get(`${WEB_API_BASE_URL}/assets?chainId=${chainId ?? ""}`)
+		);
 		return resolved;
 	}
 
