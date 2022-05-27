@@ -1,9 +1,10 @@
-export const addNotification = (message, actionTitle, action) => {
+export const addNotification = (message, actionTitle, id, action) => {
 	return {
 		type: "ADD_NOTIFICATION",
 		payload: {
 			message,
 			action,
+			id,
 			actionTitle,
 		},
 	};
