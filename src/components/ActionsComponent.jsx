@@ -307,7 +307,7 @@ export const ActionsComponent = ({ asset }) => {
 			{ amount: convertedAmount }
 		);
 		if (!resolved.error) {
-			// window.location.reload();
+			window.location.reload();
 		}
 		console.log(resolved);
 	}
@@ -332,7 +332,7 @@ export const ActionsComponent = ({ asset }) => {
 		// Server Event
 		const resolved = await saleHttpService.cancelSale(asset.events[0].data._id);
 		if (!resolved.error) {
-			// window.location.reload();
+			window.location.reload();
 		}
 		console.log(resolved);
 	}

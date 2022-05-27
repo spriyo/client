@@ -15,9 +15,15 @@ export function NavbarComponent() {
 
 	return (
 		<Box className="navbar-container">
-			<div style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
+			<Box
+				display="flex"
+				alignItems="start"
+				style={{ cursor: "pointer" }}
+				onClick={() => navigate("/")}
+			>
 				<img src={logo} alt="logo" height={36} />
-			</div>
+					<small>beta</small>
+			</Box>
 			<div className="navbar-actions">
 				{/* search */}
 				<Box sx={{ display: { xs: "none", md: "block" } }}>
