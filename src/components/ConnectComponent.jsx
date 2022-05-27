@@ -10,7 +10,7 @@ import {
 	switchAccount,
 	switchChain as actionSwitchChain,
 } from "../state/actions/wallet";
-import Web3 from "web3";
+import { addNotification } from "../state/actions/notifications";
 
 const styles = {
 	backgroundColor: "#00c775",
@@ -52,8 +52,20 @@ export function ConnectComponent() {
 					dispatch(switchAccount(accounts[0]));
 				});
 
-				window.ethereum.on("networkChanged", function (networkId) {
-					dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
+				window.ethereum.on("networkChanged", async function (networkId) {
+					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
+					let chainId = await getChainId();
+					dispatch(actionSwitchChain(chainId));
+					dispatch(
+						addNotification(
+							"If you've switched to test network, you can use dev.spriyo.xyz for testing.",
+							"Open Site",
+							1,
+							() => {
+								window.open("https://dev.spriyo.xyz");
+							}
+						)
+					);
 				});
 			}
 		} catch (error) {

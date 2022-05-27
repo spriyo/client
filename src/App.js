@@ -28,6 +28,7 @@ import {
 } from "./state/actions/contracts.js";
 import { ExploreScreen } from "./screens/ExploreScreen";
 import { BlogScreen } from "./screens/BlogScreen";
+import { addNotification } from "./state/actions/notifications";
 import Web3 from "web3";
 
 function App() {
@@ -64,8 +65,20 @@ function App() {
 					dispatch(switchAccount(accounts[0]));
 				});
 
-				window.ethereum.on("networkChanged", function (networkId) {
-					dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
+				window.ethereum.on("networkChanged", async function (networkId) {
+					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
+					let chainId = await getChainId();
+					dispatch(actionSwitchChain(chainId));
+					dispatch(
+						addNotification(
+							"If you've switched to test network, you can use dev.spriyo.xyz for testing.",
+							"Open Site",
+							1,
+							() => {
+								window.open("https://dev.spriyo.xyz");
+							}
+						)
+					);
 				});
 			}
 		} catch (error) {
@@ -82,25 +95,33 @@ function App() {
 	}
 
 	async function initializeMarketContract() {
-		const currentChainIdHex = await getChainId();
-		const currentChainId = window.web3.utils.hexToNumber(currentChainIdHex);
+		try {
+			const currentChainIdHex = await getChainId();
+			const currentChainId = Web3.utils.hexToNumber(currentChainIdHex);
 
-		const contract = new window.web3.eth.Contract(
-			marketJsonInterface.abi,
-			marketJsonInterface.networks[currentChainId].address
-		);
-		dispatch(initMarketContract(contract));
+			const contract = new window.web3.eth.Contract(
+				marketJsonInterface.abi,
+				marketJsonInterface.networks[currentChainId].address
+			);
+			dispatch(initMarketContract(contract));
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async function initializeNftContract() {
-		const currentChainIdHex = await getChainId();
-		const currentChainId = window.web3.utils.hexToNumber(currentChainIdHex);
+		try {
+			const currentChainIdHex = await getChainId();
+			const currentChainId = Web3.utils.hexToNumber(currentChainIdHex);
 
-		const contract = new window.web3.eth.Contract(
-			nftJsonInterface.abi,
-			nftJsonInterface.networks[currentChainId].address
-		);
-		dispatch(initNFTContract(contract));
+			const contract = new window.web3.eth.Contract(
+				nftJsonInterface.abi,
+				nftJsonInterface.networks[currentChainId].address
+			);
+			dispatch(initNFTContract(contract));
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	useEffect(() => {
