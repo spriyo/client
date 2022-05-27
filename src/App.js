@@ -21,7 +21,7 @@ import { ProfileScreen } from "./screens/profile/ProfileScreen";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import marketJsonInterface from "./contracts/Market.json";
-import nftJsonInterface from "./contracts/NFT.json";
+import nftJsonInterface from "./contracts/Spriyo.json";
 import {
 	initMarketContract,
 	initNFTContract,
@@ -65,7 +65,7 @@ function App() {
 					dispatch(switchAccount(accounts[0]));
 				});
 
-				window.ethereum.on("networkChanged", async function (networkId) {
+				window.ethereum.on("chainChanged", async function (networkId) {
 					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
 					let chainId = await getChainId();
 					dispatch(actionSwitchChain(chainId));
