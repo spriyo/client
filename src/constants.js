@@ -33,6 +33,13 @@ export const ChainsConfig = {
 		rpcUrls: ["https://liberty10.shardeum.org/"],
 		blockExplorerUrls: ["https://explorer.liberty10.shardeum.org/"],
 	},
+	BINANCE_SMART_CHAIN: {
+		chainId: Web3Utils.toHex("56"), // 137
+		chainName: "BNB Smart Chain",
+		nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+		rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+		blockExplorerUrls: ["https://bscscan.com/"],
+	},
 };
 
 export const BASE_URL = process.env.REACT_APP_BASE_URL;

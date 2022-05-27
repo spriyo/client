@@ -18063,6 +18063,12 @@
 		"version": "0.8.7+commit.e28d00a7.Emscripten.clang"
 	},
 	"networks": {
+		"56": {
+			"events": {},
+			"links": {},
+			"address": "0x42929B58DD889A2fd5fF92c872564c17D5a06D26",
+			"transactionHash": "0x093aaea4efdc94d6848664517d0446145debf8bf389d6b249680026ed3fa45ac"
+		},
 		"5777": {
 			"events": {},
 			"links": {},

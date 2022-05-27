@@ -7,6 +7,7 @@ import { ConnectComponent } from "../ConnectComponent";
 import { CircularProfile } from "../circularProfile/circularProfile";
 import { Box } from "@mui/material";
 import logo from "../../assets/spriyo.png";
+import { TopNotification } from "../../components/topNotification/TopNotification";
 
 export function NavbarComponent() {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -14,39 +15,48 @@ export function NavbarComponent() {
 	const navigate = useNavigate();
 
 	return (
-		<Box className="navbar-container">
-			<div style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-				<img src={logo} alt="logo" height={36} />
-			</div>
-			<div className="navbar-actions">
-				{/* search */}
-				<Box sx={{ display: { xs: "none", md: "block" } }}>
-					<SearchComponent />
+		<Box>
+			<TopNotification />
+			<Box className="navbar-container">
+				<Box
+					display="flex"
+					alignItems="start"
+					style={{ cursor: "pointer" }}
+					onClick={() => navigate("/")}
+				>
+					<img src={logo} alt="logo" height={36} />
+					<small>beta</small>
 				</Box>
-				{authenticated ? (
-					<Box mr={2} ml={2} sx={{ cursor: "pointer" }}>
-						<ButtonComponent
-							onClick={(event) => {
-								event.preventDefault();
-								navigate("/create");
-							}}
-							text="Create"
-							rounded={true}
-							filled={true}
-						/>
+				<div className="navbar-actions">
+					{/* search */}
+					<Box sx={{ display: { xs: "none", md: "block" } }}>
+						<SearchComponent />
 					</Box>
-				) : (
-					<div></div>
-				)}
-				{/* profile */}
-				{authenticated ? (
-					<div onClick={() => navigate("/profile")}>
-						<CircularProfile userImgUrl={user.displayImage} />
-					</div>
-				) : (
-					<ConnectComponent />
-				)}
-			</div>
+					{authenticated ? (
+						<Box mr={2} ml={2} sx={{ cursor: "pointer" }}>
+							<ButtonComponent
+								onClick={(event) => {
+									event.preventDefault();
+									navigate("/create");
+								}}
+								text="Create"
+								rounded={true}
+								filled={true}
+							/>
+						</Box>
+					) : (
+						<div></div>
+					)}
+					{/* profile */}
+					{authenticated ? (
+						<div onClick={() => navigate("/profile")}>
+							<CircularProfile userImgUrl={user.displayImage} />
+						</div>
+					) : (
+						<ConnectComponent />
+					)}
+				</div>
+			</Box>
 		</Box>
 	);
 }

@@ -1,11 +1,10 @@
 import "./CreateScreen.css";
-import nftJsonInterface from "../../contracts/NFT.json";
 
 import { React, useEffect, useState } from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress, getChainId } from "../../utils/wallet";
-import { uploadFileToIpfs, uploadJsonToIpfs } from "../../utils/ipfs";
+import { PinataHttpService } from "../../api/pinata";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
@@ -16,11 +15,13 @@ export function CreateScreen({ closeModal }) {
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const assetHttpService = new AssetHttpService();
+	const pinataHttpService = new PinataHttpService();
 	const [formInput, updateFormInput] = useState({
 		title: "",
 		description: "",
 	});
 	const [chainName, setChainName] = useState("");
+	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	async function getChainName() {
 		let foundChain;
@@ -42,10 +43,13 @@ export function CreateScreen({ closeModal }) {
 			setLoading(true);
 
 			// 1. Upload file to ipfs
-			const assetUrl = await uploadFileToIpfs(file);
+			const assetUrl = await pinataHttpService.pinFileToIPFS(file);
 
 			// 2. Upload data to ipfs
-			const metaDataUrl = await uploadJsonToIpfs(formInput, assetUrl);
+			const metaDataUrl = await pinataHttpService.pinJSONToIPFS(
+				formInput,
+				assetUrl
+			);
 
 			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
 			await mintAsset(metaDataUrl);
@@ -63,14 +67,8 @@ export function CreateScreen({ closeModal }) {
 		try {
 			if (!metaDataUrl) return;
 			const currentAddress = await getWalletAddress();
-			const currentChainIdHex = await getChainId();
-			const currentChainId = window.web3.utils.hexToNumber(currentChainIdHex);
 
-			const contract = new window.web3.eth.Contract(
-				nftJsonInterface.abi,
-				nftJsonInterface.networks[currentChainId].address
-			);
-			const transaction = await contract.methods
+			const transaction = await nftContract.methods
 				.mint(metaDataUrl)
 				.send({ from: currentAddress });
 

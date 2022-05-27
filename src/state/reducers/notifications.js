@@ -5,9 +5,14 @@ const notifications = {
 export const notificationReducer = (state = notifications, action) => {
 	switch (action.type) {
 		case "ADD_NOTIFICATION":
+			const notifs = state.notifications.filter(
+				(n) => n.id === action.payload.id
+			);
+			if (notifs.length >= 1) return state;
 			const newNotification = {
 				message: action.payload.message,
 				action: action.payload.action,
+				id: action.payload.id,
 				actionTitle: action.payload.actionTitle,
 			};
 			return {
