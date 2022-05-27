@@ -52,7 +52,7 @@ export function ConnectComponent() {
 					dispatch(switchAccount(accounts[0]));
 				});
 
-				window.ethereum.on("networkChanged", async function (networkId) {
+				window.ethereum.on("chainChanged", async function (networkId) {
 					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
 					let chainId = await getChainId();
 					dispatch(actionSwitchChain(chainId));

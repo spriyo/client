@@ -26,7 +26,6 @@ export function AssetScreen() {
 	const { id } = useParams();
 	const [asset, setAsset] = useState(null);
 	const assetHttpService = new AssetHttpService();
-	const [imageFilled, setImageFilled] = useState(true);
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
 
@@ -50,9 +49,9 @@ export function AssetScreen() {
 	};
 
 	function getCurrentAuction(events) {
-		const currentAuction = events.find(
-			(event) => event.event_type === "auction_create"
-		);
+		// const currentAuction = events.find(
+		// 	(event) => event.event_type === "auction_create"
+		// );
 	}
 
 	function handleExploreClick() {
@@ -93,14 +92,13 @@ export function AssetScreen() {
 								display={"flex"}
 								justifyContent="center"
 								borderRadius={"10px"}
-								// onClick={() => setImageFilled(!imageFilled)}
 								onClick={() => window.open(asset.medias[0].path, "_blank")}
 								m={1}
 							>
 								<img
 									src={asset.medias[0].path}
 									alt="nft"
-									width={imageFilled ? "100%" : "none"}
+									width="100%"
 									height="auto"
 									className="main-image"
 								/>

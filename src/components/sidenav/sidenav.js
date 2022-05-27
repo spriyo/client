@@ -3,7 +3,6 @@ import {
 	AiOutlineShoppingCart,
 	AiOutlineHeart,
 	AiOutlineStock,
-	AiOutlineSetting,
 	AiOutlineProfile,
 	AiOutlineWallet,
 } from "react-icons/ai";
