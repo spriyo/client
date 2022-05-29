@@ -1,10 +1,9 @@
-import "./circularProfile.css";
+import { Avatar, Box } from "@mui/material";
 
 export function CircularProfile({ userImgUrl }) {
 	return (
-		<div
-			className="profile-icon-container"
-			style={{ backgroundImage: `url(${userImgUrl})` }}
-		></div>
+		<Box>
+			<Avatar src={userImgUrl} alt="User Profile" />
+		</Box>
 	);
 }

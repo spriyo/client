@@ -56,7 +56,12 @@ export async function getWalletAddress() {
 
 export async function getChainId() {
 	try {
-		let chainId = await window.ethereum.chainId;
+		let chainId;
+		if (process.env.REACT_APP_ENV === "development") {
+			chainId = await window.ethereum.chainId;
+		} else {
+			chainId = process.env.REACT_APP_CHAIN_ID;
+		}
 		return chainId;
 	} catch (error) {
 		console.log(error);

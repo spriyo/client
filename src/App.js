@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./screens/home/home.js";
-// import { TestScreen } from "./screens/test/test.js";
 
 import {
 	switchAccount,
@@ -17,8 +15,21 @@ import {
 	getWalletAddress,
 } from "./utils/wallet.js";
 import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
-import HomeScreen from "./screens/home/home.js";
+import HomeScreen from "./screens/home/HomeScreen";
 import { CreateScreen } from "./screens/create/CreateScreen.jsx";
+import { ProfileScreen } from "./screens/profile/ProfileScreen";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "./theme";
+import marketJsonInterface from "./contracts/Market.json";
+import nftJsonInterface from "./contracts/Spriyo.json";
+import {
+	initMarketContract,
+	initNFTContract,
+} from "./state/actions/contracts.js";
+import { ExploreScreen } from "./screens/ExploreScreen";
+import { BlogScreen } from "./screens/BlogScreen";
+import { addNotification } from "./state/actions/notifications";
+import Web3 from "web3";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -30,6 +41,9 @@ function App() {
 				let walletAddress = await getWalletAddress();
 				let chainId = await getChainId();
 				dispatch(actionSwitchChain(chainId));
+				// Load contracts
+				await initializeMarketContract();
+				await initializeNftContract();
 
 				// Login to account if not logged
 				const token = localStorage.getItem("token");
@@ -51,8 +65,20 @@ function App() {
 					dispatch(switchAccount(accounts[0]));
 				});
 
-				window.ethereum.on("networkChanged", function (networkId) {
-					dispatch(actionSwitchChain(networkId));
+				window.ethereum.on("chainChanged", async function (networkId) {
+					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
+					let chainId = await getChainId();
+					dispatch(actionSwitchChain(chainId));
+					dispatch(
+						addNotification(
+							"If you've switched to test network, you can use dev.spriyo.xyz for testing.",
+							"Open Site",
+							1,
+							() => {
+								window.open("https://dev.spriyo.xyz");
+							}
+						)
+					);
 				});
 			}
 		} catch (error) {
@@ -65,6 +91,37 @@ function App() {
 		if (!response.error) {
 			dispatch(login({ user: response.data }));
 		}
+		console.log(localStorage);
+	}
+
+	async function initializeMarketContract() {
+		try {
+			const currentChainIdHex = await getChainId();
+			const currentChainId = Web3.utils.hexToNumber(currentChainIdHex);
+
+			const contract = new window.web3.eth.Contract(
+				marketJsonInterface.abi,
+				marketJsonInterface.networks[currentChainId].address
+			);
+			dispatch(initMarketContract(contract));
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async function initializeNftContract() {
+		try {
+			const currentChainIdHex = await getChainId();
+			const currentChainId = Web3.utils.hexToNumber(currentChainIdHex);
+
+			const contract = new window.web3.eth.Contract(
+				nftJsonInterface.abi,
+				nftJsonInterface.networks[currentChainId].address
+			);
+			dispatch(initNFTContract(contract));
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	useEffect(() => {
@@ -73,14 +130,20 @@ function App() {
 	});
 
 	return (
-		<Router>
-			<Routes>
-				<Route path="/" exact element={<HomeScreen />} />
-				{/* <Route path="/test" exact element={<TestScreen />} /> */}
-				<Route path="/asset" exact element={<AssetScreen />} />
-				<Route path="/create" exact element={<CreateScreen />} />
-			</Routes>
-		</Router>
+		<ThemeProvider theme={theme}>
+			<Router>
+				<Routes>
+					<Route path="/" exact element={<HomeScreen />} />
+					<Route path="/profile" exact element={<ProfileScreen />} />
+					{/* <Route path="/test" exact element={<TestScreen />} /> */}
+					<Route path="/asset/:id" exact element={<AssetScreen />} />
+					<Route path="/create" exact element={<CreateScreen />} />
+					<Route path="/explore" exact element={<ExploreScreen />} />
+					<Route path="/blogs/:name" exact element={<BlogScreen />} />
+					<Route path="*" exact element={<p>Invalid route</p>} />
+				</Routes>
+			</Router>
+		</ThemeProvider>
 	);
 }
 

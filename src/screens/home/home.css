@@ -9,6 +9,7 @@
 
 .body {
 	display: flex;
+	background-color: #efeff8;
 }
 
 .left {
@@ -16,7 +17,6 @@
 }
 
 .center {
-	height: 89vh;
 	width: 79.6vw;
 	padding: 20px 20px 20px 0;
 

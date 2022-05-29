@@ -1,50 +1,109 @@
 import "./CreateScreen.css";
-import { useState } from "react";
-import { AiOutlineUpload } from "react-icons/ai";
-import { create as ipfsHttpClient } from "ipfs-http-client";
 
-const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+import { React, useEffect, useState } from "react";
+import { AiOutlineUpload } from "react-icons/ai";
+import { AssetHttpService } from "../../api/asset";
+import { getWalletAddress, getChainId } from "../../utils/wallet";
+import { PinataHttpService } from "../../api/pinata";
+import { useNavigate } from "react-router-dom";
+import { Box, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { ChainsConfig } from "../../constants";
 
 export function CreateScreen({ closeModal }) {
+	const navigate = useNavigate();
 	const [file, setFile] = useState(null);
-	const [fileUrl, setFileUrl] = useState(null);
-	const [uploadProgress, setUploadProgress] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const assetHttpService = new AssetHttpService();
+	const pinataHttpService = new PinataHttpService();
 	const [formInput, updateFormInput] = useState({
-		price: 0,
-		name: "",
+		title: "",
 		description: "",
 	});
+	const [chainName, setChainName] = useState("");
+	const nftContract = useSelector((state) => state.contractReducer.nftContract);
+	const chainId = useSelector((state) => state.walletReducer.chainId);
+	async function getChainName() {
+		let foundChain;
+		const currentChainIdHex = await getChainId();
+		for (var key in ChainsConfig) {
+			if (ChainsConfig[key].chainId === currentChainIdHex) {
+				foundChain = ChainsConfig[key].chainName;
+			}
+		}
+		setChainName(foundChain);
+	}
 
-	async function uploadToIpfs(e) {
+	async function uploadToIpfs() {
+		if (loading) return;
 		try {
+			const { title, description } = formInput;
+			if (!title || !description || !file)
+				return alert("Please ensure everything is filled.");
+			setLoading(true);
+
 			// 1. Upload file to ipfs
-			if (!file) return;
-			setFileUrl(URL.createObjectURL(file));
-			const ipfsFile = await client.add(file, {
-				progress: (prog) => setUploadProgress(prog),
-			});
-			console.log(ipfsFile);
-			const assetUrl = `https://ipfs.infura.io/ipfs/${ipfsFile.path}`;
+			const assetUrl = await pinataHttpService.pinFileToIPFS(file);
 
 			// 2. Upload data to ipfs
-			const { name, description, price } = formInput;
-			if (!name || !description || !price || !assetUrl)
-				return alert("Please ensure everything is filled.");
-			const data = JSON.stringify({
-				name,
-				description,
-				assetPath: assetUrl,
-			});
-			const jsonIpfs = await client.add(data);
-			console.log(jsonIpfs);
-			const url = `https://ipfs.infura.io/ipfs/${jsonIpfs.path}`;
-			console.log(url);
+			const metaDataUrl = await pinataHttpService.pinJSONToIPFS(
+				formInput,
+				assetUrl
+			);
 
-			// 3. After file is uploaded to IPFS, pass the URL to save it on Polygon
-			createSale(url);
+			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
+			await mintAsset(metaDataUrl);
+			setLoading(false);
+
+			// Redirect to home page
+			navigate("/", { replace: true });
 		} catch (error) {
 			console.log(error);
+			setLoading(false);
 		}
+	}
+
+	async function mintAsset(metaDataUrl) {
+		try {
+			if (!metaDataUrl) return;
+			const currentAddress = await getWalletAddress();
+
+			const transaction = await nftContract.methods
+				.mint(metaDataUrl)
+				.send({ from: currentAddress });
+
+			console.log(transaction);
+			await uploadToServer(
+				transaction.to,
+				parseInt(transaction.events.Transfer.returnValues.tokenId),
+				metaDataUrl
+			);
+		} catch (error) {
+			alert(error.message);
+			console.log(error);
+		}
+	}
+
+	async function uploadToServer(contractAddress, itemId, metaDataUrl) {
+		// 2. Upload data to ipfs
+		const { title, description } = formInput;
+		if (!title || !description || !file)
+			return alert("Please ensure everything is filled.");
+
+		// Get chain details
+		const chainId = await getChainId();
+		// Get contract details
+
+		var formData = new FormData();
+		formData.append("asset", file);
+		formData.set("name", title);
+		formData.set("description", description);
+		formData.set("chainId", chainId);
+		formData.set("contract_address", contractAddress);
+		formData.set("item_id", itemId);
+		formData.set("metadata_url", metaDataUrl);
+
+		await assetHttpService.createAsset(formData);
 	}
 
 	async function onFileChange(e) {
@@ -57,36 +116,11 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
-	async function createSale(url) {
-		// const contract = window.web3.eth.Contract(
-		// 	jsonInterface.abi,
-		// 	contractAddress
-		// );
-	}
-
-	// async function createSale(url) {
-	// 	const web3Modal = new Web3Modal();
-	// 	const connection = await web3Modal.connect();
-	// 	const provider = new ethers.providers.Web3Provider(connection);
-	// 	const signer = provider.getSigner();
-	// 	/* next, create the item */
-	// 	let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
-	// 	let transaction = await contract.createToken(url);
-	// 	let tx = await transaction.wait();
-	// 	let event = tx.events[0];
-	// 	let value = event.args[2];
-	// 	let tokenId = value.toNumber();
-	// 	const price = ethers.utils.parseUnits(formInput.price, "ether");
-	// 	/* then list the item for sale on the marketplace */
-	// 	contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
-	// 	let listingPrice = await contract.getListingPrice();
-	// 	listingPrice = listingPrice.toString();
-	// 	transaction = await contract.createMarketItem(nftaddress, tokenId, price, {
-	// 		value: listingPrice,
-	// 	});
-	// 	await transaction.wait();
-	// 	router.push("/");
-	// }
+	const [imageUrl, setImageUrl] = useState();
+	useEffect(() => {
+		if (file) setImageUrl(URL.createObjectURL(file));
+		getChainName();
+	}, [file, chainId]);
 
 	return (
 		<div className="create-screen-container">
@@ -95,7 +129,10 @@ export function CreateScreen({ closeModal }) {
 				<div className="heading">Create NFT</div>
 				<hr />
 				{/* Content */}
-				<div className="content-container">
+				<Box
+					className="content-container"
+					sx={{ flexDirection: { xs: "column", md: "row" } }}
+				>
 					{/* Image */}
 					<div className="image-container">
 						<div className="title">
@@ -107,24 +144,20 @@ export function CreateScreen({ closeModal }) {
 						<div
 							className="image-dropper"
 							style={{
-								backgroundImage: `url(${
-									file ? URL.createObjectURL(file) : ""
-								})`,
+								backgroundImage: `url(${file ? imageUrl : ""})`,
 								backgroundPosition: "center",
 								backgroundSize: "cover",
 								backgroundRepeat: "no-repeat",
 								height: "200px",
 							}}
-							onClick={(e) =>
-								file ? window.open(URL.createObjectURL(file), "_blank") : ""
-							}
+							onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
 						>
-							{file ? "" : "Drag and Drop or Browse to choose a file"}
+							{file ? "" : "Click below button to upload your asset"}
 						</div>
-						<label for="file-upload" class="custom-file-upload">
+						<label htmlFor="file-upload" className="custom-file-upload">
 							<div className="image-picker">
 								<AiOutlineUpload />
-								<p>Upload File</p>
+								<p>{file ? "Change File" : "Upload File"}</p>
 								<input
 									type="file"
 									name="Asset"
@@ -142,10 +175,9 @@ export function CreateScreen({ closeModal }) {
 							<p>Title</p>
 							<input
 								type="text"
-								onclick="event.stopPropagation();"
 								placeholder="Enter your NFT title"
 								onChange={(e) =>
-									updateFormInput({ ...formInput, name: e.target.value })
+									updateFormInput({ ...formInput, title: e.target.value })
 								}
 							/>
 						</div>
@@ -155,7 +187,6 @@ export function CreateScreen({ closeModal }) {
 							<textarea
 								type="text"
 								rows="5"
-								onclick="event.stopPropagation();"
 								placeholder="Enter description of the NFT"
 								onChange={(e) =>
 									updateFormInput({ ...formInput, description: e.target.value })
@@ -168,32 +199,49 @@ export function CreateScreen({ closeModal }) {
 							<input
 								type="text"
 								rows="5"
-								onclick="event.stopPropagation();"
 								placeholder="Type Category"
 							/>
 						</div> */}
 						{/* Categories */}
-						<div className="data-container-field">
+						{/* <div className="data-container-field">
 							<p>Price</p>
 							<input
-								type="text"
+								type="number"
 								rows="5"
-								onclick="event.stopPropagation();"
 								placeholder="Set Price"
 								onChange={(e) =>
 									updateFormInput({ ...formInput, price: e.target.value })
 								}
 							/>
-						</div>
+						</div> */}
 						{/* Create Button */}
-						<div className="createscreen-create-button">
-							<div onClick={uploadToIpfs}>
-								<p>Create</p>
+						<Box className="createscreen-create-button">
+							<div
+								onClick={() => {
+									if (!chainName) return;
+									uploadToIpfs();
+								}}
+							>
+								<p style={{ cursor: chainName ? "pointer" : "not-allowed" }}>
+									{!loading ? "Create" : "loading..."}
+								</p>
 							</div>
-						</div>
+						</Box>
 					</div>
-				</div>
+				</Box>
 				<hr />
+				<Box>
+					{chainName ? (
+						<Typography variant="h6">
+							Your currently on <u>{chainName}</u>, Minting takes place in{" "}
+							{chainName}.
+						</Typography>
+					) : (
+						<Typography variant="h6" sx={{ color: "red" }}>
+							Unsupported Network, change network in metamask
+						</Typography>
+					)}
+				</Box>
 			</div>
 		</div>
 	);

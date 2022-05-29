@@ -8,8 +8,8 @@
 	/* background-clip: text; */
 	/* -webkit-background-clip: text; */
 	/* -webkit-text-fill-color: transparent; */
-	animation: hue 20s infinite linear;
-	-webkit-animation: hue 20s infinite linear;
+	/* animation: hue 20s infinite linear;
+	-webkit-animation: hue 20s infinite linear; */
 }
 
 /* @keyframes hue {

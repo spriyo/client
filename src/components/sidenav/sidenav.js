@@ -3,11 +3,12 @@ import {
 	AiOutlineShoppingCart,
 	AiOutlineHeart,
 	AiOutlineStock,
-	AiOutlineSetting,
 	AiOutlineProfile,
 	AiOutlineWallet,
 } from "react-icons/ai";
 import { BsBookmarkStar } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
 
 export function SideNav() {
 	return (
@@ -18,7 +19,8 @@ export function SideNav() {
 					<p className="sidenav-title">Marketplace</p>
 					<SideNavOption
 						icon={<AiOutlineShoppingCart />}
-						optionTitle="Stores"
+						optionTitle="Explore"
+						to="/explore"
 					/>
 					<SideNavOption
 						icon={<AiOutlineStock />}
@@ -36,10 +38,11 @@ export function SideNav() {
 					<SideNavOption
 						icon={<AiOutlineProfile />}
 						optionTitle="My Portfolio"
+						to="/profile"
 					/>
 					<SideNavOption icon={<AiOutlineWallet />} optionTitle="Wallet" />
 					<SideNavOption icon={<BsBookmarkStar />} optionTitle="Wishlist" />
-					<SideNavOption icon={<AiOutlineSetting />} optionTitle="Settings" />
+					{/* <SideNavOption icon={<AiOutlineSetting />} optionTitle="Settings" /> */}
 				</div>
 
 				<div className="sidenav-footer">
@@ -60,13 +63,23 @@ export function SideNav() {
 	);
 }
 
-function SideNavOption({ optionTitle, icon }) {
+function SideNavOption({ optionTitle, icon, to }) {
+	const navigate = useNavigate();
+	function handleClick() {
+		if (to) {
+			navigate(to);
+		}
+	}
 	return (
-		<div className="sidenav-option">
+		<Box
+			sx={{ cursor: to ? "pointer" : "no-drop" }}
+			onClick={handleClick}
+			className="sidenav-option"
+		>
 			{/* Icon */}
 			<div className="sidenav-option-icon">{icon}</div>
 			{/* Option Title */}
 			<p className="sidenav-option-title">{optionTitle}</p>
-		</div>
+		</Box>
 	);
 }

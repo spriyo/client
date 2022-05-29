@@ -1,4 +1,4 @@
-import { UserCardComponent } from "../userCard/userCard";
+import { UsercardComponent } from "../userCard/UsercardComponent";
 import "./highlights.css";
 
 export function HighlightsComponent({ title, data = [] }) {
@@ -10,7 +10,7 @@ export function HighlightsComponent({ title, data = [] }) {
 			<div>
 				{data.slice(0, 6).map((e, i) => (
 					<div key={i}>
-						<UserCardComponent />
+						<UsercardComponent user={data[i]} />
 					</div>
 				))}
 			</div>

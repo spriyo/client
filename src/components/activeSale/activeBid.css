@@ -4,6 +4,7 @@
 	border-radius: 10px;
 	display: flex;
 	justify-content: space-between;
+	cursor: pointer;
 }
 
 .activebid-body {
@@ -40,7 +41,6 @@
 	background-repeat: no-repeat;
 	background-size: cover;
 	border-radius: 50%;
-	background-image: url("https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&q=60");
 }
 
 .activebid-user-info {
@@ -61,15 +61,10 @@
 
 .activebid-img-container {
 	flex: 1;
-	cursor: pointer;
-	margin-right: 10px;
-	margin-left: 24px;
-	height: 416px;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
 	border-radius: 10px;
-	background-image: url("https://f8n-production-collection-assets.imgix.net/0x2db77122C5971647aC67cdcD151DcA0EfCe3966f/4/nft.jpg?q=80&auto=format%2Ccompress&cs=srgb&max-w=1680&max-h=1680");
 }
 
 .activebid-bidder {
@@ -121,7 +116,6 @@
 	padding: 7px 15px;
 	border-radius: 54px;
 	color: white;
-	cursor: pointer;
 }
 
 .activebids-list-title {

@@ -1,0 +1,69 @@
+.profile-container {
+	background-color: #efeff8;
+}
+.profile-header {
+	position: relative;
+	height: 40vh;
+}
+
+.banner-image {
+	width: 95vw;
+	height: 30vh;
+	background-color: aquamarine;
+	margin: 32px;
+	border-radius: 10px;
+	background-image: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	-webkit-animation: hue 20s infinite linear;
+	animation: hue 20s infinite linear;
+}
+
+@keyframes hue {
+	from {
+		-webkit-filter: hue-rotate(0deg);
+	}
+
+	to {
+		-webkit-filter: hue-rotate(-360deg);
+	}
+}
+
+.profile-details {
+	position: absolute;
+	bottom: 16px;
+	left: 60px;
+	background-color: white;
+	border-radius: 10px;
+	width: 40vw;
+	padding: 16px;
+	display: flex;
+	height: 20vh;
+	align-items: center;
+	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.profile-details div:last-child {
+	flex: 1;
+	margin-left: 16px;
+}
+
+.profile-details-image {
+	height: 15vh;
+	width: 15vh;
+	background-color: #00c775;
+	border: 2px solid #00c775;
+	border-radius: 50%;
+	z-index: 1;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+.assset-value {
+	display: flex;
+	flex: 1;
+	justify-content: space-around;
+}
+
+.profile-description {
+	margin: 8px 32px;
+}
