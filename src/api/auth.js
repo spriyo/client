@@ -3,6 +3,7 @@ import { BASE_URL } from "../constants";
 import { resolve } from "../utils/resolver";
 
 export class AuthHttpService {
+	token = localStorage.getItem("token");
 	async signIn() {
 		// 1. Send Address to server
 		// getting address from which we will sign message
@@ -72,5 +73,29 @@ export class AuthHttpService {
 		} catch (error) {
 			console.log(error);
 		}
+	}
+
+	async updateProfile(data) {
+		const resolved = await resolve(
+			axios.patch(`${BASE_URL}/website/v1/user`, data, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "application/json",
+				},
+			})
+		);
+		return resolved;
+	}
+
+	async updateAvatar(formData) {
+		const resolved = await resolve(
+			axios.patch(`${BASE_URL}/website/v1/user/avatar`, formData, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "multipart/form-data",
+				},
+			})
+		);
+		return resolved;
 	}
 }

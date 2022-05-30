@@ -5,6 +5,8 @@ import { AssetHttpService } from "../../api/asset";
 import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
 import { FooterComponent } from "../../components/FooterComponent";
 import "./ProfileScreen.css";
+import { MdOutlineModeEditOutline } from "react-icons/md";
+import { SettingComponent } from "../../components/SettingComponent";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
 export function ProfileScreen(params) {
@@ -18,6 +20,12 @@ export function ProfileScreen(params) {
 		const resolved = await assetHttpService.getUserAssets(localUser._id);
 		setAssets(resolved.data);
 	}
+
+	const [open, setOpen] = useState(false);
+
+	const handleClose = (value) => {
+		setOpen(false);
+	};
 
 	useEffect(() => {
 		getUserAssets();
@@ -42,10 +50,25 @@ export function ProfileScreen(params) {
 						className="profile-details-image"
 						style={{ backgroundImage: `url(${user.displayImage})` }}
 					></div>
-					<div>
-						<p style={{ fontWeight: "bold" }}>{user.displayName}</p>
-						<p style={{ fontWeight: "medium" }}>@{user.displayName}</p>
-					</div>
+					<Box display="flex" height="100%" alignItems="center">
+						<div>
+							<p style={{ fontWeight: "bold" }}>{user.displayName}</p>
+							<p style={{ fontWeight: "medium" }}>@{user.username}</p>
+						</div>
+						<Box sx={{ position: "absolute", top: "16px", right: "16px" }}>
+							<Box
+								display="flex"
+								alignItems="center"
+								onClick={() => setOpen(true)}
+								sx={{ cursor: "pointer" }}
+							>
+								<Box display="flex" alignItems="center" marginRight="4px">
+									<MdOutlineModeEditOutline size="20" />
+								</Box>
+							</Box>
+							<SettingComponent open={open} onClose={handleClose} />
+						</Box>
+					</Box>
 					{/* <div>
 						<div className="assset-value">
 							<div>
