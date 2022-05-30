@@ -18,6 +18,7 @@ export const ButtonComponent = ({
 			pl={2}
 			pr={2}
 			border={filled ? "none" : "1px solid #c4c4c4"}
+			sx={{ cursor: "pointer" }}
 		>
 			{text}
 		</Box>
