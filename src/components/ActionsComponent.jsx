@@ -140,7 +140,7 @@ export const ActionsComponent = ({ asset }) => {
 	}
 
 	async function makeOffer() {
-		const amount = prompt("Please enter the amount in Matic");
+		const amount = prompt("Please enter the amount in BNB");
 		if (isNaN(parseFloat(amount))) return;
 
 		const currentAddress = await getWalletAddress();
@@ -229,7 +229,7 @@ export const ActionsComponent = ({ asset }) => {
 	// }
 
 	async function sellAsset() {
-		const amount = prompt("Please enter the amount in Matic");
+		const amount = prompt("Please enter the amount in BNB");
 		if (isNaN(parseFloat(amount))) return;
 
 		const currentAddress = await getWalletAddress();
@@ -285,7 +285,7 @@ export const ActionsComponent = ({ asset }) => {
 
 	async function updateAsset() {
 		const amount = prompt(
-			"Please enter the amount in Matic to update the sale price."
+			"Please enter the amount in BNB to update the sale price."
 		);
 		if (isNaN(parseFloat(amount))) return;
 

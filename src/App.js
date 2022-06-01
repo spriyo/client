@@ -30,6 +30,7 @@ import { ExploreScreen } from "./screens/ExploreScreen";
 import { BlogScreen } from "./screens/BlogScreen";
 import { addNotification } from "./state/actions/notifications";
 import Web3 from "web3";
+import { ImportScreen } from "./screens/ImportScreen";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -140,6 +141,7 @@ function App() {
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
 					<Route path="/blogs/:name" exact element={<BlogScreen />} />
+					<Route path="/import" exact element={<ImportScreen />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />
 				</Routes>
 			</Router>
