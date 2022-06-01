@@ -16,6 +16,18 @@ export class AssetHttpService {
 		console.log(resolved);
 	}
 
+	async importAsset(data) {
+		const resolved = await resolve(
+			axios.post(`${WEB_API_BASE_URL}/assets/import`, data, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "application/json",
+				},
+			})
+		);
+		return resolved;
+	}
+
 	async getRecentlyAdded({ chainId }) {
 		const resolved = await resolve(
 			axios.get(`${WEB_API_BASE_URL}/assets?chainId=${chainId ?? ""}`)

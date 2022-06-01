@@ -27,7 +27,9 @@ export function CardComponent({ asset }) {
 				></div>
 				<div className="card-info-creator">
 					{/* created by */}
-					<p>Created : @{asset.created_by.displayName}</p>
+					<p>
+						{asset.created_by && `Created : @${asset.created_by.displayName}`}
+					</p>
 				</div>
 				<div className="card-info-top">
 					{/* title */}
