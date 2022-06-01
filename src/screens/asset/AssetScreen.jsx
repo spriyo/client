@@ -96,7 +96,7 @@ export function AssetScreen() {
 								m={1}
 							>
 								<img
-									src={asset.medias[0].path}
+									src={asset.image || asset.medias[0].path}
 									alt="nft"
 									width="100%"
 									height="auto"

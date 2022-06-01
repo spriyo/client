@@ -26,6 +26,8 @@ function getKeyword(event) {
 	switch (event.event_type) {
 		case "mint":
 			return "Minted";
+		case "imported":
+			return "Imported";
 		case "bid":
 			return "Bidded";
 		case "auction_create":
@@ -139,7 +141,7 @@ export function ActivityCardComponent({ event, asset }) {
 					secondaryAction={
 						event.data.amount && (
 							<Typography variant="h5" color={"text.primary"}>
-								{`${web3.utils.fromWei(event.data.amount)} MATIC`}
+								{`${web3.utils.fromWei(event.data.amount)} BNB`}
 							</Typography>
 						)
 					}

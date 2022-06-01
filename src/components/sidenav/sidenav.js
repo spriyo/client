@@ -9,6 +9,7 @@ import {
 import { BsBookmarkStar } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
+import { BiImport } from "react-icons/bi";
 
 export function SideNav() {
 	return (
@@ -42,6 +43,11 @@ export function SideNav() {
 					/>
 					<SideNavOption icon={<AiOutlineWallet />} optionTitle="Wallet" />
 					<SideNavOption icon={<BsBookmarkStar />} optionTitle="Wishlist" />
+					<SideNavOption
+						icon={<BiImport />}
+						optionTitle="Import"
+						to="/import"
+					/>
 					{/* <SideNavOption icon={<AiOutlineSetting />} optionTitle="Settings" /> */}
 				</div>
 
