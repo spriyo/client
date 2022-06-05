@@ -8,7 +8,10 @@ export function CardComponent({ asset }) {
 				backgroundImage:
 					asset.type === "video"
 						? "none"
-						: `url('${asset.medias.length !== 0 ? asset.medias[0].path : ""}')`,
+						: `url('${
+								asset.image ||
+								(asset.medias.length !== 0 ? asset.medias[0].path : "")
+						  }')`,
 			}}
 		>
 			{asset.type === "video" ? (

@@ -42,7 +42,7 @@ export const ExploreScreen = ({ listen }) => {
 			skip: skip.current,
 			createdAt: createdAtRef.current,
 			query: query || "",
-			chainId: Web3Utils.toHex(chainId),
+			chainId: chainId,
 		});
 		skip.current += 10;
 		recentlyAddedItemsRef.current = [
