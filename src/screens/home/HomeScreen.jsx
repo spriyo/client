@@ -11,7 +11,6 @@ import { DisplayHttpService } from "../../api/display";
 import { Box } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useSelector } from "react-redux";
-import Web3Utils from "web3-utils";
 
 function HomeScreen() {
 	const assetHttpService = new AssetHttpService();
@@ -24,14 +23,14 @@ function HomeScreen() {
 
 	async function getRecentlyAdded() {
 		const resolved = await assetHttpService.getRecentlyAdded({
-			chainId: Web3Utils.toHex(chainId),
+			chainId: chainId,
 		});
 		setRecentlyAddedItems(resolved.data);
 	}
 
 	async function getActiveSales() {
 		const resolved = await saleHttpService.getActiveSales({
-			chainId: Web3Utils.toHex(chainId),
+			chainId: chainId,
 		});
 		setOnSaleItems(resolved.data.map((e) => e.asset_id));
 	}
