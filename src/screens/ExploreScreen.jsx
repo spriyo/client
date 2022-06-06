@@ -18,7 +18,6 @@ import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLocationChange } from "../utils/useLocationChange";
-import Web3Utils from "web3-utils";
 
 export const ExploreScreen = ({ listen }) => {
 	const displayHttpService = new DisplayHttpService();

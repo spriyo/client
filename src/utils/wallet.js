@@ -24,12 +24,12 @@ export async function connectWalletToSite() {
 }
 
 export async function switchChain(config) {
-	let chainId = config.chainId;
+	config.chainId = Web3.utils.toHex(config.chainId);
 
 	try {
 		await window.ethereum.request({
 			method: "wallet_switchEthereumChain",
-			params: [{ chainId: chainId }],
+			params: [{ chainId: config.chainId }],
 		});
 	} catch (error) {
 		if (error.code === 4902) {
