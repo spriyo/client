@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { OfferHttpService } from "../../api/offer";
 import { getWalletAddress } from "../../utils/wallet";
 import "./activityCard.css";
+import { CircularProfile } from "../CircularProfileComponent";
 
 const BoxShadow = styled(Box)(({ theme }) => ({
 	boxShadow: theme.shadows[0],
@@ -147,7 +148,10 @@ export function ActivityCardComponent({ event, asset }) {
 					}
 				>
 					<ListItemAvatar>
-						<Avatar src={event.user_id.displayImage}></Avatar>
+						<CircularProfile
+							userId={event.user_id._id}
+							userImgUrl={event.user_id.displayImage}
+						/>
 					</ListItemAvatar>
 					<ListItemText
 						primary={
