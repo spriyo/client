@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { SearchComponent } from "../search/SearchComponent";
 import { ButtonComponent } from "../ButtonComponent";
 import { ConnectComponent } from "../ConnectComponent";
-import { CircularProfile } from "../circularProfile/circularProfile";
+import { CircularProfile } from "../CircularProfileComponent";
 import { Box } from "@mui/material";
 import logo from "../../assets/spriyo.png";
 import { TopNotification } from "../../components/topNotification/TopNotification";
@@ -50,7 +50,10 @@ export function NavbarComponent() {
 					{/* profile */}
 					{authenticated ? (
 						<div onClick={() => navigate("/profile")}>
-							<CircularProfile userImgUrl={user.displayImage} />
+							<CircularProfile
+								userImgUrl={user.displayImage}
+								userId={user._id}
+							/>
 						</div>
 					) : (
 						<ConnectComponent />

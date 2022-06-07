@@ -46,14 +46,31 @@ export function ProfileScreen(params) {
 						left: { xs: "auto", md: "60px" },
 					}}
 				>
-					<div
-						className="profile-details-image"
-						style={{ backgroundImage: `url(${user.displayImage})` }}
-					></div>
+					{user.displayImage && (
+						<div
+							className="profile-details-image"
+							style={{
+								backgroundImage: `url(${
+									user.displayImage.includes("default-profile-icon")
+										? `https://joeschmoe.io/api/v1/${user._id}`
+										: user.displayImage
+								})`,
+							}}
+						></div>
+					)}
 					<Box display="flex" height="100%" alignItems="center">
 						<div>
 							<p style={{ fontWeight: "bold" }}>{user.displayName}</p>
-							<p style={{ fontWeight: "medium" }}>@{user.username}</p>
+							{user.username && (
+								<p style={{ fontWeight: "medium" }}>
+									@
+									{user.username.length > 20
+										? `${user.username.substring(0, 4)}...${user.username.slice(
+												-4
+										  )}`
+										: user.username}
+								</p>
+							)}
 						</div>
 						<Box sx={{ position: "absolute", top: "16px", right: "16px" }}>
 							<Box

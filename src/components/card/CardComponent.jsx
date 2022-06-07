@@ -25,7 +25,11 @@ export function CardComponent({ asset }) {
 				<div
 					className="card-info-profileimg"
 					style={{
-						backgroundImage: `url('${asset.owner.displayImage}')`,
+						backgroundImage: `url('${
+							asset.owner.displayImage.includes("default-profile-icon")
+								? `https://joeschmoe.io/api/v1/${asset.owner._id}`
+								: asset.owner.displayImage
+						}')`,
 					}}
 				></div>
 				<div className="card-info-creator">

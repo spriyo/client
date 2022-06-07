@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ActivityCardComponent } from "../activityCard/ActivityCard";
+import { CircularProfile } from "../CircularProfileComponent";
 import "./activeBid.css";
 
 export function ActiveSaleComponent({ asset }) {
@@ -35,12 +36,12 @@ export function ActiveSaleComponent({ asset }) {
 				</div>
 				{/* User */}
 				<div className="activebid-user-container">
-					<Box
-						className="activebid-user-img"
-						sx={{
-							backgroundImage: `url('${asset.owner.displayImage}')`,
-						}}
-					></Box>
+					<Box className="activebid-user-img">
+						<CircularProfile
+							userId={asset.owner._id}
+							userImgUrl={asset.owner.displayImage}
+						/>
+					</Box>
 					<div className="activebid-user-info">
 						<p className="activebid-user-info name">
 							{asset.owner.displayName}
