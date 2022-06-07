@@ -10,7 +10,7 @@ export async function connectWalletToSite() {
 			window.web3 = new Web3(window.web3.currentProvider);
 			return true;
 		} else {
-			window.alert(
+			console.log(
 				"Non-Ethereum browser detected. You should consider trying MetaMask!"
 			);
 			return false;
@@ -24,12 +24,12 @@ export async function connectWalletToSite() {
 }
 
 export async function switchChain(config) {
-	let chainId = config.chainId;
+	config.chainId = Web3.utils.toHex(config.chainId);
 
 	try {
 		await window.ethereum.request({
 			method: "wallet_switchEthereumChain",
-			params: [{ chainId: chainId }],
+			params: [{ chainId: config.chainId }],
 		});
 	} catch (error) {
 		if (error.code === 4902) {

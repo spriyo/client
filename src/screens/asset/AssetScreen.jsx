@@ -2,7 +2,6 @@ import "./asset.css";
 import React, { useEffect, useState } from "react";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import {
-	Avatar,
 	Box,
 	Chip,
 	ListItem,
@@ -21,6 +20,7 @@ import { useSelector } from "react-redux";
 import Web3 from "web3";
 import { ActionsComponent } from "../../components/ActionsComponent";
 import { ActivityCardComponent } from "../../components/activityCard/ActivityCard";
+import { CircularProfile } from "../../components/CircularProfileComponent";
 
 export function AssetScreen() {
 	const { id } = useParams();
@@ -92,7 +92,9 @@ export function AssetScreen() {
 								display={"flex"}
 								justifyContent="center"
 								borderRadius={"10px"}
-								onClick={() => window.open(asset.medias[0].path, "_blank")}
+								onClick={() =>
+									window.open(asset.image || asset.medias[0].path, "_blank")
+								}
 								m={1}
 							>
 								<img
@@ -122,7 +124,10 @@ export function AssetScreen() {
 								</Typography>
 								<ListItem>
 									<ListItemAvatar>
-										<Avatar src={asset.owner.displayImage}></Avatar>
+										<CircularProfile
+											userId={asset.owner._id}
+											userImgUrl={asset.owner.displayImage}
+										/>
 									</ListItemAvatar>
 									{user ? (
 										<ListItemText

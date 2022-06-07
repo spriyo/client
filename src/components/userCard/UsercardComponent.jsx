@@ -1,12 +1,12 @@
 import "./userCard.css";
+import { CircularProfile } from "../CircularProfileComponent";
 
 export function UsercardComponent({ user }) {
 	return (
 		<div className="user-card-container">
-			<div
-				className="user-card-img"
-				style={{ backgroundImage: `url(${user.displayImage})` }}
-			></div>
+			<div className="user-card-img">
+				<CircularProfile userId={user._id} userImgUrl={user.displayImage} />
+			</div>
 			<div className="user-card-info">
 				<p className="user-card-info name">{user.displayName}</p>
 				<p className="user-card-info username">
