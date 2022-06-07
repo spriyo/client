@@ -10,7 +10,7 @@ export async function connectWalletToSite() {
 			window.web3 = new Web3(window.web3.currentProvider);
 			return true;
 		} else {
-			window.alert(
+			console.log(
 				"Non-Ethereum browser detected. You should consider trying MetaMask!"
 			);
 			return false;
