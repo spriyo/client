@@ -58,7 +58,9 @@ export function getChainId() {
 	try {
 		let chainId;
 		if (process.env.REACT_APP_ENV === "development") {
-			chainId = Web3.utils.hexToNumber(window.ethereum.chainId);
+			chainId =
+				Web3.utils.hexToNumber(window.ethereum.chainId) ||
+				window.ethereum.networkVersion;
 		} else {
 			chainId = process.env.REACT_APP_CHAIN_ID;
 		}

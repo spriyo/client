@@ -23,7 +23,6 @@ export function CardComponent({ asset }) {
 	useEffect(() => {
 		setLiked(asset.liked);
 
-		console.log(asset.liked);
 		return () => {
 			return asset.liked;
 		};

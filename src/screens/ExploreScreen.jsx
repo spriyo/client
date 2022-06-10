@@ -18,6 +18,7 @@ import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLocationChange } from "../utils/useLocationChange";
+import { ChangeNetworkComponent } from "../components/ChangeNetworkComponent";
 
 export const ExploreScreen = ({ listen }) => {
 	const displayHttpService = new DisplayHttpService();
@@ -58,13 +59,8 @@ export const ExploreScreen = ({ listen }) => {
 	});
 
 	useEffect(() => {
-		console.log("New value", chainId);
-		if (chainId) {
-			getRecentlyAdded(true);
-		}
-		return () => {
-			console.log("Prev value", chainId);
-		};
+		getRecentlyAdded(true);
+		return () => {};
 	}, [chainId]);
 
 	return (
@@ -80,23 +76,26 @@ export const ExploreScreen = ({ listen }) => {
 						<Typography sx={{ fontSize: "40px", fontWeight: "500" }}>
 							Explore
 						</Typography>
-						<FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-							<InputLabel id="sort-select-label">Sort</InputLabel>
-							<Select
-								labelId="sort-select-label"
-								id="sort-select"
-								value={createdAt}
-								label="Age"
-								onChange={(event) => {
-									createdAtRef.current = event.target.value;
-									setCreatedAt(event.target.value);
-									getRecentlyAdded(true);
-								}}
-							>
-								<MenuItem value={"desc"}>Newest</MenuItem>
-								<MenuItem value={"asc"}>Oldest</MenuItem>
-							</Select>
-						</FormControl>
+						<Box display="flex">
+							<ChangeNetworkComponent />
+							<FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+								<InputLabel id="sort-select-label">Sort</InputLabel>
+								<Select
+									labelId="sort-select-label"
+									id="sort-select"
+									value={createdAt}
+									label="Age"
+									onChange={(event) => {
+										createdAtRef.current = event.target.value;
+										setCreatedAt(event.target.value);
+										getRecentlyAdded(true);
+									}}
+								>
+									<MenuItem value={"desc"}>Newest</MenuItem>
+									<MenuItem value={"asc"}>Oldest</MenuItem>
+								</Select>
+							</FormControl>
+						</Box>
 					</Stack>
 					<Box paddingBottom={3}>
 						<Divider></Divider>

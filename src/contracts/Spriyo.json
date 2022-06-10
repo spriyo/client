@@ -18086,6 +18086,12 @@
 			"links": {},
 			"address": "0xD3Be4416aaC7EEAe6baFa846d51412AB151337eC",
 			"transactionHash": "0x54c1ef8c3c660f9a011576519ac1787ed7506b652194bd33da461c08ff3c1ce9"
+		},
+		"8080": {
+			"events": {},
+			"links": {},
+			"address": "0x5efe958dcef7ef48450d6370dcfeb7beb823ce5e",
+			"transactionHash": "0x937caeb6257aa87ebf6823e07601142f37f0270bdee538cb32ca5ce5827cffbf"
 		}
 	},
 	"schemaVersion": "3.4.7",
