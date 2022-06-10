@@ -5,7 +5,6 @@ import { CollectionContainer } from "../../components/collectionContainer/Collec
 import { ActiveSaleComponent } from "../../components/activeSale/ActiveSale";
 import { HighlightsComponent } from "../../components/highlights/HighlightsComponent";
 import { useEffect, useState } from "react";
-import { AssetHttpService } from "../../api/asset";
 import { SaleHttpService } from "../../api/sale";
 import { DisplayHttpService } from "../../api/display";
 import { Box } from "@mui/material";
@@ -13,7 +12,6 @@ import { FooterComponent } from "../../components/FooterComponent";
 import { useSelector } from "react-redux";
 
 function HomeScreen() {
-	const assetHttpService = new AssetHttpService();
 	const saleHttpService = new SaleHttpService();
 	const displayHttpService = new DisplayHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
@@ -22,10 +20,12 @@ function HomeScreen() {
 	const [topCreators, setTopCreators] = useState([]);
 
 	async function getRecentlyAdded() {
-		const resolved = await assetHttpService.getRecentlyAdded({
+		const resolved = await displayHttpService.searchAssets({
 			chainId: chainId,
 		});
-		setRecentlyAddedItems(resolved.data);
+		if (!resolved.error) {
+			setRecentlyAddedItems(resolved.data);
+		}
 	}
 
 	async function getActiveSales() {

@@ -6,9 +6,9 @@ import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress, getChainId } from "../../utils/wallet";
 import { PinataHttpService } from "../../api/pinata";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
-import { ChainsConfig } from "../../constants";
+import { ChangeNetworkComponent } from "../../components/ChangeNetworkComponent";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
@@ -20,19 +20,7 @@ export function CreateScreen({ closeModal }) {
 		title: "",
 		description: "",
 	});
-	const [chainName, setChainName] = useState("");
 	const nftContract = useSelector((state) => state.contractReducer.nftContract);
-	const chainId = useSelector((state) => state.walletReducer.chainId);
-	async function getChainName() {
-		let foundChain;
-		const currentChainIdHex = await getChainId();
-		for (var key in ChainsConfig) {
-			if (ChainsConfig[key].chainId === currentChainIdHex) {
-				foundChain = ChainsConfig[key].chainName;
-			}
-		}
-		setChainName(foundChain);
-	}
 
 	async function uploadToIpfs() {
 		if (loading) return;
@@ -119,14 +107,16 @@ export function CreateScreen({ closeModal }) {
 	const [imageUrl, setImageUrl] = useState();
 	useEffect(() => {
 		if (file) setImageUrl(URL.createObjectURL(file));
-		getChainName();
-	}, [file, chainId]);
+	}, [file]);
 
 	return (
 		<div className="create-screen-container">
 			<div onClick={closeModal} className="create-screen-container-inner">
 				{/* Heading */}
-				<div className="heading">Create NFT</div>
+				<Box display={"flex"} justifyContent="space-between">
+					<div className="heading">Create NFT</div>
+					<ChangeNetworkComponent />
+				</Box>
 				<hr />
 				{/* Content */}
 				<Box
@@ -218,11 +208,10 @@ export function CreateScreen({ closeModal }) {
 						<Box className="createscreen-create-button">
 							<div
 								onClick={() => {
-									if (!chainName) return;
 									uploadToIpfs();
 								}}
 							>
-								<p style={{ cursor: chainName ? "pointer" : "not-allowed" }}>
+								<p style={{ cursor: "pointer" }}>
 									{!loading ? "Create" : "loading..."}
 								</p>
 							</div>
@@ -230,18 +219,6 @@ export function CreateScreen({ closeModal }) {
 					</div>
 				</Box>
 				<hr />
-				<Box>
-					{chainName ? (
-						<Typography variant="h6">
-							Your currently on <u>{chainName}</u>, Minting takes place in{" "}
-							{chainName}.
-						</Typography>
-					) : (
-						<Typography variant="h6" sx={{ color: "red" }}>
-							Unsupported Network, change network in metamask
-						</Typography>
-					)}
-				</Box>
 			</div>
 		</div>
 	);
