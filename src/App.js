@@ -29,7 +29,6 @@ import {
 import { ExploreScreen } from "./screens/ExploreScreen";
 import { BlogScreen } from "./screens/BlogScreen";
 import { addNotification } from "./state/actions/notifications";
-import Web3 from "web3";
 import { ImportScreen } from "./screens/ImportScreen";
 import { FavoritesScreen } from "./screens/Favorites";
 
@@ -69,7 +68,10 @@ function App() {
 
 				window.ethereum.on("chainChanged", async function (networkId) {
 					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
-					let chainId = await getChainId();
+					let chainId = getChainId();
+					// Load contracts
+					await initializeMarketContract();
+					await initializeNftContract();
 					dispatch(actionSwitchChain(chainId));
 					dispatch(
 						addNotification(
@@ -98,8 +100,7 @@ function App() {
 
 	async function initializeMarketContract() {
 		try {
-			const currentChainIdHex = await getChainId();
-			const currentChainId = Web3.utils.hexToNumber(currentChainIdHex);
+			const currentChainId = getChainId();
 
 			const contract = new window.web3.eth.Contract(
 				marketJsonInterface.abi,
@@ -113,8 +114,7 @@ function App() {
 
 	async function initializeNftContract() {
 		try {
-			const currentChainIdHex = await getChainId();
-			const currentChainId = Web3.utils.hexToNumber(currentChainIdHex);
+			const currentChainId = getChainId();
 
 			const contract = new window.web3.eth.Contract(
 				nftJsonInterface.abi,

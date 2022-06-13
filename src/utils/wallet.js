@@ -57,10 +57,19 @@ export async function getWalletAddress() {
 export function getChainId() {
 	try {
 		let chainId;
-		if (process.env.REACT_APP_ENV === "development") {
+		const env = process.env.REACT_APP_ENV;
+		if (env === "development") {
 			chainId =
 				Web3.utils.hexToNumber(window.ethereum.chainId) ||
 				window.ethereum.networkVersion;
+			if (
+				chainId !== 56 &&
+				chainId !== 97 &&
+				chainId !== 8080 &&
+				chainId !== 80001
+			) {
+				chainId = 97;
+			}
 		} else {
 			chainId = process.env.REACT_APP_CHAIN_ID;
 		}

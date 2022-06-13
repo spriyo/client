@@ -67,6 +67,10 @@ export function ConnectComponent() {
 						)
 					);
 				});
+			} else {
+				alert(
+					"Non-Ethereum browser detected. You should consider trying MetaMask!"
+				);
 			}
 		} catch (error) {
 			console.log(error);

@@ -61,7 +61,7 @@ function HomeScreen() {
 						sx={{
 							width: { xs: "auto", md: "79.6vw" },
 							height: { xs: "auto", md: "89vh" },
-							padding: { xs: "20px 0" },
+							padding: { xs: "20px 12px", md: "20px" },
 						}}
 					>
 						<Box
