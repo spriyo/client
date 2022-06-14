@@ -1,11 +1,11 @@
 .search-container {
 	display: flex;
 	background-color: #efeff8;
-	border-radius: 45px;
+	border-radius: 14px;
 	padding: 4px 10px;
-	height: 32px;
-    justify-content: center;
-    align-items: center;
+	height: 42px;
+	justify-content: center;
+	align-items: center;
 }
 
 .search-container input {

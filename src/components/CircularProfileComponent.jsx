@@ -10,7 +10,7 @@ export function CircularProfile({ userImgUrl, userId }) {
 						: userImgUrl
 				}
 				alt="User Profile"
-				sx={{ width: 46, height: 46 }}
+				sx={{ width: 46, height: 46, cursor: "pointer" }}
 			/>
 		</Box>
 	);

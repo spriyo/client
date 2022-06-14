@@ -13,6 +13,7 @@ import { getChainId, switchChain } from "../utils/wallet";
 export const ChangeNetworkComponent = () => {
 	const [networkid, setNetworkid] = useState(56);
 	const cid = getChainId();
+	const env = process.env.REACT_APP_ENV;
 
 	async function handleNetworkChange(newNetworkid) {
 		let chain;
@@ -29,11 +30,7 @@ export const ChangeNetworkComponent = () => {
 
 	useEffect(() => {
 		if (cid) {
-			if (cid !== 56 && cid !== 97 && cid !== 8080 && cid !== 80001) {
-				setNetworkid(56);
-			} else {
-				setNetworkid(cid);
-			}
+			setNetworkid(cid);
 		}
 		return () => {};
 	}, [cid]);
@@ -42,20 +39,32 @@ export const ChangeNetworkComponent = () => {
 		<Box>
 			<FormControl sx={{ m: 1, minWidth: 120 }} size="small">
 				<InputLabel id="chain-selector-label">Network</InputLabel>
-				<Select
-					labelId="chain-selector-label"
-					id="chain-selector"
-					value={networkid}
-					label="Select Chain"
-					onChange={(e) => handleNetworkChange(e.target.value)}
-				>
-					<ListSubheader>Mainnet</ListSubheader>
-					<MenuItem value={56}>Binance Smart Chain</MenuItem>
-					<ListSubheader>Testnets</ListSubheader>
-					<MenuItem value={97}>Binance Testnet</MenuItem>
-					<MenuItem value={80001}>Polygon Testnet</MenuItem>
-					<MenuItem value={8080}>Shardeum Liberty 1.0</MenuItem>
-				</Select>
+				{env === "development" ? (
+					<Select
+						labelId="chain-selector-label"
+						id="chain-selector"
+						value={networkid}
+						label="Select Chain"
+						onChange={(e) => handleNetworkChange(e.target.value)}
+					>
+						<ListSubheader>Mainnet</ListSubheader>
+						<MenuItem value={56}>Binance Smart Chain</MenuItem>
+						<ListSubheader>Testnets</ListSubheader>
+						<MenuItem value={97}>Binance Testnet</MenuItem>
+						<MenuItem value={80001}>Polygon Testnet</MenuItem>
+						<MenuItem value={8080}>Shardeum Liberty 1.0</MenuItem>
+					</Select>
+				) : (
+					<Select
+						labelId="chain-selector-label"
+						id="chain-selector"
+						value={networkid}
+						label="Select Chain"
+						onChange={(e) => handleNetworkChange(e.target.value)}
+					>
+						<MenuItem value={56}>Binance Smart Chain</MenuItem>
+					</Select>
+				)}
 			</FormControl>
 		</Box>
 	);

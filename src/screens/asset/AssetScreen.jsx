@@ -75,7 +75,7 @@ export function AssetScreen() {
 				<NavbarComponent />
 			</Box>
 			{asset ? (
-				<Box sx={{ margin: { xs: "12px", md: "16px 32px" } }}>
+				<Box sx={{ margin: { xs: "12px", md: "24px 40px" } }}>
 					<Box p={2} bgcolor="white" borderRadius="10px">
 						<Stack
 							sx={{

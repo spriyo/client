@@ -10,6 +10,8 @@ import { DisplayHttpService } from "../../api/display";
 import { Box } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useSelector } from "react-redux";
+import { TopNotification } from "../../components/topNotification/TopNotification";
+import { useNavigate } from "react-router-dom";
 
 function HomeScreen() {
 	const saleHttpService = new SaleHttpService();
@@ -18,6 +20,7 @@ function HomeScreen() {
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [onSaleItems, setOnSaleItems] = useState([]);
 	const [topCreators, setTopCreators] = useState([]);
+	const navigate = useNavigate();
 
 	async function getRecentlyAdded() {
 		const resolved = await displayHttpService.searchAssets({
@@ -48,6 +51,7 @@ function HomeScreen() {
 
 	return (
 		<Box>
+			<TopNotification />
 			<div className="container">
 				<div className="navbar">
 					<NavbarComponent />
@@ -61,7 +65,7 @@ function HomeScreen() {
 						sx={{
 							width: { xs: "auto", md: "79.6vw" },
 							height: { xs: "auto", md: "89vh" },
-							padding: { xs: "20px 0" },
+							padding: { xs: "20px 8px", md: "20px" },
 						}}
 					>
 						<Box
