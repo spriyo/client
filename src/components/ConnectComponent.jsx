@@ -11,15 +11,7 @@ import {
 	switchChain as actionSwitchChain,
 } from "../state/actions/wallet";
 import { addNotification } from "../state/actions/notifications";
-
-const styles = {
-	backgroundColor: "#00c775",
-	color: "white",
-	borderRadius: "16px",
-	padding: "4px 8px",
-	margin: "0px 16px",
-	cursor: "pointer",
-};
+import { ButtonComponent } from "./ButtonComponent";
 
 export function ConnectComponent() {
 	const authHttpService = new AuthHttpService();
@@ -84,14 +76,12 @@ export function ConnectComponent() {
 		}
 	}
 	return (
-		<div
+		<ButtonComponent
+			text="Connect Wallet"
 			onClick={() => {
 				connectAndListenWallet();
 				fetchCurrentUser();
 			}}
-			style={styles}
-		>
-			<p>Connect Wallet</p>
-		</div>
+		/>
 	);
 }

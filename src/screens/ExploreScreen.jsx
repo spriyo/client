@@ -69,7 +69,7 @@ export const ExploreScreen = ({ listen }) => {
 			<Box>
 				<Stack p={3}>
 					<Stack
-						direction={"row"}
+						direction={{ xs: "column", md: "row" }}
 						alignItems="center"
 						justifyContent={"space-between"}
 					>

@@ -14,11 +14,11 @@ export function HighlightsComponent({ title, data = [] }) {
 					</div>
 				))}
 			</div>
-			{data.length > 5 ? (
+			{/* {data.length > 5 ? (
 				<div className="collection-action">See all</div>
 			) : (
 				<div></div>
-			)}
+			)} */}
 		</div>
 	);
 }

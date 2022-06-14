@@ -31,11 +31,11 @@ export function CollectionContainer({ assets, title }) {
 					</Grid>
 				)}
 			</div>
-			{assets.length === 0 ? (
+			{/* {assets.length === 0 ? (
 				""
 			) : (
 				<div className="collection-action">See all</div>
-			)}
+			)} */}
 		</div>
 	);
 }
