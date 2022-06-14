@@ -17,7 +17,6 @@ import { AssetHttpService } from "../../api/asset";
 import { BiLinkExternal } from "react-icons/bi";
 import { ChainsConfig } from "../../constants";
 import { useSelector } from "react-redux";
-import Web3 from "web3";
 import { ActionsComponent } from "../../components/ActionsComponent";
 import { ActivityCardComponent } from "../../components/activityCard/ActivityCard";
 import { CircularProfile } from "../../components/CircularProfileComponent";
@@ -55,7 +54,7 @@ export function AssetScreen() {
 	}
 
 	function handleExploreClick() {
-		const cid = Web3.utils.numberToHex(chainId);
+		const cid = chainId;
 		let chain;
 		for (const c in ChainsConfig) {
 			if (cid === ChainsConfig[c].chainId) {
@@ -76,7 +75,7 @@ export function AssetScreen() {
 				<NavbarComponent />
 			</Box>
 			{asset ? (
-				<Box sx={{ margin: { xs: "12px", md: "16px 32px" } }}>
+				<Box sx={{ margin: { xs: "12px", md: "24px 40px" } }}>
 					<Box p={2} bgcolor="white" borderRadius="10px">
 						<Stack
 							sx={{

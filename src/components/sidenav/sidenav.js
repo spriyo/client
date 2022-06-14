@@ -30,6 +30,7 @@ export function SideNav() {
 					<SideNavOption
 						icon={<AiOutlineHeart />}
 						optionTitle="Favorite NFTs"
+						to="/favorites"
 					/>
 
 					<div style={{ height: "28px" }}></div>

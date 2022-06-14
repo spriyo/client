@@ -5,27 +5,30 @@ import { CollectionContainer } from "../../components/collectionContainer/Collec
 import { ActiveSaleComponent } from "../../components/activeSale/ActiveSale";
 import { HighlightsComponent } from "../../components/highlights/HighlightsComponent";
 import { useEffect, useState } from "react";
-import { AssetHttpService } from "../../api/asset";
 import { SaleHttpService } from "../../api/sale";
 import { DisplayHttpService } from "../../api/display";
 import { Box } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useSelector } from "react-redux";
+import { TopNotification } from "../../components/topNotification/TopNotification";
+import { useNavigate } from "react-router-dom";
 
 function HomeScreen() {
-	const assetHttpService = new AssetHttpService();
 	const saleHttpService = new SaleHttpService();
 	const displayHttpService = new DisplayHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [onSaleItems, setOnSaleItems] = useState([]);
 	const [topCreators, setTopCreators] = useState([]);
+	const navigate = useNavigate();
 
 	async function getRecentlyAdded() {
-		const resolved = await assetHttpService.getRecentlyAdded({
+		const resolved = await displayHttpService.searchAssets({
 			chainId: chainId,
 		});
-		setRecentlyAddedItems(resolved.data);
+		if (!resolved.error) {
+			setRecentlyAddedItems(resolved.data);
+		}
 	}
 
 	async function getActiveSales() {
@@ -48,6 +51,7 @@ function HomeScreen() {
 
 	return (
 		<Box>
+			<TopNotification />
 			<div className="container">
 				<div className="navbar">
 					<NavbarComponent />
@@ -61,7 +65,7 @@ function HomeScreen() {
 						sx={{
 							width: { xs: "auto", md: "79.6vw" },
 							height: { xs: "auto", md: "89vh" },
-							padding: { xs: "20px 0" },
+							padding: { xs: "20px 8px", md: "20px" },
 						}}
 					>
 						<Box

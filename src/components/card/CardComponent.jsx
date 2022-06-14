@@ -1,9 +1,37 @@
+import { Avatar, Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { LikeHttpService } from "../../api/like";
 import "./card.css";
 
 export function CardComponent({ asset }) {
+	const likeHttpService = new LikeHttpService();
+	const [liked, setLiked] = useState(false);
+
+	async function handleLike(e) {
+		e.stopPropagation();
+		const id = asset._id;
+		if (liked) {
+			await likeHttpService.unLikeAsset(id);
+			setLiked(false);
+		} else {
+			await likeHttpService.likeAsset(id);
+			setLiked(true);
+		}
+	}
+
+	useEffect(() => {
+		setLiked(asset.liked);
+
+		return () => {
+			return asset.liked;
+		};
+	}, [asset.liked]);
+
 	return (
-		<div
+		<Box
 			className="card-container"
+			position="relative"
 			style={{
 				backgroundImage:
 					asset.type === "video"
@@ -20,6 +48,28 @@ export function CardComponent({ asset }) {
 				</video>
 			) : (
 				<div></div>
+			)}
+			{"liked" in asset ? (
+				<Box position={"absolute"} top={8} right={8} onClick={handleLike}>
+					<Avatar
+						sx={{
+							backgroundColor: "rgba(0, 0, 0, 0.05)",
+							width: 30,
+							height: 30,
+							"&:hover": {
+								backgroundColor: "rgba(0, 0, 0, 0.1)",
+							},
+						}}
+					>
+						{liked ? (
+							<AiFillHeart size={20} color="rgb(255, 87, 87)" />
+						) : (
+							<AiOutlineHeart size={20} color="rgba(0, 0, 0, 0.5)" />
+						)}
+					</Avatar>
+				</Box>
+			) : (
+				""
 			)}
 			<div className="card-info">
 				<div
@@ -67,6 +117,6 @@ export function CardComponent({ asset }) {
 					</div> */}
 				</div>
 			</div>
-		</div>
+		</Box>
 	);
 }
