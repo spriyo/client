@@ -68,12 +68,9 @@ function App() {
 				});
 
 				window.ethereum.on("chainChanged", async function (networkId) {
-					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
-					let chainId = getChainId();
 					// Load contracts
 					await initializeMarketContract();
 					await initializeNftContract();
-					dispatch(actionSwitchChain(chainId));
 					dispatch(
 						addNotification(
 							"If you've switched to test network, you can use dev.spriyo.xyz for testing.",
@@ -138,6 +135,7 @@ function App() {
 		connectAndListenWallet();
 		fetchCurrentUser();
 		welcomeAndRedirect();
+		// listenLogs();
 	});
 
 	return (

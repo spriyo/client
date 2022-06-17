@@ -3,12 +3,17 @@ import "./CreateScreen.css";
 import { React, useEffect, useState } from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { AssetHttpService } from "../../api/asset";
-import { getWalletAddress, getChainId } from "../../utils/wallet";
+import { getWalletAddress } from "../../utils/wallet";
 import { PinataHttpService } from "../../api/pinata";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import { ChangeNetworkComponent } from "../../components/ChangeNetworkComponent";
+import { switchChain } from "../../state/actions/wallet";
+import { useDispatch } from "react-redux";
+import { switchChain as changeChain } from "../../utils/wallet";
+import { useRef } from "react";
+import { ButtonComponent } from "../../components/ButtonComponent";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
@@ -21,6 +26,9 @@ export function CreateScreen({ closeModal }) {
 		description: "",
 	});
 	const nftContract = useSelector((state) => state.contractReducer.nftContract);
+	const dispatch = useDispatch();
+	const currentChainIdRef = useRef();
+	const stateChainId = useSelector((state) => state.walletReducer.chainId);
 
 	async function uploadToIpfs() {
 		if (loading) return;
@@ -79,7 +87,7 @@ export function CreateScreen({ closeModal }) {
 			return alert("Please ensure everything is filled.");
 
 		// Get chain details
-		const chainId = await getChainId();
+		const chainId = currentChainIdRef.current;
 		// Get contract details
 
 		var formData = new FormData();
@@ -104,10 +112,17 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
+	async function onNetworkChange(network) {
+		await changeChain(network);
+		dispatch(switchChain(network.chainId));
+		currentChainIdRef.current = network.chainId;
+	}
+
 	const [imageUrl, setImageUrl] = useState();
 	useEffect(() => {
 		if (file) setImageUrl(URL.createObjectURL(file));
-	}, [file]);
+		currentChainIdRef.current = stateChainId;
+	}, [file, stateChainId]);
 
 	return (
 		<div className="create-screen-container">
@@ -115,7 +130,7 @@ export function CreateScreen({ closeModal }) {
 				{/* Heading */}
 				<Box display={"flex"} justifyContent="space-between">
 					<div className="heading">Create NFT</div>
-					<ChangeNetworkComponent />
+					<ChangeNetworkComponent onNetworkChange={onNetworkChange} />
 				</Box>
 				<hr />
 				{/* Content */}
@@ -206,15 +221,10 @@ export function CreateScreen({ closeModal }) {
 						</div> */}
 						{/* Create Button */}
 						<Box className="createscreen-create-button">
-							<div
-								onClick={() => {
-									uploadToIpfs();
-								}}
-							>
-								<p style={{ cursor: "pointer" }}>
-									{!loading ? "Create" : "loading..."}
-								</p>
-							</div>
+							<ButtonComponent
+								text={!loading ? "Create" : "loading..."}
+								onClick={uploadToIpfs}
+							/>
 						</Box>
 					</div>
 				</Box>
