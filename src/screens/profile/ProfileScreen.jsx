@@ -2,17 +2,21 @@ import { Box } from "@mui/system";
 import React from "react";
 import { useEffect, useState } from "react";
 import { AssetHttpService } from "../../api/asset";
-import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
 import { FooterComponent } from "../../components/FooterComponent";
 import "./ProfileScreen.css";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { SettingComponent } from "../../components/SettingComponent";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Grid, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { CardComponent } from "../../components/card/CardComponent";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
 export function ProfileScreen(params) {
 	const assetHttpService = new AssetHttpService();
 	const [assets, setAssets] = useState([]);
 	const [user, setUser] = useState({});
+	const navigate = useNavigate();
 
 	async function getUserAssets() {
 		const localUser = await JSON.parse(localStorage.getItem("user"));
@@ -108,19 +112,43 @@ export function ProfileScreen(params) {
 					</div> */}
 				</Box>
 			</Box>
-
-			{/* Description */}
+			{/* Description
 			<div className="profile-description">
 				<h2>Description</h2>
 				<p>
 					BearX is a limited NFT collection of Genesis and Mini Bears created on
 					Ethereum blockchain.
 				</p>
-			</div>
-			<div style={{ margin: "32px" }}>
-				<CollectionContainer title={"Your NFTs"} assets={assets} />
-			</div>
-
+			</div> */}
+			<Box
+				p={2}
+				borderRadius={"4px"}
+				style={{ margin: "32px", backgroundColor: "white" }}
+			>
+				<Typography variant="h1">Your NFT's</Typography>
+				<Box mb={2}></Box>
+				<InfiniteScroll
+					dataLength={assets.length}
+					next={() => {}}
+					hasMore={true}
+					loader={<p></p>}
+					style={{ overflowX: "clip" }}
+				>
+					<Grid
+						container
+						spacing={{ xs: 2, md: 3 }}
+						columns={{ xs: 4, sm: 8, md: 12 }}
+					>
+						{assets.map((asset, index) => (
+							<Grid item xs={12} sm={4} md={4} key={index}>
+								<Box onClick={() => navigate("/asset/" + asset._id)}>
+									<CardComponent asset={asset} />
+								</Box>
+							</Grid>
+						))}
+					</Grid>
+				</InfiniteScroll>
+			</Box>
 			<div style={{ marginBottom: "64px" }}>.</div>
 			<FooterComponent />
 		</div>
