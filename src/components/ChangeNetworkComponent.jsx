@@ -8,9 +8,12 @@ import {
 } from "@mui/material";
 import { ChainsConfig } from "../constants";
 import React, { useEffect, useState } from "react";
-import { getChainId, switchChain } from "../utils/wallet";
+import { getChainId } from "../utils/wallet";
 
-export const ChangeNetworkComponent = () => {
+export const ChangeNetworkComponent = ({
+	onNetworkChange,
+	enableAll = false,
+}) => {
 	const [networkid, setNetworkid] = useState(56);
 	const cid = getChainId();
 	const env = process.env.REACT_APP_ENV;
@@ -23,8 +26,11 @@ export const ChangeNetworkComponent = () => {
 			}
 		}
 		if (chain) {
-			await switchChain(chain);
+			if (onNetworkChange) onNetworkChange(chain);
 			setNetworkid(newNetworkid);
+		} else {
+			if (onNetworkChange) onNetworkChange(0);
+			setNetworkid(0);
 		}
 	}
 
@@ -47,6 +53,7 @@ export const ChangeNetworkComponent = () => {
 						label="Select Chain"
 						onChange={(e) => handleNetworkChange(e.target.value)}
 					>
+						{enableAll && <MenuItem value={0}>All</MenuItem>}
 						<ListSubheader>Mainnet</ListSubheader>
 						<MenuItem value={56}>Binance Smart Chain</MenuItem>
 						<ListSubheader>Testnets</ListSubheader>

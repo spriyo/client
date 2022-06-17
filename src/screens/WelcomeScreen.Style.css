@@ -1,0 +1,230 @@
+.planesculpt {
+	animation: mymove 3s infinite;
+	animation-direction: alternate-reverse;
+}
+
+.planesculpt img {
+	transform: scale(1.1);
+}
+
+.content-container {
+	position: relative;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	bottom: 20px;
+}
+
+.content-container .main-title p {
+	font-weight: 900;
+	font-size: 60px;
+	color: #292929;
+	line-height: 65px;
+	font-family: "Paytone One", sans-serif;
+	word-spacing: 8px;
+	text-align: center;
+	animation: title-move 2s forwards;
+	animation-delay: 3s;
+}
+
+.content-container .nft-title {
+	font-family: "Potta One", cursive;
+	background: linear-gradient(-45deg, #6355a4, #e21143, #e9747d, #de98a1);
+	background-clip: text;
+	color: transparent;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation: hue 5s ease-in-out infinite;
+	-moz-animation: hue 5s ease-in-out infinite;
+	-webkit-animation: hue 5s ease-in-out infinite;
+	font-size: 70px;
+}
+
+.gradient-container {
+	z-index: -1;
+	position: absolute;
+	width: 250px;
+	height: 250px;
+	box-shadow: 0 0 100px 50px white inset;
+	border-radius: 50%;
+	border: 1px solid white;
+	background: linear-gradient(270deg, #b9e4d9, #b331d0);
+	background-size: 400% 400%;
+
+	-webkit-animation: AnimationName 5s ease infinite;
+	-moz-animation: AnimationName 5s ease infinite;
+	animation: AnimationName 5s ease infinite;
+}
+
+.welcome-button-container {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 36px;
+	visibility: hidden;
+	-webkit-animation: button-animation 2s;
+	-moz-animation: button-animation 2s;
+	animation: button-animation 2s;
+	animation-delay: 4s;
+	animation-fill-mode: forwards;
+}
+
+.welcome-button-container .continue-button {
+	background-color: #6c47ed;
+	color: white;
+	border-radius: 12px;
+	padding: 8px 14px;
+	border: 1px solid #d9d9d9;
+	cursor: pointer;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	width: min-content;
+	margin-bottom: 8px;
+}
+
+.continue-button-subtitle {
+	font-weight: 600;
+	font-size: 10px;
+}
+
+.emoji-design {
+	position: absolute;
+	font-weight: 900;
+	font-size: 70px;
+}
+
+.emoji-design.unicorn {
+	top: 60px;
+	right: 95px;
+}
+
+.emoji-design.rocket {
+	top: 200px;
+	left: 45px;
+}
+
+.emoji-design.heart {
+	bottom: 200px;
+	right: 45px;
+}
+
+@keyframes mymove {
+	from {
+		transform: translate(0px, 0px);
+	}
+	to {
+		transform: translate(0px, 20px);
+	}
+}
+
+@keyframes title-move {
+	from {
+		transform: translate(0px, 0px);
+	}
+	to {
+		transform: translate(0px, -100px);
+	}
+}
+
+@keyframes button-animation {
+	0% {
+		visibility: hidden;
+	}
+	100% {
+		visibility: visible;
+	}
+}
+
+@-webkit-keyframes AnimationName {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+@-moz-keyframes AnimationName {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+@keyframes AnimationName {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes hue {
+	from {
+		-webkit-filter: hue-rotate(0deg);
+	}
+
+	to {
+		-webkit-filter: hue-rotate(-360deg);
+	}
+}
+
+@media only screen and (max-width: 768px) {
+	.content-container .main-title p {
+		font-weight: 900;
+		font-size: 42px;
+		line-height: 40px;
+		word-spacing: 4px;
+	}
+
+	.content-container .nft-title {
+		font-size: 45px;
+	}
+
+	.welcome-button-container {
+		margin-top: 0px;
+	}
+
+	.welcome-button-container .continue-button {
+		padding: 10px 18px;
+		font-weight: 600;
+		font-size: 16px;
+	}
+
+	.continue-button-subtitle {
+		font-weight: 600;
+		font-size: 12px;
+	}
+
+	.planesculpt img {
+		transform: scale(2);
+	}
+
+	.emoji-design {
+		font-size: 50px;
+	}
+
+	.emoji-design.unicorn {
+		top: 50px;
+		right: 55px;
+	}
+
+	.emoji-design.rocket {
+		top: 180px;
+		left: 45px;
+	}
+}

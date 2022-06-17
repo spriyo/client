@@ -121,12 +121,4 @@ hr {
 	display: flex;
 	justify-content: flex-end;
 	margin-top: 24px;
-	color: white;
-}
-
-.createscreen-create-button p {
-	border-radius: 8px;
-	background-color: #00c775;
-	padding: 4px 8px;
-	cursor: pointer;
 }

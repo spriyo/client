@@ -9,18 +9,19 @@ import { SaleHttpService } from "../../api/sale";
 import { DisplayHttpService } from "../../api/display";
 import { Box } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { TopNotification } from "../../components/topNotification/TopNotification";
-import { useNavigate } from "react-router-dom";
+import { ChangeNetworkComponent } from "../../components/ChangeNetworkComponent";
+import { switchChain } from "../../state/actions/wallet";
 
 function HomeScreen() {
+	const dispatch = useDispatch();
 	const saleHttpService = new SaleHttpService();
 	const displayHttpService = new DisplayHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [onSaleItems, setOnSaleItems] = useState([]);
 	const [topCreators, setTopCreators] = useState([]);
-	const navigate = useNavigate();
 
 	async function getRecentlyAdded() {
 		const resolved = await displayHttpService.searchAssets({
@@ -41,6 +42,14 @@ function HomeScreen() {
 	async function getTopCollectors() {
 		const resolved = await displayHttpService.getTopCreators();
 		setTopCreators(resolved.data.map((e) => e.user));
+	}
+
+	function onNetworkChange(network) {
+		if (network === 0) {
+			dispatch(switchChain(""));
+		} else {
+			dispatch(switchChain(network.chainId));
+		}
 	}
 
 	useEffect(() => {
@@ -97,6 +106,10 @@ function HomeScreen() {
 								/>
 							</Box>
 						</Box>
+						<ChangeNetworkComponent
+							onNetworkChange={onNetworkChange}
+							enableAll={true}
+						/>
 						<CollectionContainer
 							title={"Newly Added"}
 							assets={recentlyAddedItems}

@@ -8,6 +8,7 @@ export const walletReducer = (state = wallet, action) => {
 		case "SWITCH_ACCOUNT":
 			return { ...state, currentAddress: action.payload };
 		case "SWITCH_CHAIN":
+			localStorage.setItem("chainId", action.payload);
 			return { ...state, chainId: action.payload };
 		default:
 			return state;
