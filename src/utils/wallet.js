@@ -58,10 +58,10 @@ export function getChainId() {
 	try {
 		let chainId;
 		const env = process.env.REACT_APP_ENV;
+		chainId =
+			Web3.utils.hexToNumber(window.ethereum.chainId) ||
+			window.ethereum.networkVersion;
 		if (env === "development") {
-			chainId =
-				Web3.utils.hexToNumber(window.ethereum.chainId) ||
-				window.ethereum.networkVersion;
 			if (
 				chainId !== 56 &&
 				chainId !== 97 &&
@@ -71,7 +71,9 @@ export function getChainId() {
 				chainId = 97;
 			}
 		} else {
-			chainId = process.env.REACT_APP_CHAIN_ID;
+			if (chainId !== 56 && chainId !== 8080) {
+				chainId = process.env.REACT_APP_CHAIN_ID;
+			}
 		}
 		return chainId;
 	} catch (error) {
