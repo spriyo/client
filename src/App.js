@@ -31,6 +31,7 @@ import { BlogScreen } from "./screens/BlogScreen";
 import { addNotification } from "./state/actions/notifications";
 import { ImportScreen } from "./screens/ImportScreen";
 import { FavoritesScreen } from "./screens/Favorites";
+import { WelcomeScreen } from "./screens/WelcomeScreen";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -126,9 +127,17 @@ function App() {
 		}
 	}
 
+	async function welcomeAndRedirect() {
+		const welcome = localStorage.getItem("welcome");
+		if (!welcome) {
+			window.location.replace("/welcome");
+		}
+	}
+
 	useEffect(() => {
 		connectAndListenWallet();
 		fetchCurrentUser();
+		welcomeAndRedirect();
 	});
 
 	return (
@@ -144,6 +153,7 @@ function App() {
 					<Route path="/blogs/:name" exact element={<BlogScreen />} />
 					<Route path="/import" exact element={<ImportScreen />} />
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
+					<Route path="/welcome" exact element={<WelcomeScreen />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />
 				</Routes>
 			</Router>
