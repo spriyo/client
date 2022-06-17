@@ -1,15 +1,8 @@
 import { useDispatch } from "react-redux";
 import { login, logout } from "../state/actions/auth";
 import { AuthHttpService } from "../api/auth";
-import {
-	connectWalletToSite,
-	getChainId,
-	getWalletAddress,
-} from "../utils/wallet";
-import {
-	switchAccount,
-	switchChain as actionSwitchChain,
-} from "../state/actions/wallet";
+import { connectWalletToSite, getWalletAddress } from "../utils/wallet";
+import { switchAccount } from "../state/actions/wallet";
 import { addNotification } from "../state/actions/notifications";
 import { ButtonComponent } from "./ButtonComponent";
 
@@ -21,8 +14,6 @@ export function ConnectComponent() {
 			const walletConnected = await connectWalletToSite();
 			if (walletConnected) {
 				let walletAddress = await getWalletAddress();
-				let chainId = await getChainId();
-				dispatch(actionSwitchChain(chainId));
 
 				// Login to account if not logged
 				const token = localStorage.getItem("token");
@@ -45,9 +36,6 @@ export function ConnectComponent() {
 				});
 
 				window.ethereum.on("chainChanged", async function (networkId) {
-					// dispatch(actionSwitchChain(Web3.utils.toHex(networkId)));
-					let chainId = await getChainId();
-					dispatch(actionSwitchChain(chainId));
 					dispatch(
 						addNotification(
 							"If you've switched to test network, you can use dev.spriyo.xyz for testing.",

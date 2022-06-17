@@ -10,7 +10,7 @@ import {
 	Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DisplayHttpService } from "../api/display";
 import { CardComponent } from "../components/card/CardComponent";
 import { FooterComponent } from "../components/FooterComponent";
@@ -19,8 +19,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLocationChange } from "../utils/useLocationChange";
 import { ChangeNetworkComponent } from "../components/ChangeNetworkComponent";
+import { switchChain } from "../state/actions/wallet";
 
 export const ExploreScreen = ({ listen }) => {
+	const dispatch = useDispatch();
 	const displayHttpService = new DisplayHttpService();
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [createdAt, setCreatedAt] = useState("desc");
@@ -58,6 +60,14 @@ export const ExploreScreen = ({ listen }) => {
 		}
 	});
 
+	function onNetworkChange(network) {
+		if (network === 0) {
+			dispatch(switchChain(""));
+		} else {
+			dispatch(switchChain(network.chainId));
+		}
+	}
+
 	useEffect(() => {
 		getRecentlyAdded(true);
 		return () => {};
@@ -77,7 +87,10 @@ export const ExploreScreen = ({ listen }) => {
 							Explore
 						</Typography>
 						<Box display="flex">
-							<ChangeNetworkComponent />
+							<ChangeNetworkComponent
+								onNetworkChange={onNetworkChange}
+								enableAll={true}
+							/>
 							<FormControl sx={{ m: 1, minWidth: 120 }} size="small">
 								<InputLabel id="sort-select-label">Sort</InputLabel>
 								<Select
