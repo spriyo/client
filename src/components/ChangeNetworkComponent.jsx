@@ -70,6 +70,8 @@ export const ChangeNetworkComponent = ({
 						onChange={(e) => handleNetworkChange(e.target.value)}
 					>
 						<MenuItem value={56}>Binance Smart Chain</MenuItem>
+						<ListSubheader>Testnets</ListSubheader>
+						<MenuItem value={8080}>Shardeum Liberty 1.0</MenuItem>
 					</Select>
 				)}
 			</FormControl>
