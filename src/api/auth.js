@@ -98,4 +98,11 @@ export class AuthHttpService {
 		);
 		return resolved;
 	}
+
+	async getUserById(id) {
+		const resolved = await resolve(
+			axios.get(`${BASE_URL}/website/v1/user/${id}`, {})
+		);
+		return resolved;
+	}
 }
