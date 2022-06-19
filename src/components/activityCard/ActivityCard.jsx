@@ -149,7 +149,10 @@ export function ActivityCardComponent({ event, asset }) {
 					}
 				>
 					<ListItemAvatar>
-						<Box onClick={() => navigate(`/profile/${user._id}`)} m={1}>
+						<Box
+							onClick={() => navigate(`/profile/${event.user_id._id}`)}
+							m={1}
+						>
 							<CircularProfile
 								userId={event.user_id._id}
 								userImgUrl={event.user_id.displayImage}
@@ -162,7 +165,12 @@ export function ActivityCardComponent({ event, asset }) {
 								<Typography variant="h3" color={"text.primary"}>
 									{`${getKeyword(event)} `}
 								</Typography>
-								<Typography variant="h5" color={"text.secondary"}>
+								<Typography
+									onClick={() => navigate(`/profile/${event.user_id._id}`)}
+									variant="h5"
+									color={"text.secondary"}
+									sx={{ cursor: "pointer" }}
+								>
 									&nbsp;
 									{`by@${
 										event.user_id.username.length > 20
