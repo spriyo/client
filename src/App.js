@@ -135,7 +135,6 @@ function App() {
 		connectAndListenWallet();
 		fetchCurrentUser();
 		welcomeAndRedirect();
-		// listenLogs();
 	});
 
 	return (
@@ -143,7 +142,7 @@ function App() {
 			<Router>
 				<Routes>
 					<Route path="/" exact element={<HomeScreen />} />
-					<Route path="/profile" exact element={<ProfileScreen />} />
+					<Route path="/profile/:id" exact element={<ProfileScreen />} />
 					{/* <Route path="/test" exact element={<TestScreen />} /> */}
 					<Route path="/asset/:id" exact element={<AssetScreen />} />
 					<Route path="/create" exact element={<CreateScreen />} />

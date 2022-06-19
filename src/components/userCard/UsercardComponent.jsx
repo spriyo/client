@@ -1,12 +1,17 @@
 import "./userCard.css";
 import { CircularProfile } from "../CircularProfileComponent";
+import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export function UsercardComponent({ user }) {
+	const navigate = useNavigate();
 	return (
 		<div className="user-card-container">
-			<div className="user-card-img">
-				<CircularProfile userId={user._id} userImgUrl={user.displayImage} />
-			</div>
+			<Box onClick={() => navigate(`/profile/${user._id}`)}>
+				<div className="user-card-img">
+					<CircularProfile userId={user._id} userImgUrl={user.displayImage} />
+				</div>
+			</Box>
 			<div className="user-card-info">
 				<p className="user-card-info name">{user.displayName}</p>
 				<p className="user-card-info username">

@@ -14,6 +14,7 @@ import { OfferHttpService } from "../../api/offer";
 import { getWalletAddress } from "../../utils/wallet";
 import "./activityCard.css";
 import { CircularProfile } from "../CircularProfileComponent";
+import { useNavigate } from "react-router-dom";
 
 const BoxShadow = styled(Box)(({ theme }) => ({
 	boxShadow: theme.shadows[0],
@@ -63,6 +64,7 @@ export function ActivityCardComponent({ event, asset }) {
 	);
 	const user = useSelector((state) => state.authReducer.user);
 	const nftContract = useSelector((state) => state.contractReducer.nftContract);
+	const navigate = useNavigate();
 
 	async function acceptOffer() {
 		if (loading) return;
@@ -147,10 +149,12 @@ export function ActivityCardComponent({ event, asset }) {
 					}
 				>
 					<ListItemAvatar>
-						<CircularProfile
-							userId={event.user_id._id}
-							userImgUrl={event.user_id.displayImage}
-						/>
+						<Box onClick={() => navigate(`/profile/${user._id}`)} m={1}>
+							<CircularProfile
+								userId={event.user_id._id}
+								userImgUrl={event.user_id.displayImage}
+							/>
+						</Box>
 					</ListItemAvatar>
 					<ListItemText
 						primary={
