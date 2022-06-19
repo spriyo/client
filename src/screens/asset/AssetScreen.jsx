@@ -8,11 +8,10 @@ import {
 	ListItemAvatar,
 	ListItemText,
 	Stack,
-	styled,
 	Typography,
 } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AssetHttpService } from "../../api/asset";
 import { BiLinkExternal } from "react-icons/bi";
 import { ChainsConfig } from "../../constants";
@@ -20,6 +19,9 @@ import { useSelector } from "react-redux";
 import { ActionsComponent } from "../../components/ActionsComponent";
 import { ActivityCardComponent } from "../../components/activityCard/ActivityCard";
 import { CircularProfile } from "../../components/CircularProfileComponent";
+import { ButtonComponent } from "../../components/ButtonComponent";
+// import { getNetworkByChainId } from "../../utils/getNetwork";
+// import { getChainId, getWalletAddress, switchChain } from "../../utils/wallet";
 
 export function AssetScreen() {
 	const { id } = useParams();
@@ -27,10 +29,11 @@ export function AssetScreen() {
 	const assetHttpService = new AssetHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
-
-	const TagChip = styled(Chip)({
-		margin: "4px",
-	});
+	const navigate = useNavigate();
+	// const nftContract = useSelector((state) => state.contractReducer.nftContract);
+	// const TagChip = styled(Chip)({
+	// 	margin: "4px",
+	// });
 
 	const getAsset = async function () {
 		const resolved = await assetHttpService.getAssetById(id);
@@ -63,6 +66,30 @@ export function AssetScreen() {
 		}
 		const url = `${chain.blockExplorerUrls[0]}token/${asset.contract_address}?a=${asset.item_id}`;
 		window.open(url);
+	}
+
+	async function transferNFT() {
+		return alert(
+			"Working on it, for now use Metamask to tranfer NFT's directly."
+		);
+		// if (!asset) return;
+		// console.log(asset);
+		// const chain = getNetworkByChainId(asset.chainId);
+		// const currentChainId = await getChainId();
+		// if (chain.chainId !== currentChainId) {
+		// 	await switchChain(chain);
+		// }
+		// const currentAddress = await getWalletAddress();
+		// const toAddresss = prompt(
+		// 	"Please enter the address, NFT's sent to invalid address is lost forever!"
+		// );
+		// if (!toAddresss) return;
+		// const transaction = await nftContract.methods
+		// 	.transferFrom(currentAddress, toAddresss, asset.item_id)
+		// 	.send({ from: currentAddress });
+
+		// console.log(transaction);
+		// Create An Event in Backend
 	}
 
 	useEffect(() => {
@@ -106,14 +133,19 @@ export function AssetScreen() {
 							</Box>
 							{/* Details */}
 							<Box flex={1} m={1}>
-								<Typography variant="h1">{asset.name}</Typography>
-								<Typography
-									variant="subtitle2"
-									color={"text.secondary"}
-									component="p"
-								>
-									NFT ID : {asset.item_id}
-								</Typography>
+								<Box display="flex" justifyContent={"space-between"}>
+									<Box>
+										<Typography variant="h1">{asset.name}</Typography>
+										<Typography
+											variant="subtitle2"
+											color={"text.secondary"}
+											component="p"
+										>
+											NFT ID : {asset.item_id}
+										</Typography>
+									</Box>
+									<ButtonComponent text="Transfer ▶️" onClick={transferNFT} />
+								</Box>
 								<Typography
 									variant="body2"
 									color={"text.secondary"}
@@ -121,7 +153,10 @@ export function AssetScreen() {
 								>
 									Owner
 								</Typography>
-								<ListItem>
+								<ListItem
+									onClick={() => navigate(`/profile/${asset.owner._id}`)}
+									sx={{ cursor: "pointer" }}
+								>
 									<ListItemAvatar>
 										<CircularProfile
 											userId={asset.owner._id}
@@ -170,13 +205,13 @@ export function AssetScreen() {
 					<Box>
 						<Typography variant="h1">Description</Typography>
 						<Typography variant="body1">{asset.description}</Typography>
-						<br />
+						{/* <br />
 						<Typography variant="h1">Tags</Typography>
 						<TagChip label="Meta"></TagChip>
 						<TagChip label="Metaverse"></TagChip>
 						<TagChip label="Drawing"></TagChip>
 						<TagChip label="Painting"></TagChip>
-						<TagChip label="Pencil"></TagChip>
+						<TagChip label="Pencil"></TagChip> */}
 						{/* Meta */}
 						<br />
 						<br />
