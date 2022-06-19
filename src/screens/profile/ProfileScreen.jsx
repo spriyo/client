@@ -8,21 +8,30 @@ import { MdOutlineModeEditOutline } from "react-icons/md";
 import { SettingComponent } from "../../components/SettingComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Grid, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CardComponent } from "../../components/card/CardComponent";
+import { AuthHttpService } from "../../api/auth";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
 export function ProfileScreen(params) {
 	const assetHttpService = new AssetHttpService();
+	const authHttpService = new AuthHttpService();
 	const [assets, setAssets] = useState([]);
+	const [loggedUser, setLoggedUserUser] = useState({});
 	const [user, setUser] = useState({});
 	const navigate = useNavigate();
+	const { id } = useParams();
 
 	async function getUserAssets() {
 		const localUser = await JSON.parse(localStorage.getItem("user"));
-		setUser(localUser);
-		const resolved = await assetHttpService.getUserAssets(localUser._id);
+		setLoggedUserUser(localUser);
+		const resolved = await assetHttpService.getUserAssets(id);
 		setAssets(resolved.data);
+	}
+
+	async function getUser() {
+		const resolved = await authHttpService.getUserById(id);
+		setUser(resolved.data);
 	}
 
 	const [open, setOpen] = useState(false);
@@ -33,7 +42,8 @@ export function ProfileScreen(params) {
 
 	useEffect(() => {
 		getUserAssets();
-	}, []);
+		getUser();
+	}, [id]);
 
 	return (
 		<div className="profile-container">
@@ -76,19 +86,21 @@ export function ProfileScreen(params) {
 								</p>
 							)}
 						</div>
-						<Box sx={{ position: "absolute", top: "16px", right: "16px" }}>
-							<Box
-								display="flex"
-								alignItems="center"
-								onClick={() => setOpen(true)}
-								sx={{ cursor: "pointer" }}
-							>
-								<Box display="flex" alignItems="center" marginRight="4px">
-									<MdOutlineModeEditOutline size="20" />
+						{loggedUser._id === user._id && (
+							<Box sx={{ position: "absolute", top: "16px", right: "16px" }}>
+								<Box
+									display="flex"
+									alignItems="center"
+									onClick={() => setOpen(true)}
+									sx={{ cursor: "pointer" }}
+								>
+									<Box display="flex" alignItems="center" marginRight="4px">
+										<MdOutlineModeEditOutline size="20" />
+									</Box>
 								</Box>
+								<SettingComponent open={open} onClose={handleClose} />
 							</Box>
-							<SettingComponent open={open} onClose={handleClose} />
-						</Box>
+						)}
 					</Box>
 					{/* <div>
 						<div className="assset-value">
