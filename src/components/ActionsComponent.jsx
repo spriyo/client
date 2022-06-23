@@ -38,6 +38,7 @@ export const ActionsComponent = ({ asset }) => {
 			case "offer_canceled":
 			case "offer_accepted":
 			case "imported":
+			case "transfer":
 			case "mint":
 				actions =
 					user._id === asset.owner._id ||

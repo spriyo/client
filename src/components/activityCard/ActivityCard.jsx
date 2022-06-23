@@ -51,6 +51,8 @@ function getKeyword(event) {
 			return "Bought";
 		case "sale_canceled":
 			return "Buy Now Removed";
+		case "transfer":
+			return "Transfered";
 		default:
 			return "None";
 	}
