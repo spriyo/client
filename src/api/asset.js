@@ -28,6 +28,18 @@ export class AssetHttpService {
 		return resolved;
 	}
 
+	async transferAsset(data) {
+		const resolved = await resolve(
+			axios.post(`${WEB_API_BASE_URL}/assets/transfer`, data, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "application/json",
+				},
+			})
+		);
+		return resolved;
+	}
+
 	async getUserAssets(userid) {
 		const resolved = await resolve(
 			axios.get(`${WEB_API_BASE_URL}/assets/user/` + userid)

@@ -20,8 +20,8 @@ import { ActionsComponent } from "../../components/ActionsComponent";
 import { ActivityCardComponent } from "../../components/activityCard/ActivityCard";
 import { CircularProfile } from "../../components/CircularProfileComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
-// import { getNetworkByChainId } from "../../utils/getNetwork";
-// import { getChainId, getWalletAddress, switchChain } from "../../utils/wallet";
+import { getNetworkByChainId } from "../../utils/getNetwork";
+import { getChainId, getWalletAddress, switchChain } from "../../utils/wallet";
 
 export function AssetScreen() {
 	const { id } = useParams();
@@ -30,7 +30,8 @@ export function AssetScreen() {
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
-	// const nftContract = useSelector((state) => state.contractReducer.nftContract);
+	const nftContract = useSelector((state) => state.contractReducer.nftContract);
+	const [loading, setLoading] = useState(false);
 	// const TagChip = styled(Chip)({
 	// 	margin: "4px",
 	// });
@@ -68,28 +69,68 @@ export function AssetScreen() {
 		window.open(url);
 	}
 
-	async function transferNFT() {
-		return alert(
-			"Working on it, for now use Metamask to tranfer NFT's directly."
-		);
-		// if (!asset) return;
-		// console.log(asset);
-		// const chain = getNetworkByChainId(asset.chainId);
-		// const currentChainId = await getChainId();
-		// if (chain.chainId !== currentChainId) {
-		// 	await switchChain(chain);
-		// }
-		// const currentAddress = await getWalletAddress();
-		// const toAddresss = prompt(
-		// 	"Please enter the address, NFT's sent to invalid address is lost forever!"
-		// );
-		// if (!toAddresss) return;
-		// const transaction = await nftContract.methods
-		// 	.transferFrom(currentAddress, toAddresss, asset.item_id)
-		// 	.send({ from: currentAddress });
+	async function checkApproval() {
+		let isApproved = false;
+		try {
+			// Check for approval
+			const owner = await nftContract.methods.ownerOf(asset.item_id).call();
+			if (asset.owner.address !== owner.toLowerCase()) {
+				alert(
+					"Cancel all the auctions or sales on this NFT before transfering."
+				);
+			} else {
+				isApproved = true;
+			}
+		} catch (error) {
+			console.log(error.message);
+		}
+		return isApproved;
+	}
 
-		// console.log(transaction);
+	async function approveMiddleware(callback) {
+		try {
+			setLoading(true);
+			const isApproved = await checkApproval();
+			if (!isApproved) return setLoading(false);
+			await callback();
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+		}
+	}
+
+	async function transferNFT() {
+		if (!asset) return;
+		const chain = await getNetworkByChainId(parseInt(asset.chainId));
+		const currentChainId = await getChainId();
+		if (chain.chainId !== currentChainId) {
+			await switchChain(chain);
+		}
+		const currentAddress = await getWalletAddress();
+		const toAddresss = await prompt(
+			"Please enter the address, NFT's sent to invalid address is lost forever!"
+		);
+		if (!toAddresss) return;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await nftContract.methods
+			.transferFrom(currentAddress, toAddresss, asset.item_id)
+			.estimateGas({
+				from: currentAddress,
+			});
+		await nftContract.methods
+			.transferFrom(currentAddress, toAddresss, asset.item_id)
+			.send({ from: currentAddress, gasPrice, gas });
+
 		// Create An Event in Backend
+		const resolved = await assetHttpService.transferAsset({
+			...asset,
+			userId: toAddresss,
+		});
+		if (!resolved.error) {
+			window.location.reload();
+		}
 	}
 
 	useEffect(() => {
@@ -144,7 +185,17 @@ export function AssetScreen() {
 											NFT ID : {asset.item_id}
 										</Typography>
 									</Box>
-									<ButtonComponent text="Transfer ▶️" onClick={transferNFT} />
+									{user && asset && user._id === asset.owner._id ? (
+										<ButtonComponent
+											text={loading ? "Transfering..." : "Transfer ▶️"}
+											onClick={() => {
+												if (loading) return;
+												approveMiddleware(transferNFT);
+											}}
+										/>
+									) : (
+										""
+									)}
 								</Box>
 								<Typography
 									variant="body2"
