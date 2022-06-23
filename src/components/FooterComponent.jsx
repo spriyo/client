@@ -32,8 +32,28 @@ export const FooterComponent = () => {
 						Please contact us if you have any specific idea or request
 					</Typography>
 					<Link href="mailto:contact@spriyo.xyz">contact@spriyo.com</Link>
+					<br />
+					<br />
+					<Box flex={1}>
+						<Typography variant="h2">Community</Typography>
+						<Stack direction={"row"}>
+							<FastLink
+								target={"_blank"}
+								href="https://instagram.com/spriyo.xyz"
+								mr={2}
+							>
+								<img src={instagramLogo} alt="instagram" />
+							</FastLink>
+							<FastLink href="#" mr={2}>
+								<img src={twitterLogo} alt="twitter" />
+							</FastLink>
+							<FastLink href="#" mr={2}>
+								<img src={discordLogo} alt="Discord" />
+							</FastLink>
+						</Stack>
+					</Box>
 				</Box>
-				<Box flex={1} sx={{ display: { xs: "none", md: "block" } }}>
+				{/* <Box flex={1} sx={{ display: { xs: "none", md: "block" } }}>
 					<Stack>
 						<Typography variant="h2">Marketplace</Typography>
 						<FastLink href="#">All NFt</FastLink>
@@ -51,26 +71,8 @@ export const FooterComponent = () => {
 						<FastLink href="#">Wallet</FastLink>
 						<FastLink href="#">Collections</FastLink>
 					</Stack>
-				</Box>
+				</Box> */}
 				<br />
-				<Box flex={1}>
-					<Typography variant="h2">Community</Typography>
-					<Stack direction={"row"}>
-						<FastLink
-							target={"_blank"}
-							href="https://instagram.com/spriyo.xyz"
-							mr={2}
-						>
-							<img src={instagramLogo} alt="instagram" />
-						</FastLink>
-						<FastLink href="#" mr={2}>
-							<img src={twitterLogo} alt="twitter" />
-						</FastLink>
-						<FastLink href="#" mr={2}>
-							<img src={discordLogo} alt="Discord" />
-						</FastLink>
-					</Stack>
-				</Box>
 			</Stack>
 			<br />
 			<Divider />
