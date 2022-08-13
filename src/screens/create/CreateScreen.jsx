@@ -102,11 +102,23 @@ export function CreateScreen({ closeModal }) {
 		await assetHttpService.createAsset(formData);
 	}
 
+	function checkFileType(filename) {
+		// Ad obj for 3D file upload
+		if (!filename.match(/\.(jpg|jpeg|png|mp4)$/)) {
+			alert("Please upload only image or video file.");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	async function onFileChange(e) {
 		try {
-			const file = e.target.files[0];
-			if (!file) return;
-			setFile(file);
+			const f = e.target.files[0];
+			if (!f) return;
+			const validFile = checkFileType(f.name);
+			if (!validFile) return;
+			setFile(f);
 		} catch (error) {
 			console.log("Error uploading file: ", error);
 		}
@@ -116,6 +128,36 @@ export function CreateScreen({ closeModal }) {
 		await changeChain(network);
 		dispatch(switchChain(network.chainId));
 		currentChainIdRef.current = network.chainId;
+	}
+
+	function dragOverHandler(ev) {
+		ev.preventDefault();
+	}
+
+	function dropHandler(ev) {
+		ev.preventDefault();
+		// Limit 1 File
+		if (ev.dataTransfer.items.length > 1 || ev.dataTransfer.files > 1) {
+			return alert("Please upload one file");
+		}
+
+		if (ev.dataTransfer.items) {
+			for (let i = 0; i < ev.dataTransfer.items.length; i++) {
+				if (ev.dataTransfer.items[i].kind === "file") {
+					const f = ev.dataTransfer.items[i].getAsFile();
+					const validFile = checkFileType(f.name);
+					if (!validFile) return;
+					console.log(f);
+					setFile(f);
+				}
+			}
+		} else {
+			for (let i = 0; i < ev.dataTransfer.files.length; i++) {
+				const validFile = checkFileType(ev.dataTransfer.files[i].name);
+				if (!validFile) return;
+				setFile(ev.dataTransfer.files[i]);
+			}
+		}
 	}
 
 	const [imageUrl, setImageUrl] = useState();
@@ -144,20 +186,44 @@ export function CreateScreen({ closeModal }) {
 							<p>Upload your images</p>
 						</div>
 						<div>
-							<p>PNG, JPG, and GIF files are allowed</p>
+							<p>PNG, JPG, and MP4 files are allowed</p>
 						</div>
 						<div
 							className="image-dropper"
 							style={{
-								backgroundImage: `url(${file ? imageUrl : ""})`,
+								backgroundImage: file
+									? file.type === "video/mp4"
+										? "none"
+										: `url(${file ? imageUrl : ""})`
+									: "none",
 								backgroundPosition: "center",
 								backgroundSize: "cover",
 								backgroundRepeat: "no-repeat",
 								height: "200px",
+								textAlign: "center",
 							}}
 							onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
+							onDrop={(e) => dropHandler(e)}
+							onDragOver={(e) => dragOverHandler(e)}
 						>
-							{file ? "" : "Click below button to upload your asset"}
+							{file ? (
+								file.type === "video/mp4" ? (
+									<video
+										src={URL.createObjectURL(
+											new Blob([file], { type: "video/mp4" })
+										)}
+										autoPlay
+										height={"200px"}
+										width={"280px"}
+										muted
+										loop
+									></video>
+								) : (
+									""
+								)
+							) : (
+								"Drag & drop or click below button to upload your asset"
+							)}
 						</div>
 						<label htmlFor="file-upload" className="custom-file-upload">
 							<div className="image-picker">
