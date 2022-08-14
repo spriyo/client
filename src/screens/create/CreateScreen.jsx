@@ -4,7 +4,7 @@ import { React, useEffect, useState } from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress } from "../../utils/wallet";
-import { PinataHttpService } from "../../api/pinata";
+import { NftStorageHttpService } from "../../api/nftStorage";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ export function CreateScreen({ closeModal }) {
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const assetHttpService = new AssetHttpService();
-	const pinataHttpService = new PinataHttpService();
+	const nftStorageHttpService = new NftStorageHttpService();
 	const [formInput, updateFormInput] = useState({
 		title: "",
 		description: "",
@@ -39,10 +39,10 @@ export function CreateScreen({ closeModal }) {
 			setLoading(true);
 
 			// 1. Upload file to ipfs
-			const assetUrl = await pinataHttpService.pinFileToIPFS(file);
+			const assetUrl = await nftStorageHttpService.pinFileToIPFS(file);
 
 			// 2. Upload data to ipfs
-			const metaDataUrl = await pinataHttpService.pinJSONToIPFS(
+			const metaDataUrl = await nftStorageHttpService.pinJSONToIPFS(
 				formInput,
 				assetUrl
 			);
