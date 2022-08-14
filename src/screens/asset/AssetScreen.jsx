@@ -89,6 +89,13 @@ export function AssetScreen() {
 
 	async function approveMiddleware(callback) {
 		try {
+			if (!asset) return;
+			const chain = await getNetworkByChainId(parseInt(asset.chainId));
+			const currentChainId = await getChainId();
+			if (chain.chainId !== currentChainId) {
+				await switchChain(chain);
+			}
+
 			setLoading(true);
 			const isApproved = await checkApproval();
 			if (!isApproved) return setLoading(false);
@@ -100,12 +107,6 @@ export function AssetScreen() {
 	}
 
 	async function transferNFT() {
-		if (!asset) return;
-		const chain = await getNetworkByChainId(parseInt(asset.chainId));
-		const currentChainId = await getChainId();
-		if (chain.chainId !== currentChainId) {
-			await switchChain(chain);
-		}
 		const currentAddress = await getWalletAddress();
 		const toAddresss = await prompt(
 			"Please enter the address, NFT's sent to invalid address is lost forever!"
