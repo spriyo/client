@@ -71,11 +71,18 @@ hr {
 	color: #b1b1b1;
 	cursor: pointer;
 }
-
 .image-container .image-picker {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.image-container .image-picker div {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	width: min-content;
+	white-space: nowrap;
 	padding: 8px 14px;
 	border-radius: 24px;
 	border: 1px solid #c4c4c4;

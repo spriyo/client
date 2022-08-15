@@ -4,7 +4,7 @@ import { React, useEffect, useState } from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress } from "../../utils/wallet";
-import { PinataHttpService } from "../../api/pinata";
+import { NftStorageHttpService } from "../../api/nftStorage";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ export function CreateScreen({ closeModal }) {
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const assetHttpService = new AssetHttpService();
-	const pinataHttpService = new PinataHttpService();
+	const nftStorageHttpService = new NftStorageHttpService();
 	const [formInput, updateFormInput] = useState({
 		title: "",
 		description: "",
@@ -39,10 +39,10 @@ export function CreateScreen({ closeModal }) {
 			setLoading(true);
 
 			// 1. Upload file to ipfs
-			const assetUrl = await pinataHttpService.pinFileToIPFS(file);
+			const assetUrl = await nftStorageHttpService.pinFileToIPFS(file);
 
 			// 2. Upload data to ipfs
-			const metaDataUrl = await pinataHttpService.pinJSONToIPFS(
+			const metaDataUrl = await nftStorageHttpService.pinJSONToIPFS(
 				formInput,
 				assetUrl
 			);
@@ -102,11 +102,23 @@ export function CreateScreen({ closeModal }) {
 		await assetHttpService.createAsset(formData);
 	}
 
+	function checkFileType(filename) {
+		// Ad obj for 3D file upload
+		if (!filename.match(/\.(jpg|jpeg|png|mp4)$/)) {
+			alert("Please upload only image or video file.");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	async function onFileChange(e) {
 		try {
-			const file = e.target.files[0];
-			if (!file) return;
-			setFile(file);
+			const f = e.target.files[0];
+			if (!f) return;
+			const validFile = checkFileType(f.name);
+			if (!validFile) return;
+			setFile(f);
 		} catch (error) {
 			console.log("Error uploading file: ", error);
 		}
@@ -116,6 +128,36 @@ export function CreateScreen({ closeModal }) {
 		await changeChain(network);
 		dispatch(switchChain(network.chainId));
 		currentChainIdRef.current = network.chainId;
+	}
+
+	function dragOverHandler(ev) {
+		ev.preventDefault();
+	}
+
+	function dropHandler(ev) {
+		ev.preventDefault();
+		// Limit 1 File
+		if (ev.dataTransfer.items.length > 1 || ev.dataTransfer.files > 1) {
+			return alert("Please upload one file");
+		}
+
+		if (ev.dataTransfer.items) {
+			for (let i = 0; i < ev.dataTransfer.items.length; i++) {
+				if (ev.dataTransfer.items[i].kind === "file") {
+					const f = ev.dataTransfer.items[i].getAsFile();
+					const validFile = checkFileType(f.name);
+					if (!validFile) return;
+					console.log(f);
+					setFile(f);
+				}
+			}
+		} else {
+			for (let i = 0; i < ev.dataTransfer.files.length; i++) {
+				const validFile = checkFileType(ev.dataTransfer.files[i].name);
+				if (!validFile) return;
+				setFile(ev.dataTransfer.files[i]);
+			}
+		}
 	}
 
 	const [imageUrl, setImageUrl] = useState();
@@ -144,32 +186,58 @@ export function CreateScreen({ closeModal }) {
 							<p>Upload your images</p>
 						</div>
 						<div>
-							<p>PNG, JPG, and GIF files are allowed</p>
+							<p>PNG, JPG, and MP4 files are allowed</p>
 						</div>
-						<div
-							className="image-dropper"
-							style={{
-								backgroundImage: `url(${file ? imageUrl : ""})`,
-								backgroundPosition: "center",
-								backgroundSize: "cover",
-								backgroundRepeat: "no-repeat",
-								height: "200px",
-							}}
-							onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
-						>
-							{file ? "" : "Click below button to upload your asset"}
-						</div>
-						<label htmlFor="file-upload" className="custom-file-upload">
+						<label htmlFor="file-upload">
+							<div
+								className="image-dropper"
+								style={{
+									backgroundImage: file
+										? file.type === "video/mp4"
+											? "none"
+											: `url(${file ? imageUrl : ""})`
+										: "none",
+									backgroundPosition: "center",
+									backgroundSize: "cover",
+									backgroundRepeat: "no-repeat",
+									height: "200px",
+									textAlign: "center",
+								}}
+								onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
+								onDrop={(e) => dropHandler(e)}
+								onDragOver={(e) => dragOverHandler(e)}
+							>
+								{file ? (
+									file.type === "video/mp4" ? (
+										<video
+											src={URL.createObjectURL(
+												new Blob([file], { type: "video/mp4" })
+											)}
+											autoPlay
+											height={"200px"}
+											width={"280px"}
+											muted
+											loop
+										></video>
+									) : (
+										""
+									)
+								) : (
+									"Drag & drop"
+								)}
+							</div>
 							<div className="image-picker">
-								<AiOutlineUpload />
-								<p>{file ? "Change File" : "Upload File"}</p>
-								<input
-									type="file"
-									name="Asset"
-									className="my-4"
-									id="file-upload"
-									onChange={onFileChange}
-								/>
+								<div>
+									<AiOutlineUpload />
+									<p>{file ? "Change File" : "Upload File"}</p>
+									<input
+										type="file"
+										name="Asset"
+										className="my-4"
+										id="file-upload"
+										onChange={onFileChange}
+									/>
+								</div>
 							</div>
 						</label>
 					</div>
