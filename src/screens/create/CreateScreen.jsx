@@ -188,54 +188,56 @@ export function CreateScreen({ closeModal }) {
 						<div>
 							<p>PNG, JPG, and MP4 files are allowed</p>
 						</div>
-						<div
-							className="image-dropper"
-							style={{
-								backgroundImage: file
-									? file.type === "video/mp4"
-										? "none"
-										: `url(${file ? imageUrl : ""})`
-									: "none",
-								backgroundPosition: "center",
-								backgroundSize: "cover",
-								backgroundRepeat: "no-repeat",
-								height: "200px",
-								textAlign: "center",
-							}}
-							onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
-							onDrop={(e) => dropHandler(e)}
-							onDragOver={(e) => dragOverHandler(e)}
-						>
-							{file ? (
-								file.type === "video/mp4" ? (
-									<video
-										src={URL.createObjectURL(
-											new Blob([file], { type: "video/mp4" })
-										)}
-										autoPlay
-										height={"200px"}
-										width={"280px"}
-										muted
-										loop
-									></video>
+						<label htmlFor="file-upload">
+							<div
+								className="image-dropper"
+								style={{
+									backgroundImage: file
+										? file.type === "video/mp4"
+											? "none"
+											: `url(${file ? imageUrl : ""})`
+										: "none",
+									backgroundPosition: "center",
+									backgroundSize: "cover",
+									backgroundRepeat: "no-repeat",
+									height: "200px",
+									textAlign: "center",
+								}}
+								onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
+								onDrop={(e) => dropHandler(e)}
+								onDragOver={(e) => dragOverHandler(e)}
+							>
+								{file ? (
+									file.type === "video/mp4" ? (
+										<video
+											src={URL.createObjectURL(
+												new Blob([file], { type: "video/mp4" })
+											)}
+											autoPlay
+											height={"200px"}
+											width={"280px"}
+											muted
+											loop
+										></video>
+									) : (
+										""
+									)
 								) : (
-									""
-								)
-							) : (
-								"Drag & drop or click below button to upload your asset"
-							)}
-						</div>
-						<label htmlFor="file-upload" className="custom-file-upload">
+									"Drag & drop"
+								)}
+							</div>
 							<div className="image-picker">
-								<AiOutlineUpload />
-								<p>{file ? "Change File" : "Upload File"}</p>
-								<input
-									type="file"
-									name="Asset"
-									className="my-4"
-									id="file-upload"
-									onChange={onFileChange}
-								/>
+								<div>
+									<AiOutlineUpload />
+									<p>{file ? "Change File" : "Upload File"}</p>
+									<input
+										type="file"
+										name="Asset"
+										className="my-4"
+										id="file-upload"
+										onChange={onFileChange}
+									/>
+								</div>
 							</div>
 						</label>
 					</div>
