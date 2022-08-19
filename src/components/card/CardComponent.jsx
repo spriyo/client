@@ -34,7 +34,7 @@ export function CardComponent({ asset }) {
 			position="relative"
 			style={{
 				backgroundImage:
-					asset.medias[0].mimetype === "video/mp4"
+					asset.medias.length !== 0 && asset.medias[0].mimetype === "video/mp4"
 						? "none"
 						: `url('${
 								asset.image ||
@@ -42,7 +42,7 @@ export function CardComponent({ asset }) {
 						  }')`,
 			}}
 		>
-			{asset.medias[0].mimetype === "video/mp4" ? (
+			{asset.medias.length !== 0 && asset.medias[0].mimetype === "video/mp4" ? (
 				<video className="video-component" autoPlay muted loop>
 					<source src={asset.medias[0].path} type="video/mp4" />
 				</video>

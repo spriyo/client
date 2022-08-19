@@ -35,7 +35,7 @@ function getKeyword(event) {
 			return "Listed";
 		case "auction_update_price":
 			return "Updated Price";
-		case "auction_canceld":
+		case "auction_canceled":
 			return "Auction Canceled";
 		case "offer_created":
 			return "Offer Made";
@@ -183,6 +183,20 @@ export function ActivityCardComponent({ event, asset }) {
 											: event.user_id.username
 									}`}
 								</Typography>
+								{event.event_type.includes("bid") ||
+								event.event_type.includes("auction") ? (
+									<Typography
+										onClick={() => navigate(`/profile/${event.user_id._id}`)}
+										variant="h5"
+										color={"text.primary"}
+										sx={{ cursor: "pointer" }}
+									>
+										&nbsp;
+										{`for ${web3.utils.fromWei(event.data.reserve_price)} BNB`}
+									</Typography>
+								) : (
+									<p></p>
+								)}
 							</Stack>
 						}
 						// secondary={event.user_id.username}
