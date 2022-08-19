@@ -14,7 +14,7 @@ export class AuctionHttpService {
 				},
 			})
 		);
-		console.log(resolved);
+		return resolved;
 	}
 
 	async updateReservePrice(auctionId, data) {
