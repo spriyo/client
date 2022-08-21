@@ -6,6 +6,7 @@ import { OfferHttpService } from "../api/offer";
 import { getWalletAddress } from "../utils/wallet";
 import { ButtonComponent } from "./ButtonComponent";
 import { ConnectComponent } from "./ConnectComponent";
+import { AuctionHttpService } from "../api/auction";
 
 const loaderStyle = {
 	backgroundImage:
@@ -22,12 +23,17 @@ export const ActionsComponent = ({ asset }) => {
 	const [loading, setLoading] = useState(false);
 	const saleHttpService = new SaleHttpService();
 	const offerHttpService = new OfferHttpService();
+	const auctionHttpService = new AuctionHttpService();
 
 	const marketContract = useSelector(
 		(state) => state.contractReducer.marketContract
 	);
 	const user = useSelector((state) => state.authReducer.user);
 	const nftContract = useSelector((state) => state.contractReducer.nftContract);
+
+	function isAuctionExpired(expireAt) {
+		return new Date(expireAt).getTime() / 1000 < Date.now() / 1000;
+	}
 
 	function getActions(event) {
 		let actions = [];
@@ -39,6 +45,7 @@ export const ActionsComponent = ({ asset }) => {
 			case "offer_accepted":
 			case "imported":
 			case "transfer":
+			case "auction_canceled":
 			case "mint":
 				actions =
 					user._id === asset.owner._id ||
@@ -50,8 +57,8 @@ export const ActionsComponent = ({ asset }) => {
 									action: () => approveMiddleware(sellAsset),
 								},
 								{
-									title: "Auction",
-									action: () => alert("Auction feature coming soon!"),
+									title: "Create Auction",
+									action: () => approveMiddleware(createAuction),
 								},
 						  ]
 						: [
@@ -71,7 +78,7 @@ export const ActionsComponent = ({ asset }) => {
 								},
 								{
 									title: "Auction",
-									action: () => alert("Auction feature coming soon!"),
+									action: () => approveMiddleware(createAuction),
 								},
 								// {
 								// 	title: "Accept Offer",
@@ -93,16 +100,39 @@ export const ActionsComponent = ({ asset }) => {
 						  ];
 				break;
 			case "bid":
+			case "auction_update_price":
 			case "auction_create":
 				actions =
-					event.user_id._id === user._id
-						? []
+					event.user_id._id === user._id && user._id === asset.owner._id
+						? isAuctionExpired(event.data.expireAt)
+							? [
+									{
+										title: "Settle Auction",
+										action: () => loadMiddleware(settleAuction),
+									},
+							  ]
+							: [
+									{
+										title: "Cancel Auction",
+										action: () => loadMiddleware(cancelAuction),
+									},
+									{
+										title: "Update Price",
+										action: () => loadMiddleware(updateReservePrice),
+									},
+							  ]
+						: isAuctionExpired(event.data.expireAt) &&
+						  user._id === event.user_id._id
+						? [
+								{
+									title: "Settle Auction",
+									action: () => loadMiddleware(settleAuction),
+								},
+						  ]
 						: [
 								{
 									title: "Place Bid",
-									action: function () {
-										alert("Place Bid coming soon!");
-									},
+									action: () => loadMiddleware(bidAuction),
 								},
 						  ];
 				break;
@@ -356,7 +386,6 @@ export const ActionsComponent = ({ asset }) => {
 						.approve(marketContract._address, asset.item_id)
 						.send({ from: currentAddress });
 					isApproved = true;
-					console.log(transaction);
 				}
 			} else {
 				isApproved = true;
@@ -365,6 +394,191 @@ export const ActionsComponent = ({ asset }) => {
 			console.log(error.message);
 		}
 		return isApproved;
+	}
+
+	async function createAuction() {
+		const amount = prompt("Please enter the reserve amount.");
+		if (isNaN(parseFloat(amount))) return;
+
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.createReserveAuction(
+				asset.contract_address,
+				asset.item_id,
+				convertedAmount
+			)
+			.estimateGas({
+				from: currentAddress,
+			});
+
+		const tx = await marketContract.methods
+			.createReserveAuction(
+				asset.contract_address,
+				asset.item_id,
+				convertedAmount
+			)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			});
+
+		// Server Event
+		const resolved = await auctionHttpService.createAuction({
+			asset_id: asset._id,
+			reserve_price: convertedAmount,
+			auction_id: parseInt(tx.events.EventAuction.returnValues.id),
+		});
+
+		if (!resolved.error) {
+			window.location.reload();
+		}
+	}
+
+	async function updateReservePrice() {
+		const amount = prompt("Please enter new reserve amount.");
+		if (isNaN(parseFloat(amount))) return;
+
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.updateReservePrice(asset.events[0].data.auction_id, convertedAmount)
+			.estimateGas({
+				from: currentAddress,
+			});
+		await marketContract.methods
+			.updateReservePrice(asset.events[0].data.auction_id, convertedAmount)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			});
+
+		// Server Event
+		const resolved = await auctionHttpService.updateReservePrice(
+			asset.events[0].data._id,
+			{
+				reserve_price: convertedAmount,
+			}
+		);
+		if (!resolved.error) {
+			window.location.reload();
+		}
+	}
+
+	async function cancelAuction() {
+		const confirmed = window.confirm(
+			"Are you sure you want to cancel this auction?"
+		);
+		if (!confirmed) return;
+
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.cancelReserveAuction(asset.events[0].data.auction_id)
+			.estimateGas({
+				from: currentAddress,
+			});
+
+		await marketContract.methods
+			.cancelReserveAuction(asset.events[0].data.auction_id)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			});
+
+		// Server Event
+		const resolved = await auctionHttpService.cancelAuction(
+			asset.events[0].data._id
+		);
+		if (!resolved.error) {
+			window.location.reload();
+		}
+	}
+
+	async function settleAuction() {
+		const confirmed = window.confirm(
+			"Are you sure you want to settle this auction?"
+		);
+		if (!confirmed) return;
+
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.settleAuction(asset.events[0].data.auction_id)
+			.estimateGas({
+				from: currentAddress,
+			});
+
+		await marketContract.methods
+			.settleAuction(asset.events[0].data.auction_id)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			});
+
+		// Server Event
+		const resolved = await auctionHttpService.settleAuction(
+			asset.events[0].data._id
+		);
+		if (!resolved.error) {
+			window.location.reload();
+		}
+	}
+
+	async function bidAuction() {
+		// const txs = await marketContract.methods.auctions(8).call();
+		// console.log(txs);
+		const amount = prompt("Please enter bid amount.");
+		if (isNaN(parseFloat(amount))) return;
+
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.placeBid(asset.events[0].data.auction_id)
+			.estimateGas({
+				from: currentAddress,
+				value: convertedAmount,
+			});
+
+		await marketContract.methods
+			.placeBid(asset.events[0].data.auction_id)
+			.send({
+				from: currentAddress,
+				value: convertedAmount,
+				gasPrice,
+				gas,
+			});
+
+		// Server Event
+		const resolved = await auctionHttpService.bidAuction({
+			auction_id: asset.events[0].data._id,
+			amount: convertedAmount,
+		});
+		if (!resolved.error) {
+			window.location.reload();
+		}
 	}
 
 	async function approveMiddleware(callback) {
