@@ -6,7 +6,7 @@ export const ButtonComponent = ({ onClick, text = "Button" }) => {
 		<Box
 			onClick={onClick}
 			borderRadius={"14px"}
-			padding={"8px 14px"}
+			padding={"8px"}
 			m={1}
 			border={"1px solid #d9d9d9"}
 			sx={{
