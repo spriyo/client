@@ -1,9 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
-import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
 import LoadingImage from "../../assets/loading-image.gif";
 import { useEffect, useState } from "react";
 import { AssetHttpService } from "../../api/asset";
@@ -17,24 +14,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { CardComponent } from "../../components/card/CardComponent";
 import { AuthHttpService } from "../../api/auth";
 import { EmptyNftComponent } from "../../components/EmptyNftComponent";
-// import { MoralisHttpService } from "../../api/moralis";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
-export function ProfileScreen(params) {
+export function ProfileScreen() {
 	const assetHttpService = new AssetHttpService();
 	const authHttpService = new AuthHttpService();
 	const [assets, setAssets] = useState([]);
-	// const [polygonAssets, setPolygonAssets] = useState([]);
-	// const [binanceAssets, setBinanceAssets] = useState([]);
-	// const [ethereumAssets, setEthereumAssets] = useState([]);
 	const [loggedUser, setLoggedUserUser] = useState({});
 	const [user, setUser] = useState({});
 	const { id } = useParams();
 	const [nftLoading, setNftLoading] = useState(false);
-	// const [nftBinanceLoading, setNftBinanceLoading] = useState(false);
-	// const [nftEthereumLoading, setNftEthereumLoading] = useState(false);
-	// const [nftPolygonLoading, setNftPolygonLoading] = useState(false);
-	// const moralisHttpService = new MoralisHttpService();
 
 	async function getUserAssets() {
 		setNftLoading(true);
@@ -58,52 +47,9 @@ export function ProfileScreen(params) {
 
 	const [value, setValue] = React.useState("1");
 
-	const handleChange = (event, newValue) => {
-		setValue(newValue);
-	};
-
-	// const fetchBinanceNFTs = async () => {
-	// 	setNftBinanceLoading(true);
-	// 	const resolved = await moralisHttpService.getNfts("bsc");
-	// 	if (!resolved.error) {
-	// 		const data = resolved.data.result
-	// 			.filter((a) => a.metadata)
-	// 			.map((a) => JSON.parse(a.metadata));
-	// 		setBinanceAssets(data);
-	// 	}
-	// 	setNftBinanceLoading(false);
-	// };
-
-	// const fetchEthereumNFTs = async () => {
-	// 	setNftEthereumLoading(true);
-	// 	const resolved = await moralisHttpService.getNfts("eth");
-	// 	if (!resolved.error) {
-	// 		const data = resolved.data.result
-	// 			.filter((a) => a.metadata)
-	// 			.map((a) => JSON.parse(a.metadata));
-	// 		setEthereumAssets(data);
-	// 	}
-	// 	setNftEthereumLoading(false);
-	// };
-
-	// const fetchPolygonNFTs = async () => {
-	// 	setNftPolygonLoading(true);
-	// 	const resolved = await moralisHttpService.getNfts("matic");
-	// 	if (!resolved.error) {
-	// 		const data = resolved.data.result
-	// 			.filter((a) => a.metadata)
-	// 			.map((a) => JSON.parse(a.metadata));
-	// 		setPolygonAssets(data);
-	// 	}
-	// 	setNftPolygonLoading(false);
-	// };
-
 	useEffect(() => {
 		getUserAssets();
 		getUser();
-		// fetchBinanceNFTs();
-		// fetchEthereumNFTs();
-		// fetchPolygonNFTs();
 	}, [id]);
 
 	return (
@@ -165,36 +111,8 @@ export function ProfileScreen(params) {
 							</Box>
 						)}
 					</Box>
-					{/* <div>
-						<div className="assset-value">
-							<div>
-								<p>5</p>
-								<p>Collection</p>
-							</div>
-							<div>
-								<p>38.98 ETH</p>
-								<p>Total Sales</p>
-							</div>
-							<div>
-								<p>2</p>
-								<p>Owned</p>
-							</div>
-							<div>
-								<p>38.98 ETH</p>
-								<p>Floor Price</p>
-							</div>
-						</div>
-					</div> */}
 				</Box>
 			</Box>
-			{/* Description
-			<div className="profile-description">
-				<h2>Description</h2>
-				<p>
-					BearX is a limited NFT collection of Genesis and Mini Bears created on
-					Ethereum blockchain.
-				</p>
-			</div> */}
 			<Box
 				p={2}
 				borderRadius={"4px"}
@@ -203,43 +121,12 @@ export function ProfileScreen(params) {
 				<Typography variant="h1">NFT's</Typography>
 				<Box mb={2}></Box>
 				<TabContext value={value}>
-					<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-						<TabList onChange={handleChange}>
-							<Tab label="Binance" value="1" />
-							<Tab label="Ethereum" value="2" />
-							<Tab label="Polygon" value="3" />
-							<Tab label="Spriyo" value="4" />
-						</TabList>
-					</Box>
-					{/* <TabPanel value="1">
-						<NFTList
-							nftLoading={nftBinanceLoading}
-							assets={binanceAssets}
-							isAuthenticated={loggedUser._id === user._id}
-						/>
-					</TabPanel>
-					<TabPanel value="2">
-						<NFTList
-							nftLoading={nftEthereumLoading}
-							assets={ethereumAssets}
-							isAuthenticated={loggedUser._id === user._id}
-						/>
-					</TabPanel>
-					<TabPanel value="3">
-						<NFTList
-							nftLoading={nftPolygonLoading}
-							assets={polygonAssets}
-							isAuthenticated={loggedUser._id === user._id}
-						/>
-					</TabPanel> */}
-					<TabPanel value="4">
-						<NFTList
-							nftLoading={nftLoading}
-							assets={assets}
-							isAuthenticated={loggedUser._id === user._id}
-							thirdParty={false}
-						/>
-					</TabPanel>
+					<NFTList
+						nftLoading={nftLoading}
+						assets={assets}
+						isAuthenticated={loggedUser._id === user._id}
+						thirdParty={false}
+					/>
 				</TabContext>
 			</Box>
 			<div style={{ marginBottom: "64px" }}>.</div>

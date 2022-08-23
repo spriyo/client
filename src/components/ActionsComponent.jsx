@@ -382,7 +382,7 @@ export const ActionsComponent = ({ asset }) => {
 					"Before selling the NFT on Spriyo, please approve us as a operator for your NFT."
 				);
 				if (isConfirmed) {
-					const transaction = await nftContract.methods
+					await nftContract.methods
 						.approve(marketContract._address, asset.item_id)
 						.send({ from: currentAddress });
 					isApproved = true;
@@ -612,7 +612,7 @@ export const ActionsComponent = ({ asset }) => {
 	) : (
 		<Box display={"flex"} sx={{ justifyContent: { xs: "center", md: "end" } }}>
 			{getActions(asset.events[0]).map((e, i) => (
-				<Box key={i} width="auto" p={2} display="flex">
+				<Box key={i} width="auto" p={1} display="flex">
 					<ButtonComponent
 						text={e.title}
 						rounded={true}
