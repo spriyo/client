@@ -117,7 +117,7 @@ export function NavbarComponent() {
 					</Menu>
 				</Box>
 				{authenticated ? (
-					<Box onClick={() => navigate(`/profile/${user._id}`)} m={1}>
+					<Box onClick={() => navigate(`/${user.username}`)} m={1}>
 						<CircularProfile userImgUrl={user.displayImage} userId={user._id} />
 					</Box>
 				) : (

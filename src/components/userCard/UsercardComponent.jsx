@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export function UsercardComponent({ user }) {
 	const navigate = useNavigate();
 	return (
-		<Box onClick={() => navigate(`/profile/${user._id}`)}>
+		<Box onClick={() => navigate(`/${user.username}`)}>
 			<div className="user-card-container">
 				<div className="user-card-img">
 					<CircularProfile userId={user._id} userImgUrl={user.displayImage} />
