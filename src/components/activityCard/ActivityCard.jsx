@@ -163,46 +163,65 @@ export function ActivityCardComponent({ event, asset }) {
 					</ListItemAvatar>
 					<ListItemText
 						primary={
-							<Stack direction={"row"}>
-								<Typography variant="h3" color={"text.primary"}>
-									{`${getKeyword(event)} `}
-								</Typography>
-								<Typography
-									onClick={() => navigate(`/profile/${event.user_id._id}`)}
-									variant="h5"
-									color={"text.secondary"}
-									sx={{ cursor: "pointer" }}
-								>
-									&nbsp;
-									{`by@${
-										event.user_id.username.length > 20
-											? `${event.user_id.username.substring(
-													0,
-													4
-											  )}...${event.user_id.username.slice(-4)}`
-											: event.user_id.username
-									}`}
-								</Typography>
-								{event.event_type.includes("bid") ||
-								event.event_type.includes("auction") ? (
-									<Typography
-										onClick={() => navigate(`/profile/${event.user_id._id}`)}
-										variant="h5"
-										color={"text.primary"}
-										sx={{ cursor: "pointer" }}
-									>
-										&nbsp;
-										{`for ${web3.utils.fromWei(event.data.reserve_price)} BNB`}
-									</Typography>
-								) : (
-									<p></p>
-								)}
+							<Stack>
+								<Stack direction={"row"}>
+									<Stack>
+										<Stack direction={"row"}>
+											<Typography variant="h3" color={"black"}>
+												{`${getKeyword(event)} `}
+											</Typography>
+											{event.event_type.includes("bid") ||
+											event.event_type.includes("auction") ? (
+												<Stack direction={"row"}>
+													<Typography variant="h5" color={"text.primary"}>
+														&nbsp; for
+													</Typography>
+													<Typography
+														onClick={() =>
+															navigate(`/profile/${event.user_id._id}`)
+														}
+														variant="h5"
+														color={"black"}
+														sx={{ cursor: "pointer" }}
+													>
+														&nbsp;
+														{` ${web3.utils.fromWei(
+															event.data.reserve_price
+														)} BNB`}
+													</Typography>
+												</Stack>
+											) : (
+												<p></p>
+											)}
+										</Stack>
+										<Typography
+											onClick={() => navigate(`/profile/${event.user_id._id}`)}
+											variant="h6"
+											color={"text.primary"}
+											sx={{ cursor: "pointer" }}
+										>
+											&nbsp;
+											{`by@${
+												event.user_id.username.length > 20
+													? `${event.user_id.username.substring(
+															0,
+															4
+													  )}...${event.user_id.username.slice(-4)}`
+													: event.user_id.username
+											}`}
+										</Typography>
+									</Stack>
+
+									<br />
+								</Stack>
+								<p style={{ fontSize: "10px", fontWeight: "500" }}>
+									{`${new Date(event.createdAt).toDateString()}, ${new Date(
+										event.createdAt
+									).toLocaleTimeString()}`}
+								</p>
 							</Stack>
 						}
 						// secondary={event.user_id.username}
-						secondary={`${new Date(event.createdAt).toDateString()}, ${new Date(
-							event.createdAt
-						).toLocaleTimeString()}`}
 					/>
 				</ListItem>
 				{event.event_type === "offer_created" &&
