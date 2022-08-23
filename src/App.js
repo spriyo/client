@@ -32,7 +32,6 @@ import { addNotification } from "./state/actions/notifications";
 import { ImportScreen } from "./screens/ImportScreen";
 import { FavoritesScreen } from "./screens/Favorites";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
-import { TestScreen } from "./screens/TestScreen";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -145,7 +144,6 @@ function App() {
 					<Route path="/" exact element={<HomeScreen />} />
 					<Route path="/:username" exact element={<ProfileScreen />} />
 					{/* :user can be contract_address or username */}
-					<Route path="/test" exact element={<TestScreen />} />
 					<Route path="/asset/:id" exact element={<AssetScreen />} />
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
