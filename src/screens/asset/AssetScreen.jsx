@@ -206,7 +206,7 @@ export function AssetScreen() {
 									Owner
 								</Typography>
 								<ListItem
-									onClick={() => navigate(`/profile/${asset.owner._id}`)}
+									onClick={() => navigate(`/${asset.owner.username}`)}
 									sx={{ cursor: "pointer" }}
 								>
 									<ListItemAvatar>

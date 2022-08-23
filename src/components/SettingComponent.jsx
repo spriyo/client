@@ -33,7 +33,12 @@ export const SettingComponent = ({ open, onClose }) => {
 			return alert("Please ensure everything is filled.");
 		setLoading(true);
 		const resolved = await authHttpService.updateProfile(formInput);
-		if (!resolved.error) {
+		if (resolved.error) {
+			const message = resolved.data.data.message;
+			if (message.includes("username not valid")) {
+				alert("Enter valid username");
+			}
+		} else {
 			alert("Profile updated");
 		}
 		setLoading(false);
