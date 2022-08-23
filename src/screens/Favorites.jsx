@@ -57,7 +57,13 @@ export const FavoritesScreen = () => {
 						>
 							{favoriteItems.map((item, index) => (
 								<Grid item xs={12} sm={4} md={4} key={index}>
-									<Box onClick={() => navigate("/asset/" + item.asset_id._id)}>
+									<Box
+										onClick={() =>
+											navigate(
+												`/assets/${item.asset_id.contract_address}/${item.asset_id.item_id}`
+											)
+										}
+									>
 										<CardComponent asset={item.asset_id} />
 									</Box>
 								</Grid>

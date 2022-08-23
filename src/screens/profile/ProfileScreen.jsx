@@ -163,7 +163,11 @@ export const NFTList = ({
 				{assets.map((a, i) => (
 					<Grid item xs={12} sm={4} md={4} key={i}>
 						{!thirdParty ? (
-							<Box onClick={() => navigate("/asset/" + a._id)}>
+							<Box
+								onClick={() =>
+									navigate(`/assets/${a.contract_address}/${a.item_id}`)
+								}
+							>
 								<CardComponent asset={a} />
 							</Box>
 						) : (
