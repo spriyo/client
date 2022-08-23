@@ -12,7 +12,9 @@ export function ActiveSaleComponent({ asset }) {
 			sx={{
 				flexDirection: { xs: "column", md: "column", lg: "row" },
 			}}
-			onClick={() => navigate(`/asset/${asset._id}`)}
+			onClick={() =>
+				navigate(`/assets/${asset.contract_address}/${asset.item_id}`)
+			}
 		>
 			<Box
 				className="activebid-img-container"
