@@ -24,7 +24,7 @@ import { getNetworkByChainId } from "../../utils/getNetwork";
 import { getChainId, getWalletAddress, switchChain } from "../../utils/wallet";
 
 export function AssetScreen() {
-	const { id } = useParams();
+	const { contract_address, token_id } = useParams();
 	const [asset, setAsset] = useState(null);
 	const assetHttpService = new AssetHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
@@ -37,7 +37,10 @@ export function AssetScreen() {
 	// });
 
 	const getAsset = async function () {
-		const resolved = await assetHttpService.getAssetById(id);
+		const resolved = await assetHttpService.getAssetById(
+			contract_address,
+			token_id
+		);
 		if (!resolved.error) {
 			const fetchedAsset = resolved.data;
 			setAsset(fetchedAsset);

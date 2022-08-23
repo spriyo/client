@@ -127,7 +127,13 @@ export const ExploreScreen = ({ listen }) => {
 						>
 							{recentlyAddedItems.map((asset, index) => (
 								<Grid item xs={12} sm={4} md={4} key={index}>
-									<Box onClick={() => navigate("/asset/" + asset._id)}>
+									<Box
+										onClick={() =>
+											navigate(
+												`/assets/${asset.contract_address}/${asset.item_id}`
+											)
+										}
+									>
 										<CardComponent asset={asset} />
 									</Box>
 								</Grid>
