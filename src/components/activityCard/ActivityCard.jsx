@@ -151,10 +151,7 @@ export function ActivityCardComponent({ event, asset }) {
 					}
 				>
 					<ListItemAvatar>
-						<Box
-							onClick={() => navigate(`/profile/${event.user_id._id}`)}
-							m={1}
-						>
+						<Box onClick={() => navigate(`/${event.user_id.username}`)} m={1}>
 							<CircularProfile
 								userId={event.user_id._id}
 								userImgUrl={event.user_id.displayImage}
@@ -178,7 +175,7 @@ export function ActivityCardComponent({ event, asset }) {
 													</Typography>
 													<Typography
 														onClick={() =>
-															navigate(`/profile/${event.user_id._id}`)
+															navigate(`/${event.user_id.username}`)
 														}
 														variant="h5"
 														color={"black"}
@@ -195,7 +192,7 @@ export function ActivityCardComponent({ event, asset }) {
 											)}
 										</Stack>
 										<Typography
-											onClick={() => navigate(`/profile/${event.user_id._id}`)}
+											onClick={() => navigate(`/${event.user_id.username}`)}
 											variant="h6"
 											color={"text.primary"}
 											sx={{ cursor: "pointer" }}

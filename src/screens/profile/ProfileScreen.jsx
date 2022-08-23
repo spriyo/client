@@ -22,10 +22,10 @@ export function ProfileScreen() {
 	const [assets, setAssets] = useState([]);
 	const [loggedUser, setLoggedUserUser] = useState({});
 	const [user, setUser] = useState({});
-	const { id } = useParams();
+	const { username } = useParams();
 	const [nftLoading, setNftLoading] = useState(false);
 
-	async function getUserAssets() {
+	async function getUserAssets(id) {
 		setNftLoading(true);
 		const localUser = await JSON.parse(localStorage.getItem("user"));
 		setLoggedUserUser(localUser ? localUser : {});
@@ -35,8 +35,9 @@ export function ProfileScreen() {
 	}
 
 	async function getUser() {
-		const resolved = await authHttpService.getUserById(id);
+		const resolved = await authHttpService.getUserById(username);
 		setUser(resolved.data);
+		getUserAssets(resolved.data._id);
 	}
 
 	const [open, setOpen] = useState(false);
@@ -48,9 +49,8 @@ export function ProfileScreen() {
 	const [value, setValue] = React.useState("1");
 
 	useEffect(() => {
-		getUserAssets();
 		getUser();
-	}, [id]);
+	}, [username]);
 
 	return (
 		<div className="profile-container">
