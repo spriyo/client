@@ -1,4 +1,5 @@
-import { UsercardComponent } from "../userCard/UsercardComponent";
+import { Box } from "@mui/material";
+import { ChatComponent } from "../chat/ChatComponent";
 import "./highlights.css";
 
 export function HighlightsComponent({ title, data = [] }) {
@@ -7,14 +8,10 @@ export function HighlightsComponent({ title, data = [] }) {
 			<div className="highlights-title">
 				<p>{title}</p>
 			</div>
-			<div>
-				{data.slice(0, 6).map((e, i) => (
-					<div key={i}>
-						<UsercardComponent user={data[i]} />
-					</div>
-				))}
-			</div>
-			{/* {data.length > 5 ? (
+			<Box sx={{ height: "50vh" }}>
+				<ChatComponent />
+			</Box>
+			{/* {data.length > 1 ? (
 				<div className="collection-action">See all</div>
 			) : (
 				<div></div>

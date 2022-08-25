@@ -102,7 +102,7 @@ function HomeScreen() {
 							>
 								<HighlightsComponent
 									data={topCreators.slice(0, 8)}
-									title="Popular Creators"
+									title="Shardeum Chat🔥"
 								/>
 							</Box>
 						</Box>
