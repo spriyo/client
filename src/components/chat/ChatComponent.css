@@ -1,0 +1,32 @@
+.scroll-body {
+	flex-grow: 1;
+	max-height: 45vh;
+	overflow-y: scroll;
+	/* hide scrollbar but allow scrolling */
+	-ms-overflow-style: none; /* for Internet Explorer, Edge */
+	scrollbar-width: none; /* for Firefox */
+	/* overflow-y: scroll; */
+}
+
+.scroll-body::-webkit-scrollbar {
+	display: none;
+	color: rgb(197, 197, 197);
+}
+
+.blinking-green {
+	animation: 1s blink-green ease infinite;
+	width: 10px;
+	height: 10px;
+	border-radius: 100%;
+}
+
+@keyframes blink-green {
+	from,
+	to {
+		opacity: 0;
+		background-color: lightgreen;
+	}
+	50% {
+		opacity: 1;
+	}
+}
