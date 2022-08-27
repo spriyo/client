@@ -6,11 +6,13 @@ import {
 	Typography,
 	Stack,
 	Button,
+	Tooltip,
 } from "@mui/material";
 import { RiSendPlane2Fill } from "react-icons/ri";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ChatImage from "../../lottie/106068-chat.gif";
+import NotificationSound from "../../assets/notification.mp3";
 import { ChatHttpService } from "../../api/chat";
 const ENDPOINT = process.env.REACT_APP_CHAT_WS_SERVER_URL;
 
@@ -21,13 +23,14 @@ export const ChatComponent = () => {
 	const [isChatLoaded, setIsChatLoaded] = useState(false);
 	const user = useSelector((state) => state.authReducer.user);
 	const [messages, setMessages] = useState([]);
-	const [activeUsers, setActiveUsers] = useState(0)
+	const [activeUsers, setActiveUsers] = useState(0);
 	const chatHttpService = new ChatHttpService();
+	const audio = new Audio(NotificationSound);
 
 	const webSocket = () => {
 		const webSocketClient = new WebSocket(ENDPOINT);
 
-		webSocketClient.onopen =async function (connection) {
+		webSocketClient.onopen = async function (connection) {
 			const user = localStorage.getItem("user");
 			webSocketClient.send(
 				JSON.stringify({
@@ -38,7 +41,7 @@ export const ChatComponent = () => {
 			);
 			setIsChatLoaded(true);
 			const usersResolved = await getActiveUsers();
-			setActiveUsers(usersResolved.data.users)
+			setActiveUsers(usersResolved.data.users);
 
 			// console.log("WebSocket Client Connected");
 			connection.onerror = function (error) {
@@ -51,8 +54,8 @@ export const ChatComponent = () => {
 
 		webSocketClient.onmessage = function (message) {
 			const data = JSON.parse(message.data);
-			console.log(...messages);
 			if (data.type === "message") {
+				audio.play();
 				setMessages((mes) => [
 					...mes,
 					{
@@ -173,15 +176,23 @@ export const ChatComponent = () => {
 									},
 								}}
 							>
-								<Typography
-									sx={{
-										fontSize: "14px",
-										fontWeight: "600",
-										color: "#" + getRandomColor(user.username),
-									}}
-								>
-									{`${user.username}:`}&nbsp;
-								</Typography>
+								<Tooltip title={user.username} arrow>
+									<Typography
+										sx={{
+											fontSize: "14px",
+											fontWeight: "600",
+											color: "#" + getRandomColor(user.username),
+										}}
+									>
+										{user.username.length > 20
+											? `${user.username.substring(
+													0,
+													4
+											  )}...${user.username.slice(-4)}:`
+											: `${user.username}:`}
+										&nbsp;
+									</Typography>
+								</Tooltip>
 								<Typography
 									sx={{
 										fontSize: "12px",
@@ -214,7 +225,7 @@ export const ChatComponent = () => {
 									}}
 									position="start"
 								>
-									<RiSendPlane2Fill onClick={sendValue} />
+									<RiSendPlane2Fill onClick={() => sendValue()} />
 								</InputAdornment>
 							),
 						}}
