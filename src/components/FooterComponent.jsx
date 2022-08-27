@@ -47,7 +47,7 @@ export const FooterComponent = () => {
 							<FastLink href="#" mr={2}>
 								<img src={twitterLogo} alt="twitter" />
 							</FastLink>
-							<FastLink href="#" mr={2}>
+							<FastLink href="https://discord.gg/pY3p7UNDd6" mr={2}>
 								<img src={discordLogo} alt="Discord" />
 							</FastLink>
 						</Stack>
