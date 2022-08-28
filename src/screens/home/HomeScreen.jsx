@@ -13,9 +13,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { TopNotification } from "../../components/topNotification/TopNotification";
 import { ChangeNetworkComponent } from "../../components/ChangeNetworkComponent";
 import { switchChain } from "../../state/actions/wallet";
+import { useNavigate } from "react-router-dom";
+import { addNotification } from "../../state/actions/notifications";
 
 function HomeScreen() {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const saleHttpService = new SaleHttpService();
 	const displayHttpService = new DisplayHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
@@ -52,10 +55,25 @@ function HomeScreen() {
 		}
 	}
 
+	function updateNotification() {
+		// Remove in next build
+		dispatch(
+			addNotification(
+				"You can now try out Sell, Buy, Offer and Auction features🥳",
+				"Create NFT",
+				1,
+				() => {
+					navigate("/create");
+				}
+			)
+		);
+	}
+
 	useEffect(() => {
 		getTopCollectors();
 		getRecentlyAdded();
 		getActiveSales();
+		updateNotification();
 	}, [chainId]);
 
 	return (
