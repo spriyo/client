@@ -193,14 +193,16 @@ export const ChatComponent = () => {
 										&nbsp;
 									</Typography>
 								</Tooltip>
-								<Typography
-									sx={{
-										fontSize: "12px",
-										fontWeight: "600",
-									}}
-								>
-									{m.message}
-								</Typography>
+								<Tooltip title={m.createdAt.toLocaleTimeString()} arrow>
+									<Typography
+										sx={{
+											fontSize: "12px",
+											fontWeight: "600",
+										}}
+									>
+										{m.message}
+									</Typography>
+								</Tooltip>
 							</Stack>
 						);
 					})
