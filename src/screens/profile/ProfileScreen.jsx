@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import React from "react";
 import TabContext from "@mui/lab/TabContext";
 import LoadingImage from "../../assets/loading-image.gif";
@@ -84,16 +84,21 @@ export function ProfileScreen() {
 							{user.displayName && (
 								<p style={{ fontWeight: "bold" }}>{user.displayName}</p>
 							)}
-							{user.username && (
-								<p style={{ fontWeight: "medium" }}>
-									@
-									{user.username.length > 20
-										? `${user.username.substring(0, 4)}...${user.username.slice(
-												-4
-										  )}`
-										: user.username}
-								</p>
-							)}
+							<Tooltip title={user.username} arrow>
+								<span>
+									{user.username && (
+										<p style={{ fontWeight: "medium" }}>
+											@
+											{user.username.length > 20
+												? `${user.username.substring(
+														0,
+														4
+												  )}...${user.username.slice(-4)}`
+												: user.username}
+										</p>
+									)}
+								</span>
+							</Tooltip>
 						</div>
 						{loggedUser._id === user._id && (
 							<Box sx={{ position: "absolute", top: "16px", right: "16px" }}>
