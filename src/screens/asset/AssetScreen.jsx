@@ -168,13 +168,20 @@ export function AssetScreen() {
 								}
 								m={1}
 							>
-								<img
-									src={asset.image || asset.medias[0].path}
-									alt="nft"
-									width="100%"
-									height="auto"
-									className="main-image"
-								/>
+								{asset.medias.length > 0 &&
+								asset.medias[0].mimetype === "video/mp4" ? (
+									<video style={{ maxHeight: "40vh" }} autoPlay muted loop>
+										<source src={asset.medias[0].path} type="video/mp4" />
+									</video>
+								) : (
+									<img
+										src={asset.image || asset.medias[0].path}
+										alt={asset.name}
+										width="100%"
+										height="auto"
+										className="main-image"
+									/>
+								)}
 							</Box>
 							{/* Details */}
 							<Box flex={1} m={1}>

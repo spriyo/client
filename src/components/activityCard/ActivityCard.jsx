@@ -145,7 +145,7 @@ export function ActivityCardComponent({ event, asset }) {
 					secondaryAction={
 						event.data.amount && (
 							<Typography variant="h5" color={"text.primary"}>
-								{`${web3.utils.fromWei(event.data.amount)} BNB`}
+								{`${web3.utils.fromWei(event.data.amount)} SHM`}
 							</Typography>
 						)
 					}
@@ -184,7 +184,7 @@ export function ActivityCardComponent({ event, asset }) {
 														&nbsp;
 														{` ${web3.utils.fromWei(
 															event.data.reserve_price
-														)} BNB`}
+														)} SHM`}
 													</Typography>
 												</Stack>
 											) : (
