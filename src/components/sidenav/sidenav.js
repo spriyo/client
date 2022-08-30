@@ -80,7 +80,7 @@ export function SideNav() {
 								disablePortal: true,
 							}}
 							onClose={handleTooltipClose}
-							open={true}
+							open={discordNotifOpen}
 							title="Join our socials to win a chance for amazing aidrops🎁"
 							arrow
 							placement="top"
