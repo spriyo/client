@@ -8,10 +8,33 @@ import {
 } from "react-icons/ai";
 import { BsBookmarkStar } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, Link, Stack, styled, Tooltip } from "@mui/material";
 import { BiImport } from "react-icons/bi";
+import instagramLogo from "../../assets/instagram.png";
+import discordLogo from "../../assets/discord.png";
+import twitterLogo from "../../assets/twitter.png";
+import { useEffect, useState } from "react";
 
 export function SideNav() {
+	const FastLink = styled(Link)(({ theme }) => ({
+		color: theme.palette.text.primary,
+		textDecoration: "none",
+	}));
+
+	const [discordNotifOpen, setDiscordNotifOpen] = useState(false);
+	const handleTooltipClose = () => {
+		setDiscordNotifOpen(false);
+	};
+
+	useEffect(() => {
+		setTimeout(() => {
+			setDiscordNotifOpen(true);
+		}, 100);
+		setTimeout(() => {
+			setDiscordNotifOpen(false);
+		}, 5000);
+	}, []);
+
 	return (
 		<div className="sidenav">
 			<div className="sidenav-container">
@@ -37,11 +60,6 @@ export function SideNav() {
 
 					{/* Title */}
 					<p className="sidenav-title">Account</p>
-					<SideNavOption
-						icon={<AiOutlineProfile />}
-						optionTitle="My Portfolio"
-						to="/profile"
-					/>
 					<SideNavOption icon={<AiOutlineWallet />} optionTitle="Wallet" />
 					<SideNavOption icon={<BsBookmarkStar />} optionTitle="Wishlist" />
 					<SideNavOption
@@ -53,7 +71,36 @@ export function SideNav() {
 				</div>
 
 				<div className="sidenav-footer">
-					<div>
+					<Stack direction={"row"}>
+						<FastLink target={"_blank"} href="https://instagram.com/spriyo.xyz">
+							<img src={instagramLogo} alt="instagram" />
+						</FastLink>
+						<Tooltip
+							PopperProps={{
+								disablePortal: true,
+							}}
+							onClose={handleTooltipClose}
+							open={true}
+							title="Join our socials to win a chance for amazing aidrops🎁"
+							arrow
+							placement="top"
+							componentsProps={{
+								tooltip: {
+									sx: {
+										textAlign: "center",
+									},
+								},
+							}}
+						>
+							<FastLink href="https://twitter.com/spriyomarket">
+								<img src={twitterLogo} alt="twitter" />
+							</FastLink>
+						</Tooltip>
+						<FastLink href="https://discord.gg/pY3p7UNDd6">
+							<img src={discordLogo} alt="Discord" />
+						</FastLink>
+					</Stack>
+					<div style={{ borderTop: "1px solid #ddddeb" }}>
 						<img src="spriyo.png" alt="logo" height={20} />
 					</div>
 					<div>

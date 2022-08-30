@@ -5,11 +5,11 @@ import { SearchComponent } from "../search/SearchComponent";
 import { ButtonComponent } from "../ButtonComponent";
 import { ConnectComponent } from "../ConnectComponent";
 import { CircularProfile } from "../CircularProfileComponent";
-import { Avatar, Box, Menu, Stack, Tooltip } from "@mui/material";
+import { Avatar, Box, Menu, Stack } from "@mui/material";
 import logo from "../../assets/spriyo.png";
 import DiscordLogo from "../../assets/discord-logo.png";
 import { IoIosMore } from "react-icons/io";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function NavbarComponent() {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -23,19 +23,6 @@ export function NavbarComponent() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-	const [discordNotifOpen, setDiscordNotifOpen] = useState(false);
-	const handleTooltipClose = () => {
-		setDiscordNotifOpen(false);
-	};
-
-	useEffect(() => {
-		setTimeout(() => {
-			setDiscordNotifOpen(true);
-		}, 100);
-		setTimeout(() => {
-			setDiscordNotifOpen(false);
-		}, 5000);
-	}, []);
 
 	return (
 		<Box
@@ -55,29 +42,6 @@ export function NavbarComponent() {
 				<small>beta</small>
 			</Box>
 			<div className="navbar-actions">
-				<Box sx={{ visibility: { xs: "hidden", md: "visible" } }}>
-					<Tooltip
-						PopperProps={{
-							disablePortal: true,
-						}}
-						onClose={handleTooltipClose}
-						open={discordNotifOpen}
-						title="Let's Chat"
-						arrow
-					>
-						<Box pr={2}>
-							<a href="https://discord.gg/pY3p7UNDd6" target="_blank">
-								<img
-									src={DiscordLogo}
-									alt="Discord Logo"
-									height={"30px"}
-									width={"auto"}
-								/>
-							</a>
-						</Box>
-					</Tooltip>
-				</Box>
-
 				{/* search */}
 				<Box sx={{ display: { xs: "none", md: "block" } }}>
 					<SearchComponent />
