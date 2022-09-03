@@ -9,7 +9,7 @@ import { FooterComponent } from "../components/FooterComponent";
 import { useState } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 const MultisigContract = require("../contracts/Meet.json");
-const contractAddress = "0xF54A74475e59b9A6fb5761BB6c2790B907266225";
+const contractAddress = process.env.IRL_CONTRACT;
 
 export const InteractIrl = () => {
 	const navigate = useNavigate();
@@ -59,7 +59,7 @@ export const InteractIrl = () => {
 			const a = await contract.methods
 				.activityInteractions(irlId, activityId, address)
 				.call();
-			setClaimed(true);
+			setClaimed(a);
 		} catch (error) {
 			alert(error.message);
 		}

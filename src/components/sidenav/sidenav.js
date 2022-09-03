@@ -7,6 +7,7 @@ import {
 	AiOutlineWallet,
 } from "react-icons/ai";
 import { BsBookmarkStar } from "react-icons/bs";
+import { MdOutlineEmojiEvents } from "react-icons/md"
 import { useNavigate } from "react-router-dom";
 import { Box, Link, Stack, styled, Tooltip } from "@mui/material";
 import { BiImport } from "react-icons/bi";
@@ -67,6 +68,7 @@ export function SideNav() {
 						optionTitle="Import"
 						to="/import"
 					/>
+					<SideNavOption icon={<MdOutlineEmojiEvents />} optionTitle="IRL" to="/irls" />
 					{/* <SideNavOption icon={<AiOutlineSetting />} optionTitle="Settings" /> */}
 				</div>
 
