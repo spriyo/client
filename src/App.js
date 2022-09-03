@@ -32,6 +32,7 @@ import { addNotification } from "./state/actions/notifications";
 import { ImportScreen } from "./screens/ImportScreen";
 import { FavoritesScreen } from "./screens/Favorites";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
+import { InteractIrl } from "./screens/InteractIrl";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -155,6 +156,7 @@ function App() {
 					<Route path="/import" exact element={<ImportScreen />} />
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
 					<Route path="/welcome" exact element={<WelcomeScreen />} />
+					<Route path="/interactirl/:irlId/:activityId" exact element={<InteractIrl />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />
 				</Routes>
 			</Router>
