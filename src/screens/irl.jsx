@@ -53,9 +53,7 @@ export const IRLScreen = () => {
 				.admins(user.address)
 				.call();
 			setIsAdmin(checkAdmin);
-			let count = await contractInstance.methods
-				.irlCount()
-				.call({ from: user.address });
+			let count = await contractInstance.methods.irlCount().call();
 			for (let i = 1; i <= count; i++) {
 				let data = await contractInstance.methods.irls(i).call();
 				setIrls((irls) => [...irls, data]);
@@ -85,7 +83,7 @@ export const IRLScreen = () => {
 						irls.map((ele, i) => {
 							return (
 								<Card
-									sx={{ maxWidth: 345 }}
+									sx={{ maxWidth: 345, m: 1 }}
 									style={{ padding: "5px" }}
 									key={i}
 									variant="outlined"

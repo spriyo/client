@@ -8,7 +8,7 @@ import ClaimIRL from "../assets/claim-irl.gif";
 import { FooterComponent } from "../components/FooterComponent";
 import { useState } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
-const MultisigContract = require("../contracts/Meet.json");
+const MeetContract = require("../contracts/Meet.json");
 const contractAddress = process.env.REACT_APP_IRL_CONTRACT;
 
 export const InteractIrl = () => {
@@ -23,7 +23,7 @@ export const InteractIrl = () => {
 			const address = await getAddress();
 			if (!irlId || !activityId) return;
 			const contract = new window.web3.eth.Contract(
-				MultisigContract.abi,
+				MeetContract.abi,
 				contractAddress
 			);
 
@@ -39,7 +39,7 @@ export const InteractIrl = () => {
 	async function getActivity() {
 		try {
 			const contract = new window.web3.eth.Contract(
-				MultisigContract.abi,
+				MeetContract.abi,
 				contractAddress
 			);
 			const a = await contract.methods.activities(irlId, activityId).call();
@@ -53,7 +53,7 @@ export const InteractIrl = () => {
 		try {
 			const address = await getAddress();
 			const contract = new window.web3.eth.Contract(
-				MultisigContract.abi,
+				MeetContract.abi,
 				contractAddress
 			);
 			const a = await contract.methods
