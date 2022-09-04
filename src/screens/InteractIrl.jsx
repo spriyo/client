@@ -1,7 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useEffect } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import SuccessLogo from "../assets/irl-claim-success.gif";
 import ClaimIRL from "../assets/claim-irl.gif";
@@ -9,7 +9,7 @@ import { FooterComponent } from "../components/FooterComponent";
 import { useState } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 const MultisigContract = require("../contracts/Meet.json");
-const contractAddress = process.env.IRL_CONTRACT;
+const contractAddress = process.env.REACT_APP_IRL_CONTRACT;
 
 export const InteractIrl = () => {
 	const navigate = useNavigate();
@@ -70,7 +70,7 @@ export const InteractIrl = () => {
 			const localUser = await JSON.parse(localStorage.getItem("user"));
 			if (!localUser) {
 				alert("Please connect metamask.");
-				Navigate("/");
+				navigate("/");
 			}
 			return localUser.address;
 		} catch (error) {

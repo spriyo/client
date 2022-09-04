@@ -46,8 +46,6 @@ export function ProfileScreen() {
 		setOpen(false);
 	};
 
-	const [value, setValue] = React.useState("1");
-
 	useEffect(() => {
 		getUser();
 	}, [username]);
@@ -125,7 +123,7 @@ export function ProfileScreen() {
 			>
 				<Typography variant="h1">NFT's</Typography>
 				<Box mb={2}></Box>
-				<TabContext value={value}>
+				<TabContext value={1}>
 					<NFTList
 						nftLoading={nftLoading}
 						assets={assets}
