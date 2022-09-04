@@ -251,8 +251,8 @@ export function AssetScreen() {
 										<Typography variant="h3" component="p">
 											Activity
 										</Typography>
-										<Box>
-											{asset.events.slice(0, 2).map((e, i) => (
+										<Box className="activityScroll">
+											{asset.events.map((e, i) => (
 												<Box key={i}>
 													<ActivityCardComponent event={e} asset={asset} />
 												</Box>
