@@ -1,15 +1,15 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useEffect } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import SuccessLogo from "../assets/irl-claim-success.gif";
 import ClaimIRL from "../assets/claim-irl.gif";
 import { FooterComponent } from "../components/FooterComponent";
 import { useState } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
-const MultisigContract = require("../contracts/Meet.json");
-const contractAddress = "0xF54A74475e59b9A6fb5761BB6c2790B907266225";
+const MeetContract = require("../contracts/Meet.json");
+const contractAddress = process.env.REACT_APP_IRL_CONTRACT;
 
 export const InteractIrl = () => {
 	const navigate = useNavigate();
@@ -23,7 +23,7 @@ export const InteractIrl = () => {
 			const address = await getAddress();
 			if (!irlId || !activityId) return;
 			const contract = new window.web3.eth.Contract(
-				MultisigContract.abi,
+				MeetContract.abi,
 				contractAddress
 			);
 
@@ -39,7 +39,7 @@ export const InteractIrl = () => {
 	async function getActivity() {
 		try {
 			const contract = new window.web3.eth.Contract(
-				MultisigContract.abi,
+				MeetContract.abi,
 				contractAddress
 			);
 			const a = await contract.methods.activities(irlId, activityId).call();
@@ -53,13 +53,13 @@ export const InteractIrl = () => {
 		try {
 			const address = await getAddress();
 			const contract = new window.web3.eth.Contract(
-				MultisigContract.abi,
+				MeetContract.abi,
 				contractAddress
 			);
 			const a = await contract.methods
 				.activityInteractions(irlId, activityId, address)
 				.call();
-			setClaimed(true);
+			setClaimed(a);
 		} catch (error) {
 			alert(error.message);
 		}
@@ -70,7 +70,7 @@ export const InteractIrl = () => {
 			const localUser = await JSON.parse(localStorage.getItem("user"));
 			if (!localUser) {
 				alert("Please connect metamask.");
-				Navigate("/");
+				navigate("/");
 			}
 			return localUser.address;
 		} catch (error) {

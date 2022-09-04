@@ -13,7 +13,7 @@ export function ActiveSaleComponent({ asset }) {
 				flexDirection: { xs: "column", md: "column", lg: "row" },
 			}}
 			onClick={() =>
-				navigate(`/assets/${asset.contract_address}/${asset.item_id}`)
+				navigate(`/assets/${asset.contract_address}/${asset.token_id}`)
 			}
 		>
 			<Box
@@ -21,18 +21,14 @@ export function ActiveSaleComponent({ asset }) {
 				sx={{
 					minHeight: "40vh",
 					marginRight: { xs: "0", md: "10px" },
-					backgroundImage:
-						asset.medias.length > 0 && asset.medias[0].mimetype === "video/mp4"
-							? "none"
-							: `url('${
-									asset.image ||
-									(asset.medias.length > 0 ? asset.medias[0].path : "")
-							  }')`,
+					backgroundImage: asset.image.includes(".mp4")
+						? "none"
+						: `url('${asset.image}')`,
 				}}
 			>
-				{asset.medias.length > 0 && asset.medias[0].mimetype === "video/mp4" ? (
+				{asset.image.includes(".mp4") ? (
 					<video style={{ maxHeight: "40vh" }} autoPlay muted loop>
-						<source src={asset.medias[0].path} type="video/mp4" />
+						<source src={asset.image} type="video/mp4" />
 					</video>
 				) : (
 					<div></div>

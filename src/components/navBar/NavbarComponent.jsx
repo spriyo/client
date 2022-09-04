@@ -29,6 +29,7 @@ export function NavbarComponent() {
 			sx={{
 				backgroundColor: "background.default",
 				padding: { xs: "9px 14px", md: "9px 45px" },
+				height: "auto",
 			}}
 			className="navbar-container"
 		>
@@ -55,7 +56,7 @@ export function NavbarComponent() {
 						<ButtonComponent
 							onClick={(event) => {
 								event.preventDefault();
-								navigate("/create");
+								navigate("/create/select");
 							}}
 							text="Create"
 							rounded={true}
@@ -129,7 +130,7 @@ export function NavbarComponent() {
 								<NavListItem title="Import" to="/import" />
 							</Box>
 							<Box m={1} p={1}>
-								<NavListItem title="Create" to="/create" />
+								<NavListItem title="Create" to="/create/select" />
 							</Box>
 						</Box>
 					</Menu>

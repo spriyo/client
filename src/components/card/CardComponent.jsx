@@ -33,18 +33,14 @@ export function CardComponent({ asset }) {
 			className="card-container"
 			position="relative"
 			style={{
-				backgroundImage:
-					asset.medias.length !== 0 && asset.medias[0].mimetype === "video/mp4"
-						? "none"
-						: `url('${
-								asset.image ||
-								(asset.medias.length !== 0 ? asset.medias[0].path : "")
-						  }')`,
+				backgroundImage: asset.image.includes(".mp4")
+					? "none"
+					: `url('${asset.image}')`,
 			}}
 		>
-			{asset.medias.length !== 0 && asset.medias[0].mimetype === "video/mp4" ? (
+			{asset.image.includes(".mp4") ? (
 				<video className="video-component" autoPlay muted loop>
-					<source src={asset.medias[0].path} type="video/mp4" />
+					<source src={asset.image} type="video/mp4" />
 				</video>
 			) : (
 				<div></div>
