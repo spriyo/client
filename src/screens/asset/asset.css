@@ -2,3 +2,15 @@
 	object-fit: cover;
 	height: auto;
 }
+
+.activityScroll {
+	max-height: 35vh;
+	-ms-overflow-style: none; /* for Internet Explorer, Edge */
+	scrollbar-width: none; /* for Firefox */
+	overflow-y: scroll;
+}
+
+/* hide scrollbar but allow scrolling */
+.activityScroll::-webkit-scrollbar {
+	display: none; /* for Chrome, Safari, and Opera */
+}
