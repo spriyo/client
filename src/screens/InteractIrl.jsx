@@ -79,10 +79,14 @@ export const InteractIrl = () => {
 	}
 
 	useEffect(() => {
-		setTimeout(() => {
+		const timer = setTimeout(() => {
 			checkClaimed();
 			getActivity();
 		}, 500);
+
+		return () => {
+			clearTimeout(timer);
+		};
 	}, []);
 
 	return (

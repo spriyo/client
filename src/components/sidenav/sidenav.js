@@ -7,7 +7,7 @@ import {
 	AiOutlineWallet,
 } from "react-icons/ai";
 import { BsBookmarkStar } from "react-icons/bs";
-import { MdOutlineEmojiEvents } from "react-icons/md"
+import { MdOutlineEmojiEvents } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { Box, Link, Stack, styled, Tooltip } from "@mui/material";
 import { BiImport } from "react-icons/bi";
@@ -28,12 +28,21 @@ export function SideNav() {
 	};
 
 	useEffect(() => {
-		setTimeout(() => {
+		const timer1 = setTimeout(() => {
 			setDiscordNotifOpen(true);
 		}, 100);
-		setTimeout(() => {
+		return () => {
+			clearTimeout(timer1);
+		};
+	}, []);
+
+	useEffect(() => {
+		const timer2 = setTimeout(() => {
 			setDiscordNotifOpen(false);
 		}, 5000);
+		return () => {
+			clearTimeout(timer2);
+		};
 	}, []);
 
 	return (
@@ -68,7 +77,11 @@ export function SideNav() {
 						optionTitle="Import"
 						to="/import"
 					/>
-					<SideNavOption icon={<MdOutlineEmojiEvents />} optionTitle="IRL" to="/irls" />
+					<SideNavOption
+						icon={<MdOutlineEmojiEvents />}
+						optionTitle="IRL"
+						to="/irls"
+					/>
 					{/* <SideNavOption icon={<AiOutlineSetting />} optionTitle="Settings" /> */}
 				</div>
 
