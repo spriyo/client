@@ -1,4 +1,4 @@
-import { Box, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import React from "react";
 import TabContext from "@mui/lab/TabContext";
 import LoadingImage from "../../assets/loading-image.gif";
@@ -45,6 +45,13 @@ export function ProfileScreen() {
 	const handleClose = (value) => {
 		setOpen(false);
 	};
+
+	async function updateFollowUser() {
+		const resolved = await authHttpService.updateFollowUser(user._id);
+		console.log(resolved);
+		// setUser(resolved.data);
+		// getUserAssets(resolved.data._id);
+	}
 
 	useEffect(() => {
 		getUser();
@@ -93,6 +100,27 @@ export function ProfileScreen() {
 														4
 												  )}...${user.username.slice(-4)}`
 												: user.username}
+											<br />
+											{user.following === false && (
+												<Button
+													variant="outlined"
+													color="success"
+													sx={{ mt: 1 }}
+													onClick={updateFollowUser}
+												>
+													Follow
+												</Button>
+											)}
+											{user.following === true && (
+												<Button
+													variant="outlined"
+													color="error"
+													sx={{ mt: 1 }}
+													onClick={updateFollowUser}
+												>
+													Unfollow
+												</Button>
+											)}
 										</p>
 									)}
 								</span>
