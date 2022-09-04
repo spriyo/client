@@ -105,4 +105,20 @@ export class AuthHttpService {
 		);
 		return resolved;
 	}
+
+	async updateFollowUser(id) {
+		const resolved = await resolve(
+			axios.post(
+				`${BASE_URL}/website/v1/follow/${id}`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${this.token}`,
+						"Content-Type": "application/json",
+					},
+				}
+			)
+		);
+		return resolved;
+	}
 }
