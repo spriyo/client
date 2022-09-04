@@ -174,21 +174,40 @@ export const IrlCreate = () => {
 							flexDirection: "column",
 							alignItems: "center",
 							justifyContent: "center",
+							border: "2px solid grey",
+							borderRadius: "8px",
+							p: 2,
+							borderStyle: "dashed",
 						}}
 					>
 						<Box m={1}>
 							<h2>Create IRL</h2>
 						</Box>
 						<Box>
-							{file && (
+							{file ? (
 								<img
 									src={window.URL.createObjectURL(file)}
 									alt="IRL Image"
-									height={"100px"}
+									height="100px"
+									width="200px"
 								/>
+							) : (
+								<Box
+									height="100px"
+									width="200px"
+									sx={{
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										backgroundColor: "#f0f0f0",
+										borderRadius: "8px",
+									}}
+								>
+									<small>Add Image</small>
+								</Box>
 							)}
 						</Box>
-						<Box m={1}>
+						<Box m={1} sx={{ width: "-webkit-fill-available" }}>
 							<label htmlFor="file-upload" className="custom-file-upload">
 								<input
 									type="file"
@@ -198,7 +217,14 @@ export const IrlCreate = () => {
 									style={{ display: "none" }}
 								/>
 								<Box
-									sx={{ p: 0.4, border: "1px solid grey", cursor: "pointer" }}
+									sx={{
+										p: 0.4,
+										border: "1px solid grey",
+										cursor: "pointer",
+										width: "100%",
+										textAlign: "center",
+										fontWeight: "medium",
+									}}
 								>
 									{`${file ? "Change Image" : "Upload Image"}`}
 								</Box>
@@ -208,14 +234,15 @@ export const IrlCreate = () => {
 							type="text"
 							placeholder="Event name"
 							onChange={(e) => (irlName = e.target.value)}
-							style={{ width: "120px", padding: "4px" }}
+							style={{ padding: "4px" }}
 						/>
-						<Box m={1} mt={2}>
+						<Box m={1} mt={2} sx={{ width: "-webkit-fill-available" }}>
 							<Button
 								size="small"
 								variant="contained"
 								endIcon={<IoChevronForwardOutline />}
 								onClick={() => createIrl()}
+								sx={{ width: "100%" }}
 							>
 								Create
 							</Button>
@@ -228,6 +255,10 @@ export const IrlCreate = () => {
 							flexDirection: "column",
 							alignItems: "center",
 							justifyContent: "center",
+							border: "2px solid grey",
+							borderRadius: "8px",
+							p: 2,
+							borderStyle: "dashed",
 						}}
 					>
 						<Box m={1}>
@@ -251,7 +282,7 @@ export const IrlCreate = () => {
 								</Select>
 							</FormControl>
 						</Box>
-						<Box m={1}>
+						<Box mt={1}>
 							<input
 								type="text"
 								placeholder="Activity Name"
@@ -259,7 +290,7 @@ export const IrlCreate = () => {
 								style={{ width: "120px", padding: "4px" }}
 							/>
 						</Box>
-						<Box m={1}>
+						<Box mt={1}>
 							<input
 								type="text"
 								placeholder="Award in SHM"
@@ -273,24 +304,33 @@ export const IrlCreate = () => {
 								variant="contained"
 								endIcon={<IoChevronForwardOutline />}
 								onClick={() => createActivity()}
+								sx={{ minWidth: "120px" }}
 							>
-								Create Activity
+								Create
 							</Button>
 						</Box>
 					</Box>
 				)}
 				<Box m={1}>
-					<p
-						style={{
-							fontWeight: "bold",
-							color: "blue",
-							textDecoration: "underline",
-							cursor: "pointer",
-						}}
-						onClick={() => setisActivity((a) => !a)}
-					>
-						{isActivity ? "Add Activity" : "Create IRL"}
-					</p>
+					<small>
+						<span>
+							{isActivity
+								? "Want to create an activity?"
+								: "Want to create an IRL?"}
+							&nbsp;
+						</span>
+						<span
+							style={{
+								fontWeight: "bold",
+								color: "blue",
+								textDecoration: "underline",
+								cursor: "pointer",
+							}}
+							onClick={() => setisActivity((a) => !a)}
+						>
+							{isActivity ? "Add Activity" : "Create IRL"}
+						</span>
+					</small>
 				</Box>
 			</Box>
 			<FooterComponent />
