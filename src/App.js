@@ -35,6 +35,7 @@ import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { InteractIrl } from "./screens/InteractIrl";
 import { IRLScreen } from "./screens/irl";
 import { IRLActivityScreen } from "./screens/irlActivity";
+import { IrlCreate } from "./screens/IrlCreate";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -157,6 +158,7 @@ function App() {
 					<Route path="/blogs/:name" exact element={<BlogScreen />} />
 					<Route path="/import" exact element={<ImportScreen />} />
 					<Route path="/irls" exact element={<IRLScreen />} />
+					<Route path="/irls/create" exact element={<IrlCreate />} />
 					<Route path="/irls/:irlId" exact element={<IRLActivityScreen />} />
 					<Route path="/irls/interact/:irlId/:activityId" exact element={<InteractIrl />} />
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
