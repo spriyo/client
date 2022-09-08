@@ -29,6 +29,7 @@ export function NavbarComponent() {
 			sx={{
 				backgroundColor: "background.default",
 				padding: { xs: "9px 14px", md: "9px 45px" },
+				height: "auto",
 			}}
 			className="navbar-container"
 		>
