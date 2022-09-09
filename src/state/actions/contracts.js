@@ -15,3 +15,12 @@ export const initNFTContract = (nftContract) => {
 		},
 	};
 };
+
+export const initNFT1155Contract = (nftContract) => {
+	return {
+		type: "INIT_NFT_1155_CONTRACT",
+		payload: {
+			nftContract,
+		},
+	};
+};

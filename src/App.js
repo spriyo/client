@@ -22,8 +22,10 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import marketJsonInterface from "./contracts/Market.json";
 import nftJsonInterface from "./contracts/Spriyo.json";
+import nft1155JsonInterface from "./contracts/Spriyo1155.json";
 import {
 	initMarketContract,
+	initNFT1155Contract,
 	initNFTContract,
 } from "./state/actions/contracts.js";
 import { ExploreScreen } from "./screens/ExploreScreen";
@@ -36,6 +38,8 @@ import { InteractIrl } from "./screens/InteractIrl";
 import { IRLScreen } from "./screens/irl";
 import { IRLActivityScreen } from "./screens/irlActivity";
 import { IrlCreate } from "./screens/IrlCreate";
+import { SelectCreate } from "./screens/create/select/SelectCreate";
+import { Create1155 } from "./screens/create/erc1155/Create1155";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -122,7 +126,13 @@ function App() {
 				nftJsonInterface.abi,
 				nftJsonInterface.networks[currentChainId].address
 			);
+
+			const contract1155 = new window.web3.eth.Contract(
+				nft1155JsonInterface.abi,
+				nft1155JsonInterface.networks[currentChainId].address
+			);
 			dispatch(initNFTContract(contract));
+			dispatch(initNFT1155Contract(contract1155));
 		} catch (error) {
 			console.log(error);
 		}
@@ -154,13 +164,19 @@ function App() {
 						element={<AssetScreen />}
 					/>
 					<Route path="/create" exact element={<CreateScreen />} />
+					<Route path="/create/select" exact element={<SelectCreate />} />
+					<Route path="/create/multiple" exact element={<Create1155 />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
 					<Route path="/blogs/:name" exact element={<BlogScreen />} />
 					<Route path="/import" exact element={<ImportScreen />} />
 					<Route path="/irls" exact element={<IRLScreen />} />
 					<Route path="/irls/create" exact element={<IrlCreate />} />
 					<Route path="/irls/:irlId" exact element={<IRLActivityScreen />} />
-					<Route path="/irls/interact/:irlId/:activityId" exact element={<InteractIrl />} />
+					<Route
+						path="/irls/interact/:irlId/:activityId"
+						exact
+						element={<InteractIrl />}
+					/>
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
 					<Route path="/welcome" exact element={<WelcomeScreen />} />
 					<Route path="*" exact element={<p>Invalid route</p>} />

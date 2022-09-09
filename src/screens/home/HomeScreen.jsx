@@ -63,7 +63,7 @@ function HomeScreen() {
 				"Create NFT",
 				1,
 				() => {
-					navigate("/create");
+					navigate("/create/select");
 				}
 			)
 		);

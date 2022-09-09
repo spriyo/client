@@ -56,7 +56,7 @@ export function NavbarComponent() {
 						<ButtonComponent
 							onClick={(event) => {
 								event.preventDefault();
-								navigate("/create");
+								navigate("/create/select");
 							}}
 							text="Create"
 							rounded={true}
