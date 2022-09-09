@@ -1,0 +1,44 @@
+.mail-template-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	width: 100vw;
+	background-image: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	/* background-clip: text; */
+	/* -webkit-background-clip: text; */
+	/* -webkit-text-fill-color: transparent; */
+	/* animation: hue 20s infinite linear;
+	-webkit-animation: hue 20s infinite linear; */
+}
+
+/* @keyframes hue {
+	from {
+		-webkit-filter: hue-rotate(0deg);
+	}
+
+	to {
+		-webkit-filter: hue-rotate(-360deg);
+	}
+} */
+
+.mail-template-container-inner {
+	width: 60vw;
+	border-radius: 8px;
+	/* padding: 18px 0; */
+	background-color: #ffffff;
+}
+
+.mail-divider-line {
+	height: 3px;
+	width: 100%;
+	background-color: rgba(0, 199, 117, 0.75);
+}
+
+.mail-footer {
+	/* width: 100%; */
+	display: "flex";
+	flex-direction: "column";
+	align-items: center;
+	justify-content: center;
+}
