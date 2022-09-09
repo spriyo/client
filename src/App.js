@@ -41,6 +41,9 @@ import { IrlCreate } from "./screens/IrlCreate";
 import { SelectCreate } from "./screens/create/select/SelectCreate";
 import { Create1155 } from "./screens/create/erc1155/Create1155";
 
+//
+import MailTemplate from "./components/mail/mailTemplate";
+//
 function App() {
 	const authHttpService = new AuthHttpService();
 	const dispatch = useDispatch();
@@ -156,6 +159,7 @@ function App() {
 			<Router>
 				<Routes>
 					<Route path="/" exact element={<HomeScreen />} />
+					<Route path="/mail" exact element={<MailTemplate />} />
 					<Route path="/:username" exact element={<ProfileScreen />} />
 					{/* :username can be address, username or _id */}
 					<Route
