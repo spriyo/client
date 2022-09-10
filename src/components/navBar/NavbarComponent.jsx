@@ -130,7 +130,7 @@ export function NavbarComponent() {
 								<NavListItem title="Import" to="/import" />
 							</Box>
 							<Box m={1} p={1}>
-								<NavListItem title="Create" to="/create" />
+								<NavListItem title="Create" to="/create/select" />
 							</Box>
 						</Box>
 					</Menu>

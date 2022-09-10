@@ -8,7 +8,8 @@ import { NftStorageHttpService } from "../../../api/nftStorage";
 import { getWalletAddress } from "../../../utils/wallet";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { NFTHttpService } from "../../../api/nft";
+import { NFTHttpService } from "../../../api/v2/nft";
+import { Resolved } from "../../../models/resolved";
 
 export const Create1155 = () => {
 	const [file, setFile] = useState(null);
@@ -50,11 +51,13 @@ export const Create1155 = () => {
 			);
 
 			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
-			await mintAsset(metaDataUrl, formInput.copies);
+			const resolved = await mintAsset(metaDataUrl, formInput.copies);
 			setLoading(false);
 
 			// Redirect to home page
-			// navigate("/", { replace: true });
+			if (!Resolved.error) {
+				navigate("/", { replace: true });
+			}
 		} catch (error) {
 			alert(error.message);
 		}
@@ -78,7 +81,6 @@ export const Create1155 = () => {
 			);
 		} catch (error) {
 			alert(error.message);
-			console.log(error);
 		}
 	}
 

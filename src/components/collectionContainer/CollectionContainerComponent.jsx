@@ -26,7 +26,7 @@ export function CollectionContainer({ assets, title }) {
 								<Box
 									onClick={() =>
 										navigate(
-											`/assets/${asset.contract_address}/${asset.item_id}`
+											`/assets/${asset.contract_address}/${asset.token_id}`
 										)
 									}
 								>

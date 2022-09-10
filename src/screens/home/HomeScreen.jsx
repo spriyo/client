@@ -15,19 +15,20 @@ import { ChangeNetworkComponent } from "../../components/ChangeNetworkComponent"
 import { switchChain } from "../../state/actions/wallet";
 import { useNavigate } from "react-router-dom";
 import { addNotification } from "../../state/actions/notifications";
+import { SearchHttpService } from "../../api/v2/search";
 
 function HomeScreen() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const saleHttpService = new SaleHttpService();
+	const searchHttpService = new SearchHttpService();
 	const displayHttpService = new DisplayHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [onSaleItems, setOnSaleItems] = useState([]);
-	const [topCreators, setTopCreators] = useState([]);
 
 	async function getRecentlyAdded() {
-		const resolved = await displayHttpService.searchAssets({
+		const resolved = await searchHttpService.searchAssets({
 			chainId: chainId,
 		});
 		if (!resolved.error) {
@@ -40,11 +41,6 @@ function HomeScreen() {
 			chainId: chainId,
 		});
 		setOnSaleItems(resolved.data.map((e) => e.asset_id));
-	}
-
-	async function getTopCollectors() {
-		const resolved = await displayHttpService.getTopCreators();
-		setTopCreators(resolved.data.map((e) => e.user));
 	}
 
 	function onNetworkChange(network) {
@@ -70,7 +66,6 @@ function HomeScreen() {
 	}
 
 	useEffect(() => {
-		getTopCollectors();
 		getRecentlyAdded();
 		getActiveSales();
 		updateNotification();
@@ -104,12 +99,12 @@ function HomeScreen() {
 							}}
 						>
 							<div style={{ flex: 2 }}>
-								{(onSaleItems.length > 0 && (
+								{/* {(onSaleItems.length > 0 && (
 									<ActiveSaleComponent asset={onSaleItems[0]} />
 								)) ||
 									(recentlyAddedItems.length > 0 && (
 										<ActiveSaleComponent asset={recentlyAddedItems[0]} />
-									))}
+									))} */}
 							</div>
 							<Box
 								sx={{
@@ -118,10 +113,7 @@ function HomeScreen() {
 									marginTop: { xs: "24px", md: "0" },
 								}}
 							>
-								<HighlightsComponent
-									data={topCreators.slice(0, 8)}
-									title="Shardeum Chat🔥"
-								/>
+								<HighlightsComponent title="Shardeum Chat🔥" />
 							</Box>
 						</Box>
 						<ChangeNetworkComponent
@@ -133,7 +125,7 @@ function HomeScreen() {
 							assets={recentlyAddedItems}
 						/>
 						<div style={{ margin: "20px" }}></div>
-						<CollectionContainer title={"On Sale"} assets={onSaleItems} />
+						{/* <CollectionContainer title={"On Sale"} assets={onSaleItems} /> */}
 					</Box>
 				</Box>
 				<Box sx={{ display: { xs: "block", md: "none" } }}>

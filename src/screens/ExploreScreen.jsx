@@ -20,10 +20,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useLocationChange } from "../utils/useLocationChange";
 import { ChangeNetworkComponent } from "../components/ChangeNetworkComponent";
 import { switchChain } from "../state/actions/wallet";
+import { SearchHttpService } from "../api/v2/search";
 
 export const ExploreScreen = ({ listen }) => {
 	const dispatch = useDispatch();
-	const displayHttpService = new DisplayHttpService();
+	const searchHttpService = new SearchHttpService();
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [createdAt, setCreatedAt] = useState("desc");
 	let skip = useRef(0);
@@ -40,7 +41,7 @@ export const ExploreScreen = ({ listen }) => {
 			recentlyAddedItemsRef.current = [];
 			setRecentlyAddedItems(recentlyAddedItemsRef.current);
 		}
-		const resolved = await displayHttpService.searchAssets({
+		const resolved = await searchHttpService.searchAssets({
 			skip: skip.current,
 			createdAt: createdAtRef.current,
 			query: query || "",
