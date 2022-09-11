@@ -60,7 +60,7 @@ hr {
 .image-container .image-dropper {
 	margin-top: 26px;
 	background-color: #efeff8;
-	border: 1px solid #b1b1b1;
+	border: 2px solid #b1b1b1;
 	border-style: dashed;
 	border-radius: 10px;
 	height: 280px;
@@ -112,7 +112,10 @@ hr {
 .data-container-field textarea {
 	background-color: #efeff8;
 	padding: 14px;
-	width: 100%;
+	/* width: 100%; */
+	width: 50vw;
+	max-width: 400px;
+	min-width: 200px;
 	border-radius: 12px;
 	border: none;
 	margin-bottom: 12px;

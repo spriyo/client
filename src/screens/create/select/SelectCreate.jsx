@@ -5,6 +5,9 @@ import { BoxShadow } from "../../../components/BoxShadow";
 import { FooterComponent } from "../../../components/FooterComponent";
 import { NavbarComponent } from "../../../components/navBar/NavbarComponent";
 
+import multi from "../../../assets/multi.png";
+import single from "../../../assets/single.png";
+
 export const SelectCreate = () => {
 	const navigate = useNavigate();
 	return (
@@ -45,24 +48,37 @@ export const SelectCreate = () => {
 						}}
 					>
 						<BoxShadow>
-							<Box
+							<Stack
 								sx={{
-									display: "flex",
-									flexDirection: "column",
+									textAlign: "center",
 									alignItems: "center",
+									flexDirection: { md: "column", xs: "row" },
 									p: 3,
 									border: "1px solid #e8e8e8",
 									borderRadius: "8px",
 								}}
 								onClick={() => navigate("/create")}
 							>
-								<Typography variant="h2">Single</Typography>
-								&nbsp;
-								<Typography variant="h5" color="text.primary">
-									Can be used to express unique items,{" "}
-									<pre>only one item per token ID.</pre>
-								</Typography>
-							</Box>
+								<img src={single} alt="single" height="100px" width="100px" />
+								<Box
+									sx={{
+										display: "flex",
+										flexDirection: "column",
+										alignItems: "center",
+										width: "100%",
+										px: 2,
+									}}
+								>
+									<Typography variant="h2" sx={{ my: 1 }}>
+										Single
+									</Typography>
+
+									<Typography variant="h5" color="text.primary">
+										Can be used to express unique items,{" "}
+										<pre>only one item per token ID.</pre>
+									</Typography>
+								</Box>
+							</Stack>
 						</BoxShadow>
 					</Box>
 					<Box
@@ -74,24 +90,37 @@ export const SelectCreate = () => {
 						}}
 					>
 						<BoxShadow>
-							<Box
+							<Stack
+								onClick={() => navigate("/create/multiple")}
 								sx={{
-									display: "flex",
-									flexDirection: "column",
+									textAlign: "center",
 									alignItems: "center",
+									flexDirection: { md: "column", xs: "row" },
 									p: 3,
 									border: "1px solid #e8e8e8",
 									borderRadius: "8px",
 								}}
-								onClick={() => navigate("/create/multiple")}
 							>
-								<Typography variant="h2">Multiple</Typography>
-								&nbsp;
-								<Typography variant="h5" color="text.primary">
-									Can have have multiple copies for the same token ID, and can
-									be distributed separately.
-								</Typography>
-							</Box>
+								<img src={multi} alt="multi" height="100px" width="100px" />
+								<Box
+									sx={{
+										display: "flex",
+										flexDirection: "column",
+										alignItems: "center",
+										width: "100%",
+										px: 2,
+									}}
+								>
+									<Typography variant="h2" sx={{ my: 1 }}>
+										Multiple
+									</Typography>
+
+									<Typography variant="h5" color="text.primary">
+										Can have have multiple copies for the same token ID, and can
+										be distributed separately.
+									</Typography>
+								</Box>
+							</Stack>
 						</BoxShadow>
 					</Box>
 				</Stack>

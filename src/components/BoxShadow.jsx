@@ -12,7 +12,10 @@ export const BoxShadow = (props) => {
 				cursor: "pointer",
 				"&:hover": {
 					transform: " scale(1.001)",
-					boxShadow: "rgba(149, 157, 165, 0.3) 0px 4px 24px",
+					// boxShadow: "rgba(149, 157, 165, 0.3) 0px 4px 24px",
+					// boxShadow: "0 0 8px rgba(149, 157, 165, 0.5)",
+					backgroundImage:
+						"linear-gradient(-45deg, #ee765220, #e73c7e20, #23a6d520, #23d5ab20)",
 				},
 			}}
 		>
