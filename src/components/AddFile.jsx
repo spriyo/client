@@ -43,7 +43,7 @@ export const AddFile = ({ onFileChange }) => {
 			const validFile = checkFileType(f.name);
 			if (!validFile) return;
 			setFile(f);
-            onFileChange(f)
+			onFileChange(f);
 		} catch (error) {
 			console.log("Error uploading file: ", error);
 		}
@@ -90,6 +90,9 @@ export const AddFile = ({ onFileChange }) => {
 							height: "200px",
 							textAlign: "center",
 							marginTop: "12px",
+							width: "50vw",
+							maxWidth: "400px",
+							minWidth: "200px",
 						}}
 						onClick={(e) => (file ? window.open(imageUrl, "_blank") : "")}
 						onDrop={(e) => dropHandler(e)}
