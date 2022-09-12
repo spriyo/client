@@ -42,9 +42,13 @@ export const IRLActivityScreen = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		setTimeout(() => {
+		const timer = setTimeout(() => {
 			fetchIRL();
 		}, 500);
+
+		return () => {
+			clearTimeout(timer);
+		};
 	}, []);
 
 	const handleOpen = (id) => {
@@ -103,7 +107,7 @@ export const IRLActivityScreen = () => {
 						activities.map((ele, i) => {
 							return (
 								<Card
-									sx={{ maxWidth: 345, padding: "5px",m:1 }}
+									sx={{ maxWidth: 345, padding: "5px", m: 1 }}
 									variant="outlined"
 									key={i}
 								>
@@ -120,7 +124,7 @@ export const IRLActivityScreen = () => {
 									<CardActions>
 										<Button
 											size="small"
-                                            variant="contained"
+											variant="contained"
 											onClick={() => handleOpen(ele.id)}
 										>
 											Print

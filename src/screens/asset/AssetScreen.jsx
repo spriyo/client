@@ -22,11 +22,13 @@ import { CircularProfile } from "../../components/CircularProfileComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { getNetworkByChainId } from "../../utils/getNetwork";
 import { getChainId, getWalletAddress, switchChain } from "../../utils/wallet";
+import { NFTHttpService } from "../../api/v2/nft";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
 	const [asset, setAsset] = useState(null);
 	const assetHttpService = new AssetHttpService();
+	const nftHttpService = new NFTHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
@@ -37,7 +39,7 @@ export function AssetScreen() {
 	// });
 
 	const getAsset = async function () {
-		const resolved = await assetHttpService.getAssetById(
+		const resolved = await nftHttpService.getAssetById(
 			contract_address,
 			token_id
 		);
@@ -68,7 +70,7 @@ export function AssetScreen() {
 				chain = ChainsConfig[c];
 			}
 		}
-		const url = `${chain.blockExplorerUrls[0]}token/${asset.contract_address}?a=${asset.item_id}`;
+		const url = `${chain.blockExplorerUrls[0]}token/${asset.contract_address}?a=${asset.token_id}`;
 		window.open(url);
 	}
 
@@ -76,7 +78,7 @@ export function AssetScreen() {
 		let isApproved = false;
 		try {
 			// Check for approval
-			const owner = await nftContract.methods.ownerOf(asset.item_id).call();
+			const owner = await nftContract.methods.ownerOf(asset.token_id).call();
 			if (asset.owner.address !== owner.toLowerCase()) {
 				alert(
 					"Cancel all the auctions or sales on this NFT before transfering."
@@ -119,12 +121,12 @@ export function AssetScreen() {
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
 		const gas = await nftContract.methods
-			.transferFrom(currentAddress, toAddresss, asset.item_id)
+			.transferFrom(currentAddress, toAddresss, asset.token_id)
 			.estimateGas({
 				from: currentAddress,
 			});
 		await nftContract.methods
-			.transferFrom(currentAddress, toAddresss, asset.item_id)
+			.transferFrom(currentAddress, toAddresss, asset.token_id)
 			.send({ from: currentAddress, gasPrice, gas });
 
 		// Create An Event in Backend
@@ -168,8 +170,7 @@ export function AssetScreen() {
 								}
 								m={1}
 							>
-								{asset.medias.length > 0 &&
-								asset.medias[0].mimetype === "video/mp4" ? (
+								{asset.image.includes(".mp4") ? (
 									<video style={{ maxHeight: "40vh" }} autoPlay muted loop>
 										<source src={asset.medias[0].path} type="video/mp4" />
 									</video>
@@ -193,17 +194,19 @@ export function AssetScreen() {
 											color={"text.secondary"}
 											component="p"
 										>
-											NFT ID : {asset.item_id}
+											NFT ID : {asset.token_id}
 										</Typography>
 									</Box>
 									{user && asset && user._id === asset.owner._id ? (
-										<ButtonComponent
-											text={loading ? "Transfering..." : "Transfer ▶️"}
-											onClick={() => {
-												if (loading) return;
-												approveMiddleware(transferNFT);
-											}}
-										/>
+										<Box>
+											<ButtonComponent
+												text={loading ? "Transfering..." : "Transfer ▶️"}
+												onClick={() => {
+													if (loading) return;
+													approveMiddleware(transferNFT);
+												}}
+											/>
+										</Box>
 									) : (
 										""
 									)}
@@ -250,8 +253,8 @@ export function AssetScreen() {
 										<Typography variant="h3" component="p">
 											Activity
 										</Typography>
-										<Box>
-											{asset.events.slice(0, 2).map((e, i) => (
+										<Box className="activityScroll">
+											{asset.events.map((e, i) => (
 												<Box key={i}>
 													<ActivityCardComponent event={e} asset={asset} />
 												</Box>

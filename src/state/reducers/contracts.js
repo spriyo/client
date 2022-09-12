@@ -1,6 +1,7 @@
 const contracts = {
 	marketContract: undefined,
 	nftContract: undefined,
+	nft1155Contract: undefined,
 };
 
 export const contractReducer = (state = contracts, action) => {
@@ -14,6 +15,11 @@ export const contractReducer = (state = contracts, action) => {
 			return {
 				...state,
 				nftContract: action.payload.nftContract,
+			};
+		case "INIT_NFT_1155_CONTRACT":
+			return {
+				...state,
+				nft1155Contract: action.payload.nftContract,
 			};
 		default:
 			return state;

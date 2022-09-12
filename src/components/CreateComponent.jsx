@@ -17,7 +17,7 @@ export function CreateComponent() {
 			<Box
 				onClick={(event) => {
 					event.preventDefault();
-					navigate("/create");
+					navigate("/create/select");
 				}}
 				style={styles}
 				sx={{ padding: { xs: "2px 4px", md: "4px 8px" } }}
