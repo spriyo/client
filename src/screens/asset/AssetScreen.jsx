@@ -198,13 +198,15 @@ export function AssetScreen() {
 										</Typography>
 									</Box>
 									{user && asset && user._id === asset.owner._id ? (
-										<ButtonComponent
-											text={loading ? "Transfering..." : "Transfer ▶️"}
-											onClick={() => {
-												if (loading) return;
-												approveMiddleware(transferNFT);
-											}}
-										/>
+										<Box>
+											<ButtonComponent
+												text={loading ? "Transfering..." : "Transfer ▶️"}
+												onClick={() => {
+													if (loading) return;
+													approveMiddleware(transferNFT);
+												}}
+											/>
+										</Box>
 									) : (
 										""
 									)}

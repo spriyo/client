@@ -37,7 +37,6 @@ export const Create1155 = () => {
 		if (!file) return alert("Please upload your image☹️");
 		if (!formInput.title || !formInput.description || !formInput.copies)
 			return alert("Please fill all the fields😥");
-		console.log(file, formInput);
 		try {
 			setLoading(true);
 
@@ -55,7 +54,7 @@ export const Create1155 = () => {
 			setLoading(false);
 
 			// Redirect to home page
-			if (!Resolved.error) {
+			if (!resolved.error) {
 				navigate("/", { replace: true });
 			}
 		} catch (error) {
@@ -71,14 +70,14 @@ export const Create1155 = () => {
 				.mint(currentAddress, copies, "0x")
 				.send({ from: currentAddress });
 
-			console.log(transaction);
-			await uploadToServer(
+			const resolved = await uploadToServer(
 				transaction.to,
 				parseInt(transaction.events.TransferSingle.returnValues.id),
 				metaDataUrl,
 				transaction.events.TransferSingle.returnValues.to,
 				transaction.events.TransferSingle.returnValues.value
 			);
+			return resolved;
 		} catch (error) {
 			alert(error.message);
 		}
@@ -111,7 +110,8 @@ export const Create1155 = () => {
 		formData.set("description", description);
 		formData.set("value", value);
 
-		await nftHttpService.createNFT1155(formData);
+		const resolved = await nftHttpService.createNFT(formData);
+		return resolved;
 	}
 
 	useEffect(() => {

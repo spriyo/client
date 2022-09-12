@@ -43,14 +43,14 @@ export const SelectCreate = () => {
 						sx={{
 							flex: 1,
 							m: { md: 0, xs: 1 },
-							ml: { md: 5, xs: 0 },
-							mr: { md: 1, xs: 0 },
+							ml: { md: 5, xs: 3 },
+							mr: { md: 1, xs: 3 },
 						}}
 					>
 						<BoxShadow>
 							<Stack
 								sx={{
-									textAlign: "center",
+									textAlign: { xs: "start", md: "center" },
 									alignItems: "center",
 									flexDirection: { md: "column", xs: "row" },
 									p: 3,
@@ -59,12 +59,12 @@ export const SelectCreate = () => {
 								}}
 								onClick={() => navigate("/create")}
 							>
-								<img src={single} alt="single" height="100px" width="100px" />
+								<img src={single} alt="single" height="90px" width="90px" />
 								<Box
 									sx={{
 										display: "flex",
 										flexDirection: "column",
-										alignItems: "center",
+										alignItems: { xs: "start", md: "center" },
 										width: "100%",
 										px: 2,
 									}}
@@ -85,15 +85,15 @@ export const SelectCreate = () => {
 						sx={{
 							flex: 1,
 							m: { md: 0, xs: 1 },
-							mr: { md: 5, xs: 0 },
-							ml: { md: 1, xs: 0 },
+							ml: { md: 5, xs: 3 },
+							mr: { md: 1, xs: 3 },
 						}}
 					>
 						<BoxShadow>
 							<Stack
 								onClick={() => navigate("/create/multiple")}
 								sx={{
-									textAlign: "center",
+									textAlign: { xs: "start", md: "center" },
 									alignItems: "center",
 									flexDirection: { md: "column", xs: "row" },
 									p: 3,
@@ -101,12 +101,12 @@ export const SelectCreate = () => {
 									borderRadius: "8px",
 								}}
 							>
-								<img src={multi} alt="multi" height="100px" width="100px" />
+								<img src={multi} alt="multi" height="90px" width="90px" />
 								<Box
 									sx={{
 										display: "flex",
 										flexDirection: "column",
-										alignItems: "center",
+										alignItems: { xs: "start", md: "center" },
 										width: "100%",
 										px: 2,
 									}}
