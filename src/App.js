@@ -40,6 +40,7 @@ import { IRLActivityScreen } from "./screens/irlActivity";
 import { IrlCreate } from "./screens/IrlCreate";
 import { SelectCreate } from "./screens/create/select/SelectCreate";
 import { Create1155 } from "./screens/create/erc1155/Create1155";
+import NotFound from "./screens/NotFound";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -175,7 +176,8 @@ function App() {
 					<Route path="/irls/interact/:irlId/:activityId" exact element={<InteractIrl />} />
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
 					<Route path="/welcome" exact element={<WelcomeScreen />} />
-					<Route path="*" exact element={<p>Invalid route</p>} />
+					<Route path="/user/notfound" exact element={<NotFound />} />
+					<Route path="*" exact element={<NotFound />} />
 				</Routes>
 			</Router>
 		</ThemeProvider>
