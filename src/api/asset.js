@@ -40,13 +40,6 @@ export class AssetHttpService {
 		return resolved;
 	}
 
-	async getUserAssets(userid) {
-		const resolved = await resolve(
-			axios.get(`${WEB_API_BASE_URL}/assets/user/` + userid)
-		);
-		return resolved;
-	}
-
 	async getAssetById(contract_address, token_id) {
 		const resolved = await resolve(
 			axios.get(`${WEB_API_BASE_URL}/assets/${contract_address}/${token_id}`)

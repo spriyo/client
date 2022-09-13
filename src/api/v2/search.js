@@ -11,12 +11,13 @@ export class SearchHttpService {
 		skip = 0,
 		query = "",
 		chainId,
+		owner,
 	}) {
 		const resolved = await resolve(
 			axios.get(
-				`${WEB_API_BASE_URL}/display/searchnft?createdAt=${createdAt}&limit=${limit}&skip=${skip}&query=${query}&chainId=${
+				`${WEB_API_BASE_URL}/display/searchnft?createdAt=${createdAt}&limit=${limit}&skip=${skip}&query=${query}&chain_id=${
 					chainId ?? ""
-				}`,
+				}&owner=${owner ?? ""}`,
 				{
 					headers: {
 						Authorization: `Bearer ${this.token}`,
