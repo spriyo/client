@@ -197,7 +197,6 @@ export function ActivityCardComponent({ event, asset }) {
 											color={"text.primary"}
 											sx={{ cursor: "pointer" }}
 										>
-											&nbsp;
 											{`by@${
 												event.user_id.username.length > 20
 													? `${event.user_id.username.substring(

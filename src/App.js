@@ -41,6 +41,7 @@ import { IrlCreate } from "./screens/IrlCreate";
 import { SelectCreate } from "./screens/create/select/SelectCreate";
 import { Create1155 } from "./screens/create/erc1155/Create1155";
 import NotFound from "./screens/NotFound";
+import { ActiveBids } from "./screens/ActiveBids";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -168,12 +169,17 @@ function App() {
 					<Route path="/create/select" exact element={<SelectCreate />} />
 					<Route path="/create/multiple" exact element={<Create1155 />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
+					<Route path="/bids" exact element={<ActiveBids />} />
 					<Route path="/blogs/:name" exact element={<BlogScreen />} />
 					<Route path="/import" exact element={<ImportScreen />} />
 					<Route path="/irls" exact element={<IRLScreen />} />
 					<Route path="/irls/create" exact element={<IrlCreate />} />
 					<Route path="/irls/:irlId" exact element={<IRLActivityScreen />} />
-					<Route path="/irls/interact/:irlId/:activityId" exact element={<InteractIrl />} />
+					<Route
+						path="/irls/interact/:irlId/:activityId"
+						exact
+						element={<InteractIrl />}
+					/>
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
 					<Route path="/welcome" exact element={<WelcomeScreen />} />
 					<Route path="/user/notfound" exact element={<NotFound />} />
