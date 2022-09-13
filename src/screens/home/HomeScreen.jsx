@@ -28,6 +28,7 @@ function HomeScreen() {
 	async function getRecentlyAdded() {
 		const resolved = await searchHttpService.searchAssets({
 			chainId: chainId,
+			limit:6
 		});
 		if (!resolved.error) {
 			setRecentlyAddedItems(resolved.data);

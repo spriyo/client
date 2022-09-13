@@ -3,7 +3,6 @@ import React from "react";
 import TabContext from "@mui/lab/TabContext";
 import LoadingImage from "../../assets/loading-image.gif";
 import { useEffect, useState } from "react";
-import { AssetHttpService } from "../../api/asset";
 import { FooterComponent } from "../../components/FooterComponent";
 import "./ProfileScreen.css";
 import { MdOutlineModeEditOutline } from "react-icons/md";
@@ -14,10 +13,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { CardComponent } from "../../components/card/CardComponent";
 import { AuthHttpService } from "../../api/auth";
 import { EmptyNftComponent } from "../../components/EmptyNftComponent";
+import { SearchHttpService } from "../../api/v2/search";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
 export function ProfileScreen() {
-	const assetHttpService = new AssetHttpService();
+	const searchHttpService = new SearchHttpService();
 	const authHttpService = new AuthHttpService();
 	const [assets, setAssets] = useState([]);
 	const [loggedUser, setLoggedUserUser] = useState({});
@@ -25,11 +25,13 @@ export function ProfileScreen() {
 	const { username } = useParams();
 	const [nftLoading, setNftLoading] = useState(false);
 
-	async function getUserAssets(id) {
+	async function getUserAssets() {
 		setNftLoading(true);
 		const localUser = await JSON.parse(localStorage.getItem("user"));
 		setLoggedUserUser(localUser ? localUser : {});
-		const resolved = await assetHttpService.getUserAssets(id);
+		const resolved = await searchHttpService.searchAssets({
+			owner: localUser.address,
+		});
 		setAssets(resolved.data);
 		setNftLoading(false);
 	}

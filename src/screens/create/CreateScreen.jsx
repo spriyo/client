@@ -48,7 +48,7 @@ export function CreateScreen({ closeModal }) {
 			);
 
 			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
-			await mintAsset(metaDataUrl, {
+			const resolved = await mintAsset(metaDataUrl, {
 				name: title,
 				description,
 				image: assetUrl,
@@ -56,7 +56,9 @@ export function CreateScreen({ closeModal }) {
 			setLoading(false);
 
 			// Redirect to home page
-			navigate("/", { replace: true });
+			if (!resolved.error) {
+				navigate("/", { replace: true });
+			}
 		} catch (error) {
 			console.log(error);
 			setLoading(false);
@@ -72,13 +74,14 @@ export function CreateScreen({ closeModal }) {
 				.mint(metaDataUrl)
 				.send({ from: currentAddress });
 
-			await uploadToServer(
+			const resolved = await uploadToServer(
 				transaction.to,
 				parseInt(transaction.events.Transfer.returnValues.tokenId),
 				metaDataUrl,
 				transaction.events.Transfer.returnValues.to,
 				metadata
 			);
+			return resolved;
 		} catch (error) {
 			alert(error.message);
 			console.log(error);
@@ -92,32 +95,36 @@ export function CreateScreen({ closeModal }) {
 		owner,
 		metadata
 	) {
-		// 2. Upload data to ipfs
-		const { title, description } = formInput;
-		if (!title || !description || !file)
-			return alert("Please ensure everything is filled.");
+		try {
+			const { title, description } = formInput;
+			if (!title || !description || !file)
+				return alert("Please ensure everything is filled.");
 
-		// Get chain details
-		const chainId = currentChainIdRef.current;
-		// Get contract details
+			// Get chain details
+			const chainId = currentChainIdRef.current;
 
-		var formData = new FormData();
-		formData.append("asset", file);
-		formData.set("name", title);
-		formData.set("description", description);
-		formData.set("chain_id", chainId);
-		formData.set("contract_address", contractAddress);
-		formData.set("metadata_url", metaDataUrl);
-		formData.set("token_id", itemId);
-		formData.set("type", "721");
-		formData.set("owner", owner);
-		formData.set("name", title);
-		formData.set("value", "1");
-		for (let previewKey in metadata) {
-			formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
+			var formData = new FormData();
+			formData.append("asset", file);
+			formData.set("name", title);
+			formData.set("description", description);
+			formData.set("chain_id", chainId);
+			formData.set("contract_address", contractAddress);
+			formData.set("metadata_url", metaDataUrl);
+			formData.set("token_id", itemId);
+			formData.set("type", "721");
+			formData.set("owner", owner);
+			formData.set("name", title);
+			formData.set("value", "1");
+			for (let previewKey in metadata) {
+				formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
+			}
+
+			const resolved = await nftHttpService.createNFT(formData);
+			return resolved;
+		} catch (error) {
+			alert(error.message);
+			console.log(error);
 		}
-
-		await nftHttpService.createNFT(formData);
 	}
 
 	function checkFileType(filename) {
