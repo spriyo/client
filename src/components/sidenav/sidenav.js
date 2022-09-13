@@ -59,6 +59,8 @@ export function SideNav() {
 					<SideNavOption
 						icon={<AiOutlineStock />}
 						optionTitle="My Active Bids"
+						to="/bids"
+
 					/>
 					<SideNavOption
 						icon={<AiOutlineHeart />}
