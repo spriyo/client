@@ -9,7 +9,6 @@ import { getWalletAddress } from "../../../utils/wallet";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { NFTHttpService } from "../../../api/v2/nft";
-import { Resolved } from "../../../models/resolved";
 
 export const Create1155 = () => {
 	const [file, setFile] = useState(null);
@@ -50,7 +49,7 @@ export const Create1155 = () => {
 			);
 
 			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
-			const resolved = await mintAsset(metaDataUrl, formInput.copies);
+			const resolved = await mintAsset(metaDataUrl, formInput.copies, assetUrl);
 			setLoading(false);
 
 			// Redirect to home page
@@ -62,7 +61,7 @@ export const Create1155 = () => {
 		}
 	}
 
-	async function mintAsset(metaDataUrl, copies) {
+	async function mintAsset(metaDataUrl, copies, assetUrl) {
 		try {
 			const currentAddress = await getWalletAddress();
 
@@ -75,7 +74,8 @@ export const Create1155 = () => {
 				parseInt(transaction.events.TransferSingle.returnValues.id),
 				metaDataUrl,
 				transaction.events.TransferSingle.returnValues.to,
-				transaction.events.TransferSingle.returnValues.value
+				transaction.events.TransferSingle.returnValues.value,
+				assetUrl
 			);
 			return resolved;
 		} catch (error) {
@@ -88,7 +88,8 @@ export const Create1155 = () => {
 		itemId,
 		metaDataUrl,
 		owner,
-		value
+		value,
+		assetUrl
 	) {
 		// 2. Upload data to ipfs
 		const { title, description } = formInput;
@@ -104,11 +105,14 @@ export const Create1155 = () => {
 		formData.set("chain_id", chainId);
 		formData.set("owner", owner);
 		formData.set("metadata_url", metaDataUrl);
-		formData.set("metadata", new Object());
 		formData.append("asset", file);
 		formData.set("name", title);
 		formData.set("description", description);
 		formData.set("value", value);
+		const metadata = { name: title, description, image: assetUrl }
+		for (let previewKey in metadata) {
+			formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
+		}
 
 		const resolved = await nftHttpService.createNFT(formData);
 		return resolved;

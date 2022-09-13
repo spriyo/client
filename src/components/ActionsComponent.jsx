@@ -180,14 +180,14 @@ export const ActionsComponent = ({ asset }) => {
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
 		const gas = await marketContract.methods
-			.makeOffer(asset.contract_address, asset.item_id, convertedAmount)
+			.makeOffer(asset.contract_address, asset.token_id, convertedAmount)
 			.estimateGas({
 				from: currentAddress,
 				value: convertedAmount,
 			});
 
 		const transaction = await marketContract.methods
-			.makeOffer(asset.contract_address, asset.item_id, convertedAmount)
+			.makeOffer(asset.contract_address, asset.token_id, convertedAmount)
 			.send({
 				from: currentAddress,
 				gasPrice,
@@ -268,7 +268,7 @@ export const ActionsComponent = ({ asset }) => {
 		window.web3.eth.handleRevert = true;
 		const convertedAmount = window.web3.utils.toWei(amount);
 		const tx = await marketContract.methods
-			.setBuyPrice(asset.contract_address, asset.item_id, convertedAmount)
+			.setBuyPrice(asset.contract_address, asset.token_id, convertedAmount)
 			.send({ from: currentAddress });
 		console.log(tx.events.EventSale.returnValues.id);
 
@@ -291,14 +291,14 @@ export const ActionsComponent = ({ asset }) => {
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
 		const gas = await marketContract.methods
-			.buy(asset.contract_address, asset.item_id, asset.events[0].data.sale_id)
+			.buy(asset.contract_address, asset.token_id, asset.events[0].data.sale_id)
 			.estimateGas({
 				from: currentAddress,
 				value: asset.events[0].data.amount,
 			});
 
 		const tx = await marketContract.methods
-			.buy(asset.contract_address, asset.item_id, asset.events[0].data.sale_id)
+			.buy(asset.contract_address, asset.token_id, asset.events[0].data.sale_id)
 			.send({
 				from: currentAddress,
 				value: asset.events[0].data.amount,
@@ -375,7 +375,7 @@ export const ActionsComponent = ({ asset }) => {
 			const currentAddress = await getWalletAddress();
 			// Check for approval
 			const approveAddress = await nftContract.methods
-				.getApproved(asset.item_id)
+				.getApproved(asset.token_id)
 				.call();
 			if (marketContract._address !== approveAddress) {
 				const isConfirmed = window.confirm(
@@ -383,7 +383,7 @@ export const ActionsComponent = ({ asset }) => {
 				);
 				if (isConfirmed) {
 					await nftContract.methods
-						.approve(marketContract._address, asset.item_id)
+						.approve(marketContract._address, asset.token_id)
 						.send({ from: currentAddress });
 					isApproved = true;
 				}
@@ -391,7 +391,7 @@ export const ActionsComponent = ({ asset }) => {
 				isApproved = true;
 			}
 		} catch (error) {
-			console.log(error.message);
+			console.log(error);
 		}
 		return isApproved;
 	}
@@ -409,7 +409,7 @@ export const ActionsComponent = ({ asset }) => {
 		const gas = await marketContract.methods
 			.createReserveAuction(
 				asset.contract_address,
-				asset.item_id,
+				asset.token_id,
 				convertedAmount
 			)
 			.estimateGas({
@@ -419,7 +419,7 @@ export const ActionsComponent = ({ asset }) => {
 		const tx = await marketContract.methods
 			.createReserveAuction(
 				asset.contract_address,
-				asset.item_id,
+				asset.token_id,
 				convertedAmount
 			)
 			.send({
@@ -544,8 +544,6 @@ export const ActionsComponent = ({ asset }) => {
 	}
 
 	async function bidAuction() {
-		// const txs = await marketContract.methods.auctions(8).call();
-		// console.log(txs);
 		const amount = prompt("Please enter bid amount.");
 		if (isNaN(parseFloat(amount))) return;
 
@@ -583,6 +581,10 @@ export const ActionsComponent = ({ asset }) => {
 
 	async function approveMiddleware(callback) {
 		try {
+			if (asset.type === "1155")
+				return alert(
+					"Feature yet to come on ERC-1155 token, try on ERC721 token."
+				);
 			setLoading(true);
 			const isApproved = await checkApproval();
 			if (!isApproved) return setLoading(false);
@@ -595,6 +597,10 @@ export const ActionsComponent = ({ asset }) => {
 
 	async function loadMiddleware(callback) {
 		try {
+			if (asset.type === "1155")
+				return alert(
+					"Feature yet to come on ERC-1155 token, try on ERC721 token."
+				);
 			setLoading(true);
 			await callback();
 			setLoading(false);

@@ -38,7 +38,7 @@ export function ActiveSaleComponent({ asset }) {
 				{/* Title */}
 				<div className="activebid-title">
 					<p className="activebid-title-name">{asset.name}</p>
-					<p className="activebid-title-id">NFT ID : {asset.item_id}</p>
+					<p className="activebid-title-id">NFT ID : {asset.token_id}</p>
 				</div>
 				{/* User */}
 				<div className="activebid-user-container">
