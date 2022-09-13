@@ -176,6 +176,7 @@ function App() {
 					<Route path="/irls/interact/:irlId/:activityId" exact element={<InteractIrl />} />
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
 					<Route path="/welcome" exact element={<WelcomeScreen />} />
+					<Route path="/user/notfound" exact element={<NotFound />} />
 					<Route path="*" exact element={<NotFound />} />
 				</Routes>
 			</Router>

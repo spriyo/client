@@ -24,13 +24,14 @@ export function ProfileScreen() {
 	const [user, setUser] = useState({});
 	const { username } = useParams();
 	const [nftLoading, setNftLoading] = useState(false);
+	const navigate = useNavigate();
 
-	async function getUserAssets() {
+	async function getUserAssets(address) {
 		setNftLoading(true);
 		const localUser = await JSON.parse(localStorage.getItem("user"));
 		setLoggedUserUser(localUser ? localUser : {});
 		const resolved = await searchHttpService.searchAssets({
-			owner: localUser.address,
+			owner: address,
 		});
 		setAssets(resolved.data);
 		setNftLoading(false);
@@ -39,7 +40,11 @@ export function ProfileScreen() {
 	async function getUser() {
 		const resolved = await authHttpService.getUserById(username);
 		setUser(resolved.data);
-		getUserAssets(resolved.data._id);
+		if (!resolved.error) {
+			getUserAssets(resolved.data.address);
+		}else{
+			navigate("/user/notfound");
+		}
 	}
 
 	const [open, setOpen] = useState(false);
@@ -198,7 +203,7 @@ export const NFTList = ({
 						{!thirdParty ? (
 							<Box
 								onClick={() =>
-									navigate(`/assets/${a.contract_address}/${a.item_id}`)
+									navigate(`/assets/${a.contract_address}/${a.token_id}`)
 								}
 							>
 								<CardComponent asset={a} />
