@@ -24,9 +24,13 @@ export const IRLScreen = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		setTimeout(() => {
+		const timer = setTimeout(() => {
 			fetchIRL();
 		}, 500);
+
+		return () => {
+			clearTimeout(timer);
+		};
 	}, []);
 
 	const redirectToActivity = (id) => {

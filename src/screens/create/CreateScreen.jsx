@@ -2,7 +2,6 @@ import "./CreateScreen.css";
 
 import { React, useEffect, useState } from "react";
 import { AiOutlineUpload } from "react-icons/ai";
-import { AssetHttpService } from "../../api/asset";
 import { getWalletAddress } from "../../utils/wallet";
 import { NftStorageHttpService } from "../../api/nftStorage";
 import { useNavigate } from "react-router-dom";
@@ -14,12 +13,13 @@ import { useDispatch } from "react-redux";
 import { switchChain as changeChain } from "../../utils/wallet";
 import { useRef } from "react";
 import { ButtonComponent } from "../../components/ButtonComponent";
+import { NFTHttpService } from "../../api/v2/nft";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
-	const assetHttpService = new AssetHttpService();
+	const nftHttpService = new NFTHttpService();
 	const nftStorageHttpService = new NftStorageHttpService();
 	const [formInput, updateFormInput] = useState({
 		title: "",
@@ -48,7 +48,11 @@ export function CreateScreen({ closeModal }) {
 			);
 
 			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
-			await mintAsset(metaDataUrl);
+			await mintAsset(metaDataUrl, {
+				name: title,
+				description,
+				image: assetUrl,
+			});
 			setLoading(false);
 
 			// Redirect to home page
@@ -59,7 +63,7 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
-	async function mintAsset(metaDataUrl) {
+	async function mintAsset(metaDataUrl, metadata) {
 		try {
 			if (!metaDataUrl) return;
 			const currentAddress = await getWalletAddress();
@@ -68,11 +72,12 @@ export function CreateScreen({ closeModal }) {
 				.mint(metaDataUrl)
 				.send({ from: currentAddress });
 
-			console.log(transaction);
 			await uploadToServer(
 				transaction.to,
 				parseInt(transaction.events.Transfer.returnValues.tokenId),
-				metaDataUrl
+				metaDataUrl,
+				transaction.events.Transfer.returnValues.to,
+				metadata
 			);
 		} catch (error) {
 			alert(error.message);
@@ -80,7 +85,13 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
-	async function uploadToServer(contractAddress, itemId, metaDataUrl) {
+	async function uploadToServer(
+		contractAddress,
+		itemId,
+		metaDataUrl,
+		owner,
+		metadata
+	) {
 		// 2. Upload data to ipfs
 		const { title, description } = formInput;
 		if (!title || !description || !file)
@@ -94,12 +105,19 @@ export function CreateScreen({ closeModal }) {
 		formData.append("asset", file);
 		formData.set("name", title);
 		formData.set("description", description);
-		formData.set("chainId", chainId);
+		formData.set("chain_id", chainId);
 		formData.set("contract_address", contractAddress);
-		formData.set("item_id", itemId);
 		formData.set("metadata_url", metaDataUrl);
+		formData.set("token_id", itemId);
+		formData.set("type", "721");
+		formData.set("owner", owner);
+		formData.set("name", title);
+		formData.set("value", "1");
+		for (let previewKey in metadata) {
+			formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
+		}
 
-		await assetHttpService.createAsset(formData);
+		await nftHttpService.createNFT(formData);
 	}
 
 	function checkFileType(filename) {
@@ -147,7 +165,6 @@ export function CreateScreen({ closeModal }) {
 					const f = ev.dataTransfer.items[i].getAsFile();
 					const validFile = checkFileType(f.name);
 					if (!validFile) return;
-					console.log(f);
 					setFile(f);
 				}
 			}

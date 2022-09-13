@@ -101,7 +101,7 @@ export const ChatComponent = () => {
 
 	useEffect(() => {
 		if (socketInitailized) return;
-		setTimeout(() => {
+		const timer = setTimeout(() => {
 			const wSocket = webSocket();
 			setWs(wSocket);
 		}, 1000);
@@ -113,6 +113,10 @@ export const ChatComponent = () => {
 				target.scroll({ top: target.scrollHeight, behavior: "smooth" });
 			});
 		}
+
+		return () => {
+			clearTimeout(timer);
+		};
 	}, []);
 
 	return (
@@ -129,12 +133,7 @@ export const ChatComponent = () => {
 							flexDirection: "column",
 						}}
 					>
-						<img
-							src={ChatImage}
-							height="150px"
-							width="150px"
-							alt="Chat Image"
-						/>
+						<img src={ChatImage} height="150px" width="150px" alt="Chat" />
 						{isChatLoaded ? (
 							<Box>
 								<Button
