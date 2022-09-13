@@ -6,7 +6,6 @@ import { ActiveSaleComponent } from "../../components/activeSale/ActiveSale";
 import { HighlightsComponent } from "../../components/highlights/HighlightsComponent";
 import { useEffect, useState } from "react";
 import { SaleHttpService } from "../../api/sale";
-import { DisplayHttpService } from "../../api/display";
 import { Box } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +21,6 @@ function HomeScreen() {
 	const navigate = useNavigate();
 	const saleHttpService = new SaleHttpService();
 	const searchHttpService = new SearchHttpService();
-	const displayHttpService = new DisplayHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [onSaleItems, setOnSaleItems] = useState([]);
@@ -99,12 +97,12 @@ function HomeScreen() {
 							}}
 						>
 							<div style={{ flex: 2 }}>
-								{/* {(onSaleItems.length > 0 && (
+								{(onSaleItems.length > 0 && (
 									<ActiveSaleComponent asset={onSaleItems[0]} />
 								)) ||
 									(recentlyAddedItems.length > 0 && (
 										<ActiveSaleComponent asset={recentlyAddedItems[0]} />
-									))} */}
+									))}
 							</div>
 							<Box
 								sx={{
@@ -125,7 +123,7 @@ function HomeScreen() {
 							assets={recentlyAddedItems}
 						/>
 						<div style={{ margin: "20px" }}></div>
-						{/* <CollectionContainer title={"On Sale"} assets={onSaleItems} /> */}
+						<CollectionContainer title={"On Sale"} assets={onSaleItems} />
 					</Box>
 				</Box>
 				<Box sx={{ display: { xs: "block", md: "none" } }}>

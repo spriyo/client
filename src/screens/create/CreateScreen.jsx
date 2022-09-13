@@ -48,7 +48,11 @@ export function CreateScreen({ closeModal }) {
 			);
 
 			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
-			await mintAsset(metaDataUrl);
+			await mintAsset(metaDataUrl, {
+				name: title,
+				description,
+				image: assetUrl,
+			});
 			setLoading(false);
 
 			// Redirect to home page
@@ -59,7 +63,7 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
-	async function mintAsset(metaDataUrl) {
+	async function mintAsset(metaDataUrl, metadata) {
 		try {
 			if (!metaDataUrl) return;
 			const currentAddress = await getWalletAddress();
@@ -68,12 +72,12 @@ export function CreateScreen({ closeModal }) {
 				.mint(metaDataUrl)
 				.send({ from: currentAddress });
 
-			console.log(transaction);
 			await uploadToServer(
 				transaction.to,
 				parseInt(transaction.events.Transfer.returnValues.tokenId),
 				metaDataUrl,
-				transaction.events.Transfer.returnValues.to
+				transaction.events.Transfer.returnValues.to,
+				metadata
 			);
 		} catch (error) {
 			alert(error.message);
@@ -81,7 +85,13 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
-	async function uploadToServer(contractAddress, itemId, metaDataUrl, owner) {
+	async function uploadToServer(
+		contractAddress,
+		itemId,
+		metaDataUrl,
+		owner,
+		metadata
+	) {
 		// 2. Upload data to ipfs
 		const { title, description } = formInput;
 		if (!title || !description || !file)
@@ -99,11 +109,13 @@ export function CreateScreen({ closeModal }) {
 		formData.set("contract_address", contractAddress);
 		formData.set("metadata_url", metaDataUrl);
 		formData.set("token_id", itemId);
-		formData.set("metadata", new Object());
 		formData.set("type", "721");
 		formData.set("owner", owner);
 		formData.set("name", title);
 		formData.set("value", "1");
+		for (let previewKey in metadata) {
+			formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
+		}
 
 		await nftHttpService.createNFT(formData);
 	}
@@ -153,7 +165,6 @@ export function CreateScreen({ closeModal }) {
 					const f = ev.dataTransfer.items[i].getAsFile();
 					const validFile = checkFileType(f.name);
 					if (!validFile) return;
-					console.log(f);
 					setFile(f);
 				}
 			}

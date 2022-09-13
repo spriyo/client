@@ -95,7 +95,11 @@ export function AssetScreen() {
 	async function approveMiddleware(callback) {
 		try {
 			if (!asset) return;
-			const chain = await getNetworkByChainId(parseInt(asset.chainId));
+			if (asset.type === "1155")
+				return alert(
+					"Feature yet to come on ERC-1155 token, try on ERC721 token."
+				);
+			const chain = await getNetworkByChainId(parseInt(asset.chain_id));
 			const currentChainId = await getChainId();
 			if (chain.chainId !== currentChainId) {
 				await switchChain(chain);
@@ -113,7 +117,7 @@ export function AssetScreen() {
 
 	async function transferNFT() {
 		const currentAddress = await getWalletAddress();
-		const toAddresss = await prompt(
+		const toAddresss = prompt(
 			"Please enter the address, NFT's sent to invalid address is lost forever!"
 		);
 		if (!toAddresss) return;
@@ -187,7 +191,7 @@ export function AssetScreen() {
 							{/* Details */}
 							<Box flex={1} m={1}>
 								<Box display="flex" justifyContent={"space-between"}>
-									<Box>
+									<Box mb={1}>
 										<Typography variant="h1">{asset.name}</Typography>
 										<Typography
 											variant="subtitle2"
@@ -196,6 +200,15 @@ export function AssetScreen() {
 										>
 											NFT ID : {asset.token_id}
 										</Typography>
+										{asset.type === "721" ? (
+											<Typography sx={{ color: "text.secondary" }} variant="subtitle2">
+												ERC-721
+											</Typography>
+										) : (
+											<Typography sx={{ color: "text.secondary" }} variant="subtitle2">
+												ERC-1155
+											</Typography>
+										)}
 									</Box>
 									{user && asset && user._id === asset.owner._id ? (
 										<Box>
