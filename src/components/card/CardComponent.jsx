@@ -1,4 +1,4 @@
-import { Avatar, Box } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { LikeHttpService } from "../../api/like";
@@ -80,9 +80,10 @@ export function CardComponent({ asset }) {
 				></div>
 				<div className="card-info-creator">
 					{/* created by */}
-					<p>
-						{asset.created_by && `Created : @${asset.created_by.displayName}`}
-					</p>
+					<Typography variant="h6">
+						{/* {asset.created_by && `Created : @${asset.created_by.displayName}`} */}
+						ERC-{asset.type}
+					</Typography>
 				</div>
 				<div className="card-info-top">
 					{/* title */}

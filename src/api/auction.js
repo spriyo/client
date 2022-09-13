@@ -72,4 +72,16 @@ export class AuctionHttpService {
 		);
 		return resolved;
 	}
+
+	async getBids() {
+		const resolved = await resolve(
+			axios.get(`${WEB_API_BASE_URL}/auctions/bids`, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "application/json",
+				},
+			})
+		);
+		return resolved;
+	}
 }
