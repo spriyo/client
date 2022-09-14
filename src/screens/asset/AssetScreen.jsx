@@ -55,22 +55,9 @@ export function AssetScreen() {
 		if (!resolved.error) {
 			const fetchedAsset = resolved.data;
 			setAsset(fetchedAsset);
-			if (
-				fetchedAsset.events.length !== 0 &&
-				(fetchedAsset.events[0].event_type === "bid" ||
-					fetchedAsset.events[0].event_type === "auction_create")
-			) {
-				getCurrentAuction(fetchedAsset.events);
-			}
 			getComments(fetchedAsset._id);
 		}
 	};
-
-	function getCurrentAuction(events) {
-		// const currentAuction = events.find(
-		// 	(event) => event.event_type === "auction_create"
-		// );
-	}
 
 	function handleExploreClick() {
 		const cid = chainId;
@@ -202,7 +189,10 @@ export function AssetScreen() {
 	useEffect(() => {
 		getAsset();
 		getAssetsFromCollection();
-	}, []);
+		return () => {
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		};
+	}, [contract_address, token_id]);
 
 	return (
 		<Box sx={{ backgroundColor: "#efeff8" }}>
@@ -343,7 +333,10 @@ export function AssetScreen() {
 					</Box>
 					<br />
 					{/* Meta Details */}
-					<Stack flexDirection={"row"} justifyContent="space-between">
+					<Stack
+						flexDirection={{ xs: "column", md: "row" }}
+						justifyContent="space-between"
+					>
 						{/* Comments */}
 						{user && (
 							<Box flex={1}>
@@ -479,7 +472,8 @@ export function AssetScreen() {
 								display: "flex",
 								flexDirection: "column",
 								justifyContent: "start",
-								ml: "90px",
+								ml: { xs: "0", md: "90px" },
+								mt: { xs: "24px", md: "0" },
 							}}
 							flex={1}
 						>
@@ -489,12 +483,14 @@ export function AssetScreen() {
 							<br />
 							<br />
 							<Typography variant="h1">Details</Typography>
-							<Chip
-								label="View on Explorer"
-								onClick={handleExploreClick}
-								icon={<BiLinkExternal />}
-								style={{ fontWeight: 600 }}
-							/>
+							<Box>
+								<Chip
+									label="View on Explorer"
+									onClick={handleExploreClick}
+									icon={<BiLinkExternal />}
+									style={{ fontWeight: 600 }}
+								/>
+							</Box>
 						</Box>
 					</Stack>
 				</Box>
