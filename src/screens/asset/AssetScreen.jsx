@@ -4,10 +4,12 @@ import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import {
 	Box,
 	Chip,
+	IconButton,
 	ListItem,
 	ListItemAvatar,
 	ListItemText,
 	Stack,
+	TextField,
 	Typography,
 } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
@@ -23,6 +25,11 @@ import { ButtonComponent } from "../../components/ButtonComponent";
 import { getNetworkByChainId } from "../../utils/getNetwork";
 import { getChainId, getWalletAddress, switchChain } from "../../utils/wallet";
 import { NFTHttpService } from "../../api/v2/nft";
+import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
+import { SearchHttpService } from "../../api/v2/search";
+import { RiDeleteBin5Line, RiSendPlane2Line } from "react-icons/ri";
+import { CommentHttpService } from "../../api/comment";
+import NoComment from "../../assets/no-comments.gif";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -34,9 +41,11 @@ export function AssetScreen() {
 	const navigate = useNavigate();
 	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 	const [loading, setLoading] = useState(false);
-	// const TagChip = styled(Chip)({
-	// 	margin: "4px",
-	// });
+	const [itemFromCollection, setItemFromCollection] = useState([]);
+	const searchHttpService = new SearchHttpService();
+	const commentHttpService = new CommentHttpService();
+	const [comments, setComments] = useState([]);
+	const [comment, setComment] = useState();
 
 	const getAsset = async function () {
 		const resolved = await nftHttpService.getAssetById(
@@ -53,6 +62,7 @@ export function AssetScreen() {
 			) {
 				getCurrentAuction(fetchedAsset.events);
 			}
+			getComments(fetchedAsset._id);
 		}
 	};
 
@@ -90,6 +100,52 @@ export function AssetScreen() {
 			console.log(error.message);
 		}
 		return isApproved;
+	}
+
+	async function getAssetsFromCollection() {
+		try {
+			const resolved = await searchHttpService.searchAssets({
+				chainId: chainId,
+				limit: 6,
+				skip: 6,
+			});
+			if (!resolved.error) {
+				setItemFromCollection(resolved.data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	function commentOnChange(text) {
+		setComment(text);
+	}
+
+	async function writeComment(nft_id, content) {
+		if (!content || comment === "" || !nft_id) return;
+		const data = {
+			nft_id,
+			content,
+		};
+		const resolved = await commentHttpService.writeComment(data);
+		if (!resolved.error) {
+			setComments((comments) => [resolved.data, ...comments]);
+			setComment("");
+		}
+	}
+
+	async function getComments(nftid) {
+		const resolved = await commentHttpService.getComments(nftid);
+		if (!resolved.error) {
+			setComments(resolved.data);
+		}
+	}
+
+	async function deleteComment(commentId) {
+		const resolved = await commentHttpService.deleteComment(commentId);
+		if (!resolved.error) {
+			setComments((comments) => comments.filter((c) => c._id !== commentId));
+		}
 	}
 
 	async function approveMiddleware(callback) {
@@ -145,6 +201,7 @@ export function AssetScreen() {
 
 	useEffect(() => {
 		getAsset();
+		getAssetsFromCollection();
 	}, []);
 
 	return (
@@ -201,11 +258,17 @@ export function AssetScreen() {
 											NFT ID : {asset.token_id}
 										</Typography>
 										{asset.type === "721" ? (
-											<Typography sx={{ color: "text.secondary" }} variant="subtitle2">
+											<Typography
+												sx={{ color: "text.secondary" }}
+												variant="subtitle2"
+											>
 												ERC-721
 											</Typography>
 										) : (
-											<Typography sx={{ color: "text.secondary" }} variant="subtitle2">
+											<Typography
+												sx={{ color: "text.secondary" }}
+												variant="subtitle2"
+											>
 												ERC-1155
 											</Typography>
 										)}
@@ -280,27 +343,160 @@ export function AssetScreen() {
 					</Box>
 					<br />
 					{/* Meta Details */}
-					<Box>
-						<Typography variant="h1">Description</Typography>
-						<Typography variant="body1">{asset.description}</Typography>
-						{/* <br />
-						<Typography variant="h1">Tags</Typography>
-						<TagChip label="Meta"></TagChip>
-						<TagChip label="Metaverse"></TagChip>
-						<TagChip label="Drawing"></TagChip>
-						<TagChip label="Painting"></TagChip>
-						<TagChip label="Pencil"></TagChip> */}
-						{/* Meta */}
-						<br />
-						<br />
-						<Typography variant="h1">Details</Typography>
-						<Chip
-							label="View on Explorer"
-							onClick={handleExploreClick}
-							icon={<BiLinkExternal />}
-							style={{ fontWeight: 600 }}
-						/>
-					</Box>
+					<Stack flexDirection={"row"} justifyContent="space-between">
+						{/* Comments */}
+						{user && (
+							<Box flex={1}>
+								<Typography variant="h1">Comments</Typography>
+								<Box mt={"20px"}>
+									{/* Write Comment */}
+									<Box display="flex">
+										<CircularProfile
+											userId={user._id}
+											userImgUrl={user.displayImage}
+										/>
+										<Box sx={{ width: "100%", ml: "16px" }}>
+											{/* Custom Textfield */}
+											<Box sx={{ borderRadius: "12px" }}>
+												<TextField
+													sx={{
+														backgroundColor: "white",
+														borderRadius: "12px",
+														paddingX: "12px",
+														paddingY: "10px",
+													}}
+													variant="standard"
+													InputProps={{
+														disableUnderline: true,
+														endAdornment: (
+															<IconButton
+																onClick={() => writeComment(asset._id, comment)}
+															>
+																<RiSendPlane2Line size={16} />
+															</IconButton>
+														),
+													}}
+													fullWidth
+													placeholder="Write your comment"
+													id="fullWidth"
+													value={comment}
+													onChange={(e) => commentOnChange(e.target.value)}
+												/>
+											</Box>
+										</Box>
+									</Box>
+
+									{/* Comment List */}
+									{comments.length === 0 ? (
+										<Box
+											sx={{
+												backgroundColor: "white",
+												mt: "8px",
+												p: 2,
+												borderRadius: "12px",
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												flexDirection: "column",
+											}}
+										>
+											<img width={"75px"} src={NoComment}></img>
+											<Typography variant="h5">
+												Be the first to comment😃
+											</Typography>
+										</Box>
+									) : (
+										comments.map((comment, i) => {
+											return (
+												<Box display="flex" mt={"14px"} key={i}>
+													<CircularProfile
+														userId={comment.userId._id}
+														userImgUrl={comment.userId.displayImage}
+													/>
+													<Box sx={{ width: "100%", ml: "16px" }}>
+														<Box
+															sx={{
+																backgroundColor: "white",
+																borderRadius: "12px",
+																paddingX: "12px",
+																paddingY: "10px",
+															}}
+														>
+															<Stack
+																flexDirection="row"
+																justifyContent="space-between"
+															>
+																<Typography variant="h6">
+																	{comment.userId.username}
+																</Typography>
+																{comment.userId._id === user._id && (
+																	<IconButton
+																		size="small"
+																		sx={{
+																			"&:hover": {
+																				color: "red",
+																			},
+																		}}
+																		onClick={() => deleteComment(comment._id)}
+																	>
+																		<RiDeleteBin5Line size={14} />
+																	</IconButton>
+																)}
+															</Stack>
+															<Typography
+																sx={{
+																	fontSize: "12px",
+																	color: "text.primary",
+																}}
+															>
+																{comment.content}
+															</Typography>
+															<Box mt={"4px"}></Box>
+															<p
+																style={{
+																	fontSize: "10px",
+																	fontWeight: "500",
+																	color: "text.secondary",
+																}}
+															>
+																{`${new Date(
+																	comment.createdAt
+																).toDateString()}, ${new Date(
+																	comment.createdAt
+																).toLocaleTimeString()}`}
+															</p>
+														</Box>
+													</Box>
+												</Box>
+											);
+										})
+									)}
+								</Box>
+							</Box>
+						)}
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "start",
+								ml: "90px",
+							}}
+							flex={1}
+						>
+							<Typography variant="h1">Description</Typography>
+							<Typography variant="body1">{asset.description}</Typography>
+							{/* Meta */}
+							<br />
+							<br />
+							<Typography variant="h1">Details</Typography>
+							<Chip
+								label="View on Explorer"
+								onClick={handleExploreClick}
+								icon={<BiLinkExternal />}
+								style={{ fontWeight: 600 }}
+							/>
+						</Box>
+					</Stack>
 				</Box>
 			) : (
 				<Box
@@ -309,9 +505,15 @@ export function AssetScreen() {
 					justifyContent="center"
 					alignItems="center"
 				>
-					{/* <p>loading</p> */}
+					<p>loading</p>
 				</Box>
 			)}
+			<Box sx={{ margin: { xs: "12px", md: "24px 40px" } }}>
+				<CollectionContainer
+					title={"More from this Collection"}
+					assets={itemFromCollection}
+				/>
+			</Box>
 			<FooterComponent />
 		</Box>
 	);
