@@ -5,16 +5,24 @@ import { SearchComponent } from "../search/SearchComponent";
 import { ButtonComponent } from "../ButtonComponent";
 import { ConnectComponent } from "../ConnectComponent";
 import { CircularProfile } from "../CircularProfileComponent";
-import { Avatar, Box, Menu, Stack } from "@mui/material";
+import { Avatar, Box, Grid, Menu, Stack, Typography, Button, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+
 import logo from "../../assets/spriyo.png";
 import DiscordLogo from "../../assets/discord-logo.png";
 import { IoIosMore } from "react-icons/io";
+import { MdOutlineNotificationsActive, MdExpandMore } from "react-icons/md";
 import { useState } from "react";
+import { NotificationHttpService } from "../../api/notification";
+import { useEffect } from "react";
+
 
 export function NavbarComponent() {
+	const notificationHttpService = new NotificationHttpService();
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
 	const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
+	const [anchorElNotification, setAnchorElNotification] = useState(null);
+	const openNotification = Boolean(anchorElNotification)
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event) => {
@@ -23,6 +31,36 @@ export function NavbarComponent() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+	const [notificationList, setNotificationList] = useState([]);
+
+	useEffect(() => {
+		getNotification();
+	}, [])
+
+	const getNotification = async () => {
+		let data = await notificationHttpService.getNotitficationList();
+		console.log('getnotification', data)
+		setNotificationList(data);
+	}
+
+	const updateNotification = async(id, is_read) => {
+		let payload = is_read === true ? {
+			read: true
+		} : { trash: true}
+		let data = await notificationHttpService.updateNotitfication(id, payload);
+		console.log('update data', data)
+	}
+
+	const handleCloseNotification = () => {
+		setAnchorElNotification(null);
+	  };
+
+	const handleNotification = (event) => {
+		console.log('***', Boolean(anchorElNotification))
+		setAnchorElNotification(event.currentTarget);
+	}
+
+	
 
 	return (
 		<Box
@@ -53,6 +91,8 @@ export function NavbarComponent() {
 						ml={1}
 						sx={{ cursor: "pointer", display: { xs: "none", md: "block" } }}
 					>
+						<Grid spacing={2}>
+							<Grid xs={8}>
 						<ButtonComponent
 							onClick={(event) => {
 								event.preventDefault();
@@ -62,9 +102,60 @@ export function NavbarComponent() {
 							rounded={true}
 							filled={true}
 						/>
+						</Grid>
+						<Grid xs={4}>
+						<Button
+						id="basic-button"
+						aria-controls={openNotification ? 'basic-menu' : undefined}
+						aria-haspopup="true"
+						aria-expanded={openNotification ? 'true' : undefined}
+						onClick={handleNotification}
+							>
+								Notification
+							</Button>
+						{/* <MdOutlineNotificationsActive id="basic-button" aria-expanded={openNotification ? 'true' : undefined} aria-controls={openNotification ? 'basic-menu' : undefined} onClick={handleNotification} /> */}
+						{openNotification ? (
+							<Menu
+							id="basic-menu"
+							anchorEl={anchorElNotification}
+							open={openNotification}
+							onClose={handleCloseNotification}
+							MenuListProps={{
+							  'aria-labelledby': 'basic-button',
+							}}
+							anchorOrigin={{
+								vertical: 'top',
+								horizontal: 'left',
+							  }}
+							  transformOrigin={{
+								vertical: 'top',
+								horizontal: 'left',
+							  }}
+						  >
+							 {notificationList.length > 0 && notificationList.map((ele, i) => {
+									return (<Accordion key={i}>
+									<AccordionSummary
+									expandIcon={<MdExpandMore />}
+									aria-controls="panel1a-content"
+									id="panel1a-header"
+									>
+									<Typography>{ele.title}</Typography>
+									</AccordionSummary>
+									<AccordionDetails>
+									<Typography>
+										{ele.description} - {ele.createdAt}
+										<Button onClick={() => updateNotification(ele._id, true)} >read</Button> <Button onClick={() => updateNotification(ele._id, false)}>clear</Button>
+									</Typography>
+									</AccordionDetails>
+									</Accordion>)
+							 }) }
+						  </Menu>
+							) : null}
+						</Grid>
+						</Grid>
 					</Box>
 				) : (
-					<div></div>
+					<div><MdOutlineNotificationsActive /></div>
 				)}
 				{/* profile */}
 				<Box sx={{ display: { xs: "block", md: "none" } }}>
