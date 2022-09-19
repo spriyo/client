@@ -55,22 +55,9 @@ export function AssetScreen() {
 		if (!resolved.error) {
 			const fetchedAsset = resolved.data;
 			setAsset(fetchedAsset);
-			if (
-				fetchedAsset.events.length !== 0 &&
-				(fetchedAsset.events[0].event_type === "bid" ||
-					fetchedAsset.events[0].event_type === "auction_create")
-			) {
-				getCurrentAuction(fetchedAsset.events);
-			}
 			getComments(fetchedAsset._id);
 		}
 	};
-
-	function getCurrentAuction(events) {
-		// const currentAuction = events.find(
-		// 	(event) => event.event_type === "auction_create"
-		// );
-	}
 
 	function handleExploreClick() {
 		const cid = chainId;
@@ -202,7 +189,10 @@ export function AssetScreen() {
 	useEffect(() => {
 		getAsset();
 		getAssetsFromCollection();
-	}, []);
+		return () => {
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		};
+	}, [contract_address, token_id]);
 
 	return (
 		<Box sx={{ backgroundColor: "#efeff8" }}>
@@ -233,7 +223,7 @@ export function AssetScreen() {
 							>
 								{asset.image.includes(".mp4") ? (
 									<video style={{ maxHeight: "40vh" }} autoPlay muted loop>
-										<source src={asset.medias[0].path} type="video/mp4" />
+										<source src={asset.image} type="video/mp4" />
 									</video>
 								) : (
 									<img
@@ -343,143 +333,153 @@ export function AssetScreen() {
 					</Box>
 					<br />
 					{/* Meta Details */}
-					<Stack flexDirection={"row"} justifyContent="space-between">
+					<Stack
+						flexDirection={{ xs: "column", md: "row" }}
+						justifyContent="space-between"
+					>
 						{/* Comments */}
-						{user && (
-							<Box flex={1}>
-								<Typography variant="h1">Comments</Typography>
-								<Box mt={"20px"}>
-									{/* Write Comment */}
-									<Box display="flex">
-										<CircularProfile
-											userId={user._id}
-											userImgUrl={user.displayImage}
-										/>
-										<Box sx={{ width: "100%", ml: "16px" }}>
-											{/* Custom Textfield */}
-											<Box sx={{ borderRadius: "12px" }}>
-												<TextField
-													sx={{
-														backgroundColor: "white",
-														borderRadius: "12px",
-														paddingX: "12px",
-														paddingY: "10px",
-													}}
-													variant="standard"
-													InputProps={{
-														disableUnderline: true,
-														endAdornment: (
-															<IconButton
-																onClick={() => writeComment(asset._id, comment)}
-															>
-																<RiSendPlane2Line size={16} />
-															</IconButton>
-														),
-													}}
-													fullWidth
-													placeholder="Write your comment"
-													id="fullWidth"
-													value={comment}
-													onChange={(e) => commentOnChange(e.target.value)}
-												/>
-											</Box>
+						<Box flex={1}>
+							<Typography variant="h1">Comments</Typography>
+							<Box mt={"20px"}>
+								{/* Write Comment */}
+
+								<Box display="flex">
+									<CircularProfile
+										userId={user ? user._id : ""}
+										userImgUrl={user ? user.displayImage : ""}
+									/>
+									<Box sx={{ width: "100%", ml: "16px" }}>
+										{/* Custom Textfield */}
+										<Box sx={{ borderRadius: "12px" }}>
+											<TextField
+												sx={{
+													backgroundColor: "white",
+													borderRadius: "12px",
+													paddingX: "12px",
+													paddingY: "10px",
+												}}
+												variant="standard"
+												InputProps={{
+													disableUnderline: true,
+													endAdornment: (
+														<IconButton
+															onClick={() => {
+																if (!user) return;
+																writeComment(asset._id, comment);
+															}}
+															sx={{ cursor: user ? "pointer" : "not-allowed" }}
+														>
+															<RiSendPlane2Line size={16} />
+														</IconButton>
+													),
+												}}
+												fullWidth
+												placeholder={
+													user
+														? "Write your comment"
+														: "Connect wallet to comment"
+												}
+												id="fullWidth"
+												value={comment}
+												onChange={(e) => commentOnChange(e.target.value)}
+											/>
 										</Box>
 									</Box>
-
-									{/* Comment List */}
-									{comments.length === 0 ? (
-										<Box
-											sx={{
-												backgroundColor: "white",
-												mt: "8px",
-												p: 2,
-												borderRadius: "12px",
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-												flexDirection: "column",
-											}}
-										>
-											<img width={"75px"} src={NoComment}></img>
-											<Typography variant="h5">
-												Be the first to comment😃
-											</Typography>
-										</Box>
-									) : (
-										comments.map((comment, i) => {
-											return (
-												<Box display="flex" mt={"14px"} key={i}>
-													<CircularProfile
-														userId={comment.userId._id}
-														userImgUrl={comment.userId.displayImage}
-													/>
-													<Box sx={{ width: "100%", ml: "16px" }}>
-														<Box
+								</Box>
+								{/* Comment List */}
+								{comments.length === 0 ? (
+									<Box
+										sx={{
+											backgroundColor: "white",
+											mt: "8px",
+											p: 2,
+											borderRadius: "12px",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											flexDirection: "column",
+										}}
+									>
+										<img width={"75px"} src={NoComment}></img>
+										<Typography variant="h5">
+											Be the first to comment😃
+										</Typography>
+									</Box>
+								) : (
+									comments.map((comment, i) => {
+										return (
+											<Box display="flex" mt={"14px"} key={i}>
+												<CircularProfile
+													userId={comment.userId._id}
+													userImgUrl={comment.userId.displayImage}
+												/>
+												<Box sx={{ width: "100%", ml: "16px" }}>
+													<Box
+														sx={{
+															backgroundColor: "white",
+															borderRadius: "12px",
+															paddingX: "12px",
+															paddingY: "10px",
+														}}
+													>
+														<Stack
+															flexDirection="row"
+															justifyContent="space-between"
+														>
+															<Typography variant="h6">
+																{comment.userId.username}
+															</Typography>
+															{comment.userId._id === user._id && (
+																<IconButton
+																	size="small"
+																	sx={{
+																		"&:hover": {
+																			color: "red",
+																		},
+																	}}
+																	onClick={() => deleteComment(comment._id)}
+																>
+																	<RiDeleteBin5Line size={14} />
+																</IconButton>
+															)}
+														</Stack>
+														<Typography
 															sx={{
-																backgroundColor: "white",
-																borderRadius: "12px",
-																paddingX: "12px",
-																paddingY: "10px",
+																fontSize: "12px",
+																color: "text.primary",
 															}}
 														>
-															<Stack
-																flexDirection="row"
-																justifyContent="space-between"
-															>
-																<Typography variant="h6">
-																	{comment.userId.username}
-																</Typography>
-																{comment.userId._id === user._id && (
-																	<IconButton
-																		size="small"
-																		sx={{
-																			"&:hover": {
-																				color: "red",
-																			},
-																		}}
-																		onClick={() => deleteComment(comment._id)}
-																	>
-																		<RiDeleteBin5Line size={14} />
-																	</IconButton>
-																)}
-															</Stack>
-															<Typography
-																sx={{
-																	fontSize: "12px",
-																	color: "text.primary",
-																}}
-															>
-																{comment.content}
-															</Typography>
-															<Box mt={"4px"}></Box>
-															<p
-																style={{
-																	fontSize: "10px",
-																	fontWeight: "500",
-																	color: "text.secondary",
-																}}
-															>
-																{`${new Date(
-																	comment.createdAt
-																).toDateString()}, ${new Date(
-																	comment.createdAt
-																).toLocaleTimeString()}`}
-															</p>
-														</Box>
+															{comment.content}
+														</Typography>
+														<Box mt={"4px"}></Box>
+														<p
+															style={{
+																fontSize: "10px",
+																fontWeight: "500",
+																color: "text.secondary",
+															}}
+														>
+															{`${new Date(
+																comment.createdAt
+															).toDateString()}, ${new Date(
+																comment.createdAt
+															).toLocaleTimeString()}`}
+														</p>
 													</Box>
 												</Box>
-											);
-										})
-									)}
-								</Box>
+											</Box>
+										);
+									})
+								)}
 							</Box>
-						)}
+						</Box>
 						<Box
 							sx={{
 								display: "flex",
 								flexDirection: "column",
 								justifyContent: "start",
-								ml: "90px",
+								ml: { xs: "0", md: "90px" },
+								mt: { xs: "24px", md: "0" },
 							}}
 							flex={1}
 						>
@@ -489,12 +489,14 @@ export function AssetScreen() {
 							<br />
 							<br />
 							<Typography variant="h1">Details</Typography>
-							<Chip
-								label="View on Explorer"
-								onClick={handleExploreClick}
-								icon={<BiLinkExternal />}
-								style={{ fontWeight: 600 }}
-							/>
+							<Box>
+								<Chip
+									label="View on Explorer"
+									onClick={handleExploreClick}
+									icon={<BiLinkExternal />}
+									style={{ fontWeight: 600 }}
+								/>
+							</Box>
 						</Box>
 					</Stack>
 				</Box>
