@@ -45,7 +45,7 @@ export function AssetScreen() {
 	const searchHttpService = new SearchHttpService();
 	const commentHttpService = new CommentHttpService();
 	const [comments, setComments] = useState([]);
-	const [comment, setComment] = useState();
+	const [comment, setComment] = useState("");
 
 	const getAsset = async function () {
 		const resolved = await nftHttpService.getAssetById(

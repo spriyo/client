@@ -14,6 +14,9 @@ import { switchAccount } from "../state/actions/wallet";
 import { login, logout } from "../state/actions/auth";
 import { addNotification } from "../state/actions/notifications";
 import { useNavigate } from "react-router-dom";
+import { switchChain as changeChain } from "../utils/wallet";
+import { ChainsConfig } from "../constants";
+import { switchChain } from "../state/actions/wallet";
 
 export const Connect = () => {
 	const FastLink = styled(Link)(({ theme }) => ({
@@ -27,6 +30,9 @@ export const Connect = () => {
 
 	async function connectAndListenWallet() {
 		try {
+			await changeChain(ChainsConfig.SHARDEUM_LIBERTY);
+			dispatch(switchChain(ChainsConfig.SHARDEUM_LIBERTY.chainId));
+
 			const walletConnected = await connectWalletToSite();
 			if (walletConnected) {
 				let walletAddress = await getWalletAddress();

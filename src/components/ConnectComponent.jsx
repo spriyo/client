@@ -5,10 +5,12 @@ import { connectWalletToSite, getWalletAddress } from "../utils/wallet";
 import { switchAccount } from "../state/actions/wallet";
 import { addNotification } from "../state/actions/notifications";
 import { ButtonComponent } from "./ButtonComponent";
+import { useNavigate } from "react-router-dom";
 
 export function ConnectComponent() {
 	const authHttpService = new AuthHttpService();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	async function connectAndListenWallet() {
 		try {
 			const walletConnected = await connectWalletToSite();
@@ -67,8 +69,9 @@ export function ConnectComponent() {
 		<ButtonComponent
 			text="Connect Wallet"
 			onClick={() => {
-				connectAndListenWallet();
-				fetchCurrentUser();
+				navigate("/connect")
+				// connectAndListenWallet();
+				// fetchCurrentUser();
 			}}
 		/>
 	);

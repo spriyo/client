@@ -54,8 +54,8 @@ function HomeScreen() {
 		// Remove in next build
 		dispatch(
 			addNotification(
-				"Add your email to receive updates when your NFTs sell or receive offers 📧",
-				"Add Email",
+				"You can now try out Sell, Buy, Offer and Auction features🥳",
+				"Create NFT",
 				1,
 				() => {
 					navigate("/create/select");

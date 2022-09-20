@@ -11,6 +11,7 @@ import { IoIosMore } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { RiNotification3Line } from "react-icons/ri";
 import { NotificationHttpService } from "../../api/notification";
+import { ButtonComponent } from "../ButtonComponent";
 
 export function NavbarComponent() {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -65,6 +66,25 @@ export function NavbarComponent() {
 				<Box sx={{ display: { xs: "none", md: "block" } }}>
 					<SearchComponent />
 				</Box>
+				{authenticated ? (
+					<Box
+						mr={1}
+						ml={1}
+						sx={{ cursor: "pointer", display: { xs: "none", md: "block" } }}
+					>
+						<ButtonComponent
+							onClick={(event) => {
+								event.preventDefault();
+								navigate("/create/select");
+							}}
+							text="Create"
+							rounded={true}
+							filled={true}
+						/>
+					</Box>
+				) : (
+					<div></div>
+				)}
 				{/* profile */}
 				<Box sx={{ display: { xs: "block", md: "none" } }}>
 					<Avatar
