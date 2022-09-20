@@ -2,14 +2,16 @@ import "./navBar.css";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SearchComponent } from "../search/SearchComponent";
-import { ButtonComponent } from "../ButtonComponent";
 import { ConnectComponent } from "../ConnectComponent";
 import { CircularProfile } from "../CircularProfileComponent";
-import { Avatar, Box, Menu, Stack } from "@mui/material";
+import { Avatar, Box, IconButton, Menu, Stack } from "@mui/material";
 import logo from "../../assets/spriyo.png";
 import DiscordLogo from "../../assets/discord-logo.png";
 import { IoIosMore } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { RiNotification3Line } from "react-icons/ri";
+import { NotificationHttpService } from "../../api/notification";
+import { ButtonComponent } from "../ButtonComponent";
 
 export function NavbarComponent() {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -23,6 +25,23 @@ export function NavbarComponent() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+	const [notificationCount, setNotificationCount] = useState(0);
+	const notificationHttpService = new NotificationHttpService();
+	async function getNotification() {
+		try {
+			const resolved = await notificationHttpService.getNotitficationList();
+			if (!resolved.error) {
+				setNotificationCount(resolved.data.data.length);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	useEffect(() => {
+		getNotification();
+		return () => {};
+	}, []);
 
 	return (
 		<Box
@@ -135,6 +154,23 @@ export function NavbarComponent() {
 						</Box>
 					</Menu>
 				</Box>
+				{authenticated && (
+					<Box
+						mx={2}
+						style={{ position: "relative" }}
+						onClick={() => navigate("/notifications")}
+					>
+						<Box className="notification-count">
+							{notificationCount > 9 ? "9+" : notificationCount}
+						</Box>
+						<IconButton
+							onClick={() => {}}
+							sx={{ cursor: user ? "pointer" : "not-allowed" }}
+						>
+							<RiNotification3Line />
+						</IconButton>
+					</Box>
+				)}
 				{authenticated ? (
 					<Box onClick={() => navigate(`/${user.username}`)} m={1}>
 						<CircularProfile userImgUrl={user.displayImage} userId={user._id} />

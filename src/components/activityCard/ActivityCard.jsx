@@ -112,7 +112,7 @@ export function ActivityCardComponent({ event, asset }) {
 			const currentAddress = await getWalletAddress();
 			// Check for approval
 			const approveAddress = await nftContract.methods
-				.getApproved(asset.item_id)
+				.getApproved(asset.token_id)
 				.call();
 			if (marketContract._address !== approveAddress) {
 				const isConfirmed = window.confirm(
@@ -120,7 +120,7 @@ export function ActivityCardComponent({ event, asset }) {
 				);
 				if (isConfirmed) {
 					const transaction = await nftContract.methods
-						.approve(marketContract._address, asset.item_id)
+						.approve(marketContract._address, asset.token_id)
 						.send({ from: currentAddress });
 					isApproved = true;
 					console.log(transaction);

@@ -42,6 +42,7 @@ import { SelectCreate } from "./screens/create/select/SelectCreate";
 import { Create1155 } from "./screens/create/erc1155/Create1155";
 import NotFound from "./screens/NotFound";
 import { ActiveBids } from "./screens/ActiveBids";
+import { Connect } from "./screens/Connect";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -166,6 +167,7 @@ function App() {
 						element={<AssetScreen />}
 					/>
 					<Route path="/create" exact element={<CreateScreen />} />
+					<Route path="/connect" exact element={<Connect />} />
 					<Route path="/create/select" exact element={<SelectCreate />} />
 					<Route path="/create/multiple" exact element={<Create1155 />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
