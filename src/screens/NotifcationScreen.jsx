@@ -1,42 +1,37 @@
 import {
 	Box,
-	Divider,
 	Card,
 	CardHeader,
 	Avatar,
-	IconButton,
 	Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FooterComponent } from "../components/FooterComponent";
 import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import { NotificationHttpService } from "../api/notification";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const NotificationScreen = () => {
 	const notificationHttpService = new NotificationHttpService();
 	const [notificationList, setNotificationList] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		getNotification();
 	}, []);
 
 	const getNotification = async () => {
-		let {
-			data: { data },
-		} = await notificationHttpService.getNotitficationList();
-		console.log("getnotification", data);
-		setNotificationList(data);
-	};
-
-	const updateNotification = async (id, is_read) => {
-		let payload =
-			is_read === true
-				? {
-						read: true,
-				  }
-				: { trash: true };
-		let data = await notificationHttpService.updateNotitfication(id, payload);
-		console.log("update data", data);
+		try {
+			let {
+				data: { data },
+			} = await notificationHttpService.getNotificationList();
+			setNotificationList(data);
+			setLoading(false);
+		} catch (error) {
+			toast.warn(error.message);
+		}
 	};
 
 	return (
@@ -48,6 +43,7 @@ export const NotificationScreen = () => {
 					justifyContent: "center",
 					flexDirection: "column",
 					width: "100%",
+					paddingBottom: "16px",
 				}}
 			>
 				<Box>
@@ -59,7 +55,7 @@ export const NotificationScreen = () => {
 						return (
 							<Box
 								style={{
-									padding: "10px",
+									padding: "4px",
 									display: "flex",
 									justifyContent: "center",
 								}}
@@ -68,6 +64,17 @@ export const NotificationScreen = () => {
 								<Card
 									sx={{
 										boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+										minWidth: { xs: "80vw", sm: "60vw", md: "50vw" },
+										maxWidth: { xs: "80vw", sm: "60vw", md: "50vw" },
+										border: "1px solid #a4a4a433",
+										cursor: ele.url ? "pointer" : "default",
+										backgroundColor: ele.read ? "white" : "#d8d8d8",
+										"&:hover": {
+											backgroundColor: "#d5d5d533",
+										},
+									}}
+									onClick={() => {
+										if (ele.url) navigate(ele.url);
 									}}
 								>
 									<CardHeader
@@ -88,29 +95,29 @@ export const NotificationScreen = () => {
 												</p>
 											</Box>
 										}
-										action={
-											<IconButton
-												aria-label="settings"
-												style={{
-													color: "white",
-													cursor: "pointer",
-													fontSize: "1em",
-												}}
-												onClick={() => updateNotification(ele._id, true)}
-											>
-												View
-											</IconButton>
-										}
 									/>
 								</Card>
 							</Box>
 						);
 					})
 				) : (
-					<h1>No notifications📥</h1>
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "center",
+							flexDirection: "column",
+							width: "100%",
+							padding: "32px",
+						}}
+					>
+						{
+							<h2 style={{ textAlign: "center" }}>
+								{loading ? "Loading..." : "No notifications📥"}
+							</h2>
+						}
+					</Box>
 				)}
 			</Box>
-			<Divider />
 			<FooterComponent />
 		</Box>
 	);

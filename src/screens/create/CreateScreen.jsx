@@ -324,9 +324,7 @@ export function CreateScreen({ closeModal }) {
 						<Box className="createscreen-create-button">
 							<ButtonComponent
 								text={!loading ? "Create" : "loading..."}
-								onClick={() => {
-									mintAsset("someurl", {});
-								}}
+								onClick={uploadToIpfs}
 							/>
 						</Box>
 					</div>
