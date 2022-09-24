@@ -27,11 +27,11 @@ export function NavbarComponent() {
 	};
 	const [notificationCount, setNotificationCount] = useState(0);
 	const notificationHttpService = new NotificationHttpService();
-	async function getNotification() {
+	async function getNotificationCount() {
 		try {
-			const resolved = await notificationHttpService.getNotitficationList();
+			const resolved = await notificationHttpService.getNotitficationCount();
 			if (!resolved.error) {
-				setNotificationCount(resolved.data.data.length);
+				setNotificationCount(resolved.data.count);
 			}
 		} catch (error) {
 			console.log(error);
@@ -39,7 +39,7 @@ export function NavbarComponent() {
 	}
 
 	useEffect(() => {
-		getNotification();
+		getNotificationCount();
 		return () => {};
 	}, []);
 

@@ -5,9 +5,9 @@ import { resolve } from "../utils/resolver";
 export class NotificationHttpService {
 	token = localStorage.getItem("token");
 
-	async getNotitficationList() {
+	async getNotificationList() {
 		const resolved = await resolve(
-			axios.get(`${WEB_API_BASE_URL}/notification`, {
+			axios.get(`${WEB_API_BASE_URL}/notifications`, {
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 				},
@@ -16,17 +16,13 @@ export class NotificationHttpService {
 		return resolved;
 	}
 
-	async updateNotitfication(id, payload) {
+	async getNotitficationCount() {
 		const resolved = await resolve(
-			axios.patch(
-				`${WEB_API_BASE_URL}/notification/update-notification/${id}`,
-				payload,
-				{
-					headers: {
-						Authorization: `Bearer ${this.token}`,
-					},
-				}
-			)
+			axios.get(`${WEB_API_BASE_URL}/notifications/count`, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			})
 		);
 		return resolved;
 	}
