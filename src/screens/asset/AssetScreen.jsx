@@ -30,6 +30,7 @@ import { SearchHttpService } from "../../api/v2/search";
 import { RiDeleteBin5Line, RiSendPlane2Line } from "react-icons/ri";
 import { CommentHttpService } from "../../api/comment";
 import NoComment from "../../assets/no-comments.gif";
+import { Helmet } from "react-helmet";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -201,6 +202,43 @@ export function AssetScreen() {
 			</Box>
 			{asset ? (
 				<Box sx={{ margin: { xs: "12px", md: "24px 40px" } }}>
+					{/* Metatags */}
+					<Helmet>
+						{/* <!-- Primary Meta Tags --> */}
+						<title>{asset.name} - Shardeum NFT - Spriyo.xyz</title>
+						<meta
+							name="title"
+							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
+						/>
+						<meta name="description" content={asset.description} />
+
+						{/* <!-- Open Graph / Facebook --> */}
+						<meta property="og:type" content="website" />
+						<meta
+							property="og:url"
+							content={`${process.env.REACT_APP_BASE_URL}/assets/${asset.contract_address}/${asset.token_id}`}
+						/>
+						<meta
+							property="og:title"
+							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
+						/>
+						<meta property="og:description" content={asset.description} />
+						<meta property="og:image" content={asset.image} />
+
+						{/* <!-- Twitter --> */}
+						<meta property="twitter:card" content="summary_large_image" />
+						<meta
+							property="twitter:url"
+							content={`${process.env.REACT_APP_BASE_URL}/assets/${asset.contract_address}/${asset.token_id}`}
+						/>
+						<meta
+							property="twitter:title"
+							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
+						/>
+						<meta property="twitter:description" content={asset.description} />
+						<meta property="twitter:image" content={asset.image} />
+					</Helmet>
+
 					<Box p={2} bgcolor="white" borderRadius="10px">
 						<Stack
 							sx={{
