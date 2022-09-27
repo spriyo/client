@@ -43,6 +43,7 @@ import NotFound from "./screens/NotFound";
 import { ActiveBids } from "./screens/ActiveBids";
 import { Connect } from "./screens/Connect";
 import { NotificationScreen } from "./screens/NotifcationScreen";
+import { Helmet } from "react-helmet";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -148,6 +149,13 @@ function App() {
 
 	return (
 		<ThemeProvider theme={theme}>
+			<Helmet>
+				{/* <!-- Primary Meta Tags --> */}
+				<meta name="title" content="Spriyo.xyz - Shardeum NFT Marketplace" />
+				<meta name="description" content="Shardeum's first NFT marketplace" />
+				<meta property="og:image" content="/meta_banner_image.png" />
+				<meta name="twitter:image" content="/meta_banner_image.png" />
+			</Helmet>
 			<Router>
 				<Routes>
 					<Route path="/" exact element={<HomeScreen />} />
