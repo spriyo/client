@@ -33,7 +33,6 @@ import { BlogScreen } from "./screens/BlogScreen";
 import { addNotification } from "./state/actions/notifications";
 import { ImportScreen } from "./screens/ImportScreen";
 import { FavoritesScreen } from "./screens/Favorites";
-import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { InteractIrl } from "./screens/InteractIrl";
 import { IRLScreen } from "./screens/irl";
 import { IRLActivityScreen } from "./screens/irlActivity";
@@ -142,17 +141,9 @@ function App() {
 		}
 	}
 
-	async function welcomeAndRedirect() {
-		const welcome = localStorage.getItem("welcome");
-		if (!welcome) {
-			window.location.replace("/welcome");
-		}
-	}
-
 	useEffect(() => {
 		connectAndListenWallet();
 		fetchCurrentUser();
-		welcomeAndRedirect();
 	});
 
 	return (
@@ -183,10 +174,9 @@ function App() {
 						exact
 						element={<InteractIrl />}
 					/>
-					
+
 					<Route path="/notifications" exact element={<NotificationScreen />} />
 					<Route path="/favorites" exact element={<FavoritesScreen />} />
-					<Route path="/welcome" exact element={<WelcomeScreen />} />
 					<Route path="/user/notfound" exact element={<NotFound />} />
 					<Route path="*" exact element={<NotFound />} />
 				</Routes>
