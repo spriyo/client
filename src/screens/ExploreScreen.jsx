@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { DisplayHttpService } from "../api/display";
 import { CardComponent } from "../components/card/CardComponent";
 import { FooterComponent } from "../components/FooterComponent";
 import { NavbarComponent } from "../components/navBar/NavbarComponent";

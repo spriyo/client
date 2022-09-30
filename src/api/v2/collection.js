@@ -16,4 +16,11 @@ export class CollectionHttpService {
 		);
 		return resolved;
 	}
+
+	async getCollection(collectionUsername) {
+		const resolved = await resolve(
+			axios.get(`${V2_WEB_API_BASE_URL}/collections/${collectionUsername}`)
+		);
+		return resolved;
+	}
 }

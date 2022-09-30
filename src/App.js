@@ -44,6 +44,7 @@ import { ActiveBids } from "./screens/ActiveBids";
 import { Connect } from "./screens/Connect";
 import { NotificationScreen } from "./screens/NotifcationScreen";
 import { Helmet } from "react-helmet";
+import { Collection } from "./screens/collection/Collection";
 import { Create } from "./screens/collection/create/Create";
 
 function App() {
@@ -168,6 +169,12 @@ function App() {
 						element={<AssetScreen />}
 					/>
 					<Route path="/collections/create" exact element={<Create />} />
+					<Route
+						path="/collections/:collection_name"
+						exact
+						element={<Collection />}
+					/>
+					{/* :collection_name can be contract_address or unique name */}
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="/connect" exact element={<Connect />} />
 					<Route path="/create/select" exact element={<SelectCreate />} />
