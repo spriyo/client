@@ -44,6 +44,7 @@ import { ActiveBids } from "./screens/ActiveBids";
 import { Connect } from "./screens/Connect";
 import { NotificationScreen } from "./screens/NotifcationScreen";
 import { Helmet } from "react-helmet";
+import { Create } from "./screens/collection/create/Create";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -166,6 +167,7 @@ function App() {
 						exact
 						element={<AssetScreen />}
 					/>
+					<Route path="/collections/create" exact element={<Create />} />
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="/connect" exact element={<Connect />} />
 					<Route path="/create/select" exact element={<SelectCreate />} />
