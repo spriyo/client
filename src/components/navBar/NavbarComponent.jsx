@@ -52,57 +52,85 @@ export function NavbarComponent() {
 			}}
 			className="navbar-container"
 		>
-			<Box
-				display="flex"
-				alignItems="start"
-				style={{ cursor: "pointer" }}
-				onClick={() => navigate("/")}
-			>
-				<img src={logo} alt="logo" height={36} />
-				<small>beta</small>
-			</Box>
-			<div className="navbar-actions">
-				{/* search */}
-				<Box sx={{ display: { xs: "none", md: "block" } }}>
+			<Box display="flex">
+				<Box
+					display="flex"
+					alignItems="start"
+					style={{ cursor: "pointer" }}
+					onClick={() => navigate("/")}
+				>
+					<img src={logo} alt="logo" height={36} />
+					<small>beta</small>
+					{/* search */}
+				</Box>
+				<Box sx={{ display: { xs: "none", md: "block" }, ml: "24px" }}>
 					<SearchComponent />
 				</Box>
+			</Box>
+			<div className="navbar-actions">
+				{authenticated && (
+					<Box
+						mx={2}
+						style={{ position: "relative" }}
+						onClick={() => navigate("/notifications")}
+					>
+						<Box className="notification-count">
+							{notificationCount > 9 ? "9+" : notificationCount}
+						</Box>
+						<IconButton
+							onClick={() => {}}
+							sx={{ cursor: user ? "pointer" : "not-allowed" }}
+						>
+							<RiNotification3Line />
+						</IconButton>
+					</Box>
+				)}
 				{authenticated ? (
 					<Box
 						mr={1}
 						ml={1}
 						sx={{ cursor: "pointer", display: { xs: "none", md: "block" } }}
 					>
-						<ButtonComponent
-							onClick={(event) => {
-								event.preventDefault();
-								navigate("/create/select");
-							}}
+						<Box
+							onClick={() => navigate("/create/select")}
 							text="Create"
-							rounded={true}
-							filled={true}
-						/>
+							sx={{
+								backgroundColor: "#00e285",
+								borderRadius: "8px",
+								padding: "6px 10px",
+								color: "black",
+								border: "none",
+								fontWeight: "600",
+							}}
+						>
+							Create 🌈
+						</Box>
 					</Box>
 				) : (
 					<div></div>
 				)}
 				{/* profile */}
 				<Box sx={{ display: { xs: "block", md: "none" } }}>
-					<Avatar
+					<Box
 						onClick={handleClick}
 						aria-controls={open ? "menu" : undefined}
 						aria-haspopup="true"
 						aria-expanded={open ? "true" : undefined}
 						id="nav-button"
 						sx={{
-							width: 46,
-							height: 46,
+							width: 35,
+							height: 35,
 							bgcolor: "background.default",
 							border: "1px solid #d9d9d9",
 							cursor: "pointer",
+							borderRadius: "8px",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "Center",
 						}}
 					>
 						<IoIosMore color="#505050" />
-					</Avatar>
+					</Box>
 					<Menu
 						id="menu"
 						aria-labelledby="nav-button"
@@ -154,23 +182,7 @@ export function NavbarComponent() {
 						</Box>
 					</Menu>
 				</Box>
-				{authenticated && (
-					<Box
-						mx={2}
-						style={{ position: "relative" }}
-						onClick={() => navigate("/notifications")}
-					>
-						<Box className="notification-count">
-							{notificationCount > 9 ? "9+" : notificationCount}
-						</Box>
-						<IconButton
-							onClick={() => {}}
-							sx={{ cursor: user ? "pointer" : "not-allowed" }}
-						>
-							<RiNotification3Line />
-						</IconButton>
-					</Box>
-				)}
+
 				{authenticated ? (
 					<Box onClick={() => navigate(`/${user.username}`)} m={1}>
 						<CircularProfile userImgUrl={user.displayImage} userId={user._id} />
