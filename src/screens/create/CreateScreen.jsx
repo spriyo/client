@@ -21,7 +21,6 @@ import { switchChain as changeChain } from "../../utils/wallet";
 import { useRef } from "react";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { NFTHttpService } from "../../api/v2/nft";
-import { initNFTContract } from "../../state/actions/contracts";
 import nftJsonInterface from "../../contracts/Spriyo.json";
 import { CgAddR } from "react-icons/cg";
 import { toast } from "react-toastify";
@@ -38,7 +37,6 @@ export function CreateScreen({ closeModal }) {
 		title: "",
 		description: "",
 	});
-	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 	const dispatch = useDispatch();
 	const currentChainIdRef = useRef();
 	const stateChainId = useSelector((state) => state.walletReducer.chainId);
@@ -88,13 +86,10 @@ export function CreateScreen({ closeModal }) {
 		try {
 			if (!metaDataUrl) return;
 			const currentAddress = await getWalletAddress();
-			if (!nftContract) {
-				const contract = new window.web3.eth.Contract(
-					nftJsonInterface.abi,
-					nftJsonInterface.networks[currentChainIdRef.current].address
-				);
-				dispatch(initNFTContract(contract));
-			}
+			const nftContract = new window.web3.eth.Contract(
+				nftJsonInterface.abi,
+				collectionSelectValue
+			);
 
 			const transaction = await nftContract.methods
 				.mint(metaDataUrl)
@@ -156,7 +151,6 @@ export function CreateScreen({ closeModal }) {
 	async function getCollections() {
 		try {
 			const resolved = await collectionHttpService.getCollections(user.address);
-			console.log(resolved);
 			if (!resolved.error) {
 				setCollections(resolved.data);
 			}

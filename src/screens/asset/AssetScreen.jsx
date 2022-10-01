@@ -96,6 +96,7 @@ export function AssetScreen() {
 				chainId: chainId,
 				limit: 6,
 				skip: 6,
+				contract: contract_address,
 			});
 			if (!resolved.error) {
 				setItemFromCollection(resolved.data);

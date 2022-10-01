@@ -54,7 +54,7 @@ export const Collection = () => {
 		try {
 			const resolved = await searchHttpService.searchAssets({
 				contract,
-				skip: (skip.current += 10),
+				skip: skip.current,
 			});
 			if (!resolved.error) {
 				setNfts((d) => [...d, ...resolved.data]);
@@ -256,7 +256,7 @@ export const Collection = () => {
 								) : (
 									<InfiniteScroll
 										dataLength={nfts.length}
-										next={getNFTS}
+										next={() => getNFTS(collection.contract_address)}
 										hasMore={true}
 										loader={<p></p>}
 										style={{ overflowX: "clip" }}
