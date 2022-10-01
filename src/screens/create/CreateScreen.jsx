@@ -5,7 +5,14 @@ import { AiOutlineUpload } from "react-icons/ai";
 import { getWalletAddress } from "../../utils/wallet";
 import { NftStorageHttpService } from "../../api/nftStorage";
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
+import {
+	Box,
+	FormControl,
+	MenuItem,
+	Select,
+	Stack,
+	Typography,
+} from "@mui/material";
 import { useSelector } from "react-redux";
 import { ChangeNetworkComponent } from "../../components/ChangeNetworkComponent";
 import { switchChain } from "../../state/actions/wallet";
@@ -16,6 +23,10 @@ import { ButtonComponent } from "../../components/ButtonComponent";
 import { NFTHttpService } from "../../api/v2/nft";
 import { initNFTContract } from "../../state/actions/contracts";
 import nftJsonInterface from "../../contracts/Spriyo.json";
+import { CgAddR } from "react-icons/cg";
+import { toast } from "react-toastify";
+import { CollectionHttpService } from "../../api/v2/collection";
+import SpriyoLetterLogo from "../../assets/spriyo-letter-logo.png";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
@@ -31,6 +42,12 @@ export function CreateScreen({ closeModal }) {
 	const dispatch = useDispatch();
 	const currentChainIdRef = useRef();
 	const stateChainId = useSelector((state) => state.walletReducer.chainId);
+	const user = useSelector((state) => state.authReducer.user);
+	const collectionHttpService = new CollectionHttpService();
+	const spriyoNFTAddress = "0xdd4c71b099b68a8a18c8e629c6acda9bd495abe2";
+	const [collectionSelectValue, setCollectionSelectValue] =
+		useState(spriyoNFTAddress);
+	const [collections, setCollections] = useState([]);
 
 	async function uploadToIpfs() {
 		if (loading) return;
@@ -136,6 +153,18 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
+	async function getCollections() {
+		try {
+			const resolved = await collectionHttpService.getCollections(user.address);
+			console.log(resolved);
+			if (!resolved.error) {
+				setCollections(resolved.data);
+			}
+		} catch (error) {
+			toast(error.message);
+		}
+	}
+
 	function checkFileType(filename) {
 		// Ad obj for 3D file upload
 		if (!filename.match(/\.(jpg|jpeg|png|mp4)$/)) {
@@ -193,11 +222,16 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
+	const handleChange = async (event) => {
+		setCollectionSelectValue(event.target.value);
+	};
+
 	const [imageUrl, setImageUrl] = useState();
 	useEffect(() => {
 		if (file) setImageUrl(URL.createObjectURL(file));
+		if (user) getCollections();
 		currentChainIdRef.current = stateChainId;
-	}, [file, stateChainId]);
+	}, [file, stateChainId, user]);
 
 	return (
 		<div className="create-screen-container">
@@ -212,6 +246,7 @@ export function CreateScreen({ closeModal }) {
 				<Box
 					className="content-container"
 					sx={{ flexDirection: { xs: "column", md: "row" } }}
+					alignItems="center"
 				>
 					{/* Image */}
 					<div className="image-container">
@@ -299,27 +334,61 @@ export function CreateScreen({ closeModal }) {
 								}
 							/>
 						</div>
-						{/* Categories
+						{/* Collection */}
 						<div className="data-container-field">
-							<p>Categories</p>
-							<input
-								type="text"
-								rows="5"
-								placeholder="Type Category"
-							/>
-						</div> */}
-						{/* Categories */}
-						{/* <div className="data-container-field">
-							<p>Price</p>
-							<input
-								type="number"
-								rows="5"
-								placeholder="Set Price"
-								onChange={(e) =>
-									updateFormInput({ ...formInput, price: e.target.value })
-								}
-							/>
-						</div> */}
+							<p>Collection</p>
+							<FormControl sx={{ minWidth: 120 }} size="small">
+								<Select
+									labelId="demo-select-small"
+									id="demo-select-small"
+									value={collectionSelectValue}
+									onChange={handleChange}
+								>
+									<MenuItem value={spriyoNFTAddress}>
+										<Box display={"flex"}>
+											<img
+												height="25px"
+												src={SpriyoLetterLogo}
+												alt="Spriyo Logo"
+											/>
+											<Box pl={1}>Spriyo Original</Box>
+										</Box>
+									</MenuItem>
+									<Box m={1}>
+										<Typography variant="h5">Your Collections</Typography>
+									</Box>
+									{collections.map((c, i) => {
+										return (
+											<MenuItem value={c.contract_address} key={i}>
+												<Box display={"flex"}>
+													<img
+														height="25px"
+														src={c.image}
+														alt="Foundation Logo"
+													/>
+													<Box pl={1}>{c.name}</Box>
+												</Box>
+											</MenuItem>
+										);
+									})}
+								</Select>
+							</FormControl>
+						</div>
+						{/* Create Collection */}
+						<Stack
+							my={1}
+							flexDirection="row"
+							alignItems="center"
+							onClick={() => {
+								navigate("/collections/create");
+							}}
+							sx={{ color: "blue", cursor: "pointer" }}
+						>
+							<Typography variant="h5">Create Collection</Typography>
+							<Box ml={0.5}>
+								<CgAddR />
+							</Box>
+						</Stack>
 						{/* Create Button */}
 						<Box className="createscreen-create-button">
 							<ButtonComponent

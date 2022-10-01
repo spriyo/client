@@ -23,4 +23,13 @@ export class CollectionHttpService {
 		);
 		return resolved;
 	}
+
+	async getCollections({ user_address = "", query = "" }) {
+		const resolved = await resolve(
+			axios.get(
+				`${V2_WEB_API_BASE_URL}/collections?query=${query}&user_address=${user_address}`
+			)
+		);
+		return resolved;
+	}
 }
