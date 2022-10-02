@@ -45,6 +45,7 @@ import { Connect } from "./screens/Connect";
 import { NotificationScreen } from "./screens/NotifcationScreen";
 import { Helmet } from "react-helmet";
 import { Collection } from "./screens/collection/Collection";
+import { Collections } from "./screens/collection/Collections";
 import { Create } from "./screens/collection/create/Create";
 
 function App() {
@@ -168,6 +169,7 @@ function App() {
 						exact
 						element={<AssetScreen />}
 					/>
+					<Route path="/collections" exact element={<Collections />} />
 					<Route path="/collections/create" exact element={<Create />} />
 					<Route
 						path="/collections/:collection_name"

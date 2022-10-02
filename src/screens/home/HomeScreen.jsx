@@ -28,7 +28,7 @@ function HomeScreen() {
 	async function getRecentlyAdded() {
 		const resolved = await searchHttpService.searchAssets({
 			chainId: chainId,
-			limit:6
+			limit: 6,
 		});
 		if (!resolved.error) {
 			setRecentlyAddedItems(resolved.data);
@@ -54,11 +54,11 @@ function HomeScreen() {
 		// Remove in next build
 		dispatch(
 			addNotification(
-				"You can now try out Sell, Buy, Offer and Auction features🥳",
-				"Create NFT",
+				"Create your own collections now! 🚀",
+				"Create Collection",
 				1,
 				() => {
-					navigate("/create/select");
+					navigate("/collections/create");
 				}
 			)
 		);

@@ -24,10 +24,15 @@ export class CollectionHttpService {
 		return resolved;
 	}
 
-	async getCollections({ user_address = "", query = "" }) {
+	async getCollections({
+		user_address = "",
+		query = "",
+		skip = 0,
+		limit = 10,
+	}) {
 		const resolved = await resolve(
 			axios.get(
-				`${V2_WEB_API_BASE_URL}/collections?query=${query}&user_address=${user_address}`
+				`${V2_WEB_API_BASE_URL}/collections?limit=${limit}&skip=${skip}&query=${query}&user_address=${user_address}`
 			)
 		);
 		return resolved;
