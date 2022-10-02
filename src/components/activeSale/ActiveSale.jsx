@@ -41,28 +41,28 @@ export function ActiveSaleComponent({ asset }) {
 					<p className="activebid-title-id">NFT ID : {asset.token_id}</p>
 				</div>
 				{/* User */}
-				<div className="activebid-user-container">
+				{asset.owners.length >0 && <div className="activebid-user-container">
 					<Box className="activebid-user-img">
 						<CircularProfile
-							userId={asset.owner._id}
-							userImgUrl={asset.owner.displayImage}
+							userId={asset.owners[0].user._id}
+							userImgUrl={asset.owners[0].user.displayImage}
 						/>
 					</Box>
 					<div className="activebid-user-info">
 						<p className="activebid-user-info name">
-							{asset.owner.displayName}
+							{asset.owners[0].user.displayName}
 						</p>
 						<p className="activebid-user-info username">
 							@
-							{asset.owner.username.length > 20
-								? `${asset.owner.username.substring(
+							{asset.owners[0].user.username.length > 20
+								? `${asset.owners[0].user.username.substring(
 										0,
 										4
-								  )}...${asset.owner.username.slice(-4)}`
-								: asset.owner.username}
+								  )}...${asset.owners[0].user.username.slice(-4)}`
+								: asset.owners[0].user.username}
 						</p>
 					</div>
-				</div>
+				</div>}
 				{/* Data */}
 				{/* <div className="activebid-bidder">
 					<div className="activebid-bidder-actions container">

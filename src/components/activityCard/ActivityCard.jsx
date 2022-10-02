@@ -15,6 +15,7 @@ import { getWalletAddress } from "../../utils/wallet";
 import "./activityCard.css";
 import { CircularProfile } from "../CircularProfileComponent";
 import { useNavigate } from "react-router-dom";
+import { checkApproval } from "../../utils/checkApproval";
 
 const BoxShadow = styled(Box)(({ theme }) => ({
 	boxShadow: theme.shadows[0],
@@ -65,13 +66,16 @@ export function ActivityCardComponent({ event, asset }) {
 		(state) => state.contractReducer.marketContract
 	);
 	const user = useSelector((state) => state.authReducer.user);
-	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 	const navigate = useNavigate();
 
 	async function acceptOffer() {
 		if (loading) return;
 		setLoading(true);
-		const isApproved = await checkApproval();
+		const isApproved = await checkApproval(
+			marketContract._address,
+			asset.contract_address,
+			asset.token_id
+		);
 		if (!isApproved) {
 			setLoading(false);
 			return;
@@ -104,34 +108,6 @@ export function ActivityCardComponent({ event, asset }) {
 			console.log(e);
 		}
 		setLoading(false);
-	}
-
-	async function checkApproval() {
-		let isApproved = false;
-		try {
-			const currentAddress = await getWalletAddress();
-			// Check for approval
-			const approveAddress = await nftContract.methods
-				.getApproved(asset.token_id)
-				.call();
-			if (marketContract._address !== approveAddress) {
-				const isConfirmed = window.confirm(
-					"Before selling the NFT on Spriyo, please approve us as a operator for your NFT."
-				);
-				if (isConfirmed) {
-					const transaction = await nftContract.methods
-						.approve(marketContract._address, asset.token_id)
-						.send({ from: currentAddress });
-					isApproved = true;
-					console.log(transaction);
-				}
-			} else {
-				isApproved = true;
-			}
-		} catch (error) {
-			console.log(error.message);
-		}
-		return isApproved;
 	}
 
 	function isOfferExpired(expireAt) {

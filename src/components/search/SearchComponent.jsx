@@ -1,7 +1,7 @@
 import "./search.css";
-import magnifier from "../../assets/Magnifier.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { TbSearch } from "react-icons/tb";
 
 export function SearchComponent() {
 	const navigate = useNavigate();
@@ -22,15 +22,15 @@ export function SearchComponent() {
 	return (
 		<div>
 			<div className="search-container">
+				<TbSearch onClick={onSearch} color="grey" cursor={"pointer"} size={18}/>
 				<input
 					type="search"
 					id="search"
 					onKeyDown={handleKeyDown}
-					placeholder="Search"
+					placeholder="Search..."
 					value={input}
 					onInput={(e) => setInput(e.target.value)}
 				/>
-				<img src={magnifier} alt="search" height={24} onClick={onSearch} />
 			</div>
 		</div>
 	);

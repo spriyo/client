@@ -3,11 +3,10 @@ import {
 	AiOutlineShoppingCart,
 	AiOutlineHeart,
 	AiOutlineStock,
-	AiOutlineProfile,
 	AiOutlineWallet,
 } from "react-icons/ai";
+import { BsCollection } from "react-icons/bs";
 import { BsBookmarkStar } from "react-icons/bs";
-import { MdOutlineEmojiEvents } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { Box, Link, Stack, styled, Tooltip } from "@mui/material";
 import { BiImport } from "react-icons/bi";
@@ -57,10 +56,14 @@ export function SideNav() {
 						to="/explore"
 					/>
 					<SideNavOption
+						icon={<BsCollection />}
+						optionTitle="Collections"
+						to="/collections"
+					/>
+					<SideNavOption
 						icon={<AiOutlineStock />}
 						optionTitle="My Active Bids"
 						to="/bids"
-
 					/>
 					<SideNavOption
 						icon={<AiOutlineHeart />}
@@ -78,11 +81,6 @@ export function SideNav() {
 						icon={<BiImport />}
 						optionTitle="Import"
 						to="/import"
-					/>
-					<SideNavOption
-						icon={<MdOutlineEmojiEvents />}
-						optionTitle="IRL"
-						to="/irls"
 					/>
 					{/* <SideNavOption icon={<AiOutlineSetting />} optionTitle="Settings" /> */}
 				</div>

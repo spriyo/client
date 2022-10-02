@@ -1,5 +1,5 @@
 import "./asset.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import {
 	Box,
@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
-import { AssetHttpService } from "../../api/asset";
 import { BiLinkExternal } from "react-icons/bi";
 import { ChainsConfig } from "../../constants";
 import { useSelector } from "react-redux";
@@ -31,22 +30,23 @@ import { RiDeleteBin5Line, RiSendPlane2Line } from "react-icons/ri";
 import { CommentHttpService } from "../../api/comment";
 import NoComment from "../../assets/no-comments.gif";
 import { Helmet } from "react-helmet";
+import NFTContractJSON from "../../contracts/Spriyo.json";
+import { toast } from "react-toastify";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
 	const [asset, setAsset] = useState(null);
-	const assetHttpService = new AssetHttpService();
 	const nftHttpService = new NFTHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
-	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 	const [loading, setLoading] = useState(false);
 	const [itemFromCollection, setItemFromCollection] = useState([]);
 	const searchHttpService = new SearchHttpService();
 	const commentHttpService = new CommentHttpService();
 	const [comments, setComments] = useState([]);
 	const [comment, setComment] = useState("");
+	const NFTContract = useRef(null);
 
 	const getAsset = async function () {
 		const resolved = await nftHttpService.getAssetById(
@@ -55,7 +55,11 @@ export function AssetScreen() {
 		);
 		if (!resolved.error) {
 			const fetchedAsset = resolved.data;
+			if (fetchedAsset.owners.length > 0) {
+				fetchedAsset.owner = fetchedAsset.owners[0].user;
+			}
 			setAsset(fetchedAsset);
+			initializeContract(fetchedAsset.contract_address);
 			getComments(fetchedAsset._id);
 		}
 	};
@@ -76,7 +80,9 @@ export function AssetScreen() {
 		let isApproved = false;
 		try {
 			// Check for approval
-			const owner = await nftContract.methods.ownerOf(asset.token_id).call();
+			const owner = await NFTContract.current.methods
+				.ownerOf(asset.token_id)
+				.call();
 			if (asset.owner.address !== owner.toLowerCase()) {
 				alert(
 					"Cancel all the auctions or sales on this NFT before transfering."
@@ -85,7 +91,7 @@ export function AssetScreen() {
 				isApproved = true;
 			}
 		} catch (error) {
-			console.log(error.message);
+			toast(error.message, { type: "warning" });
 		}
 		return isApproved;
 	}
@@ -96,6 +102,7 @@ export function AssetScreen() {
 				chainId: chainId,
 				limit: 6,
 				skip: 6,
+				contract: contract_address,
 			});
 			if (!resolved.error) {
 				setItemFromCollection(resolved.data);
@@ -168,22 +175,34 @@ export function AssetScreen() {
 
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await nftContract.methods
+		const gas = await NFTContract.current.methods
 			.transferFrom(currentAddress, toAddresss, asset.token_id)
 			.estimateGas({
 				from: currentAddress,
 			});
-		await nftContract.methods
+		await NFTContract.current.methods
 			.transferFrom(currentAddress, toAddresss, asset.token_id)
 			.send({ from: currentAddress, gasPrice, gas });
 
 		// Create An Event in Backend
-		const resolved = await assetHttpService.transferAsset({
+		const resolved = await nftHttpService.transferAsset({
 			...asset,
-			userId: toAddresss,
+			address: toAddresss,
 		});
 		if (!resolved.error) {
 			window.location.reload();
+		}
+	}
+
+	async function initializeContract(contract_address) {
+		try {
+			const contract = new window.web3.eth.Contract(
+				NFTContractJSON.abi,
+				contract_address
+			);
+			NFTContract.current = contract;
+		} catch (error) {
+			toast(error.message);
 		}
 	}
 
@@ -315,39 +334,43 @@ export function AssetScreen() {
 										""
 									)}
 								</Box>
-								<Typography
-									variant="body2"
-									color={"text.secondary"}
-									component="p"
-								>
-									Owner
-								</Typography>
-								<ListItem
-									onClick={() => navigate(`/${asset.owner.username}`)}
-									sx={{ cursor: "pointer" }}
-								>
-									<ListItemAvatar>
-										<CircularProfile
-											userId={asset.owner._id}
-											userImgUrl={asset.owner.displayImage}
-										/>
-									</ListItemAvatar>
-									{user ? (
-										<ListItemText
-											primary={asset.owner.displayName}
-											secondary={`@${
-												asset.owner.username.length > 20
-													? `${asset.owner.username.substring(
-															0,
-															4
-													  )}...${asset.owner.username.slice(-4)}`
-													: asset.owner.username
-											}`}
-										/>
-									) : (
-										""
-									)}
-								</ListItem>
+								{asset.owners.length>0 && (
+									<Box>
+										<Typography
+											variant="body2"
+											color={"text.secondary"}
+											component="p"
+										>
+											Owner
+										</Typography>
+										<ListItem
+											onClick={() => navigate(`/${asset.owner.username}`)}
+											sx={{ cursor: "pointer" }}
+										>
+											<ListItemAvatar>
+												<CircularProfile
+													userId={asset.owner._id}
+													userImgUrl={asset.owner.displayImage}
+												/>
+											</ListItemAvatar>
+											{user ? (
+												<ListItemText
+													primary={asset.owner.displayName}
+													secondary={`@${
+														asset.owner.username.length > 20
+															? `${asset.owner.username.substring(
+																	0,
+																	4
+															  )}...${asset.owner.username.slice(-4)}`
+															: asset.owner.username
+													}`}
+												/>
+											) : (
+												""
+											)}
+										</ListItem>
+									</Box>
+								)}
 								{asset.events.length === 0 ? (
 									<Typography variant="body1">No Activity</Typography>
 								) : (

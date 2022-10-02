@@ -68,16 +68,20 @@ export function CardComponent({ asset }) {
 				""
 			)}
 			<div className="card-info">
-				<div
-					className="card-info-profileimg"
-					style={{
-						backgroundImage: `url('${
-							asset.owner.displayImage.includes("default-profile-icon")
-								? `https://joeschmoe.io/api/v1/${asset.owner._id}`
-								: asset.owner.displayImage
-						}')`,
-					}}
-				></div>
+				{asset.owners.length > 0 && (
+					<div
+						className="card-info-profileimg"
+						style={{
+							backgroundImage: `url('${
+								asset.owners[0].user.displayImage.includes(
+									"default-profile-icon"
+								)
+									? `https://joeschmoe.io/api/v1/${asset.owners[0].user._id}`
+									: asset.owners[0].user.displayImage
+							}')`,
+						}}
+					></div>
+				)}
 				<div className="card-info-creator">
 					{/* created by */}
 					<Typography variant="h6">

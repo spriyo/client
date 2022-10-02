@@ -1,6 +1,5 @@
 import { Box, Button, Tooltip } from "@mui/material";
 import React from "react";
-import TabContext from "@mui/lab/TabContext";
 import LoadingImage from "../../assets/loading-image.gif";
 import { useEffect, useState } from "react";
 import { FooterComponent } from "../../components/FooterComponent";
@@ -42,7 +41,7 @@ export function ProfileScreen() {
 		setUser(resolved.data);
 		if (!resolved.error) {
 			getUserAssets(resolved.data.address);
-		}else{
+		} else {
 			navigate("/user/notfound");
 		}
 	}
@@ -96,7 +95,7 @@ export function ProfileScreen() {
 							{user.displayName && (
 								<p style={{ fontWeight: "bold" }}>{user.displayName}</p>
 							)}
-							<Tooltip title={user.username} arrow>
+							<Tooltip title={user.username || ""} arrow>
 								<span>
 									{user.username && (
 										<p style={{ fontWeight: "medium" }}>
@@ -158,14 +157,12 @@ export function ProfileScreen() {
 			>
 				<Typography variant="h1">NFT's</Typography>
 				<Box mb={2}></Box>
-				<TabContext value={1}>
-					<NFTList
-						nftLoading={nftLoading}
-						assets={assets}
-						isAuthenticated={loggedUser._id === user._id}
-						thirdParty={false}
-					/>
-				</TabContext>
+				<NFTList
+					nftLoading={nftLoading}
+					assets={assets}
+					isAuthenticated={loggedUser._id === user._id}
+					thirdParty={false}
+				/>
 			</Box>
 			<div style={{ marginBottom: "64px" }}>.</div>
 			<FooterComponent />

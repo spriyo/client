@@ -17,7 +17,19 @@ export class NFTHttpService {
 		return resolved;
 	}
 
-    async getAssetById(contract_address, token_id) {
+	async transferAsset(data) {
+		const resolved = await resolve(
+			axios.post(`${WEB_API_BASE_URL}/nfts/transfer`, data, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "application/json",
+				},
+			})
+		);
+		return resolved;
+	}
+
+	async getAssetById(contract_address, token_id) {
 		const resolved = await resolve(
 			axios.get(`${WEB_API_BASE_URL}/nfts/${contract_address}/${token_id}`)
 		);

@@ -7,6 +7,7 @@ import { getWalletAddress } from "../utils/wallet";
 import { ButtonComponent } from "./ButtonComponent";
 import { ConnectComponent } from "./ConnectComponent";
 import { AuctionHttpService } from "../api/auction";
+import { checkApproval } from "../utils/checkApproval";
 
 const loaderStyle = {
 	backgroundImage:
@@ -29,7 +30,6 @@ export const ActionsComponent = ({ asset }) => {
 		(state) => state.contractReducer.marketContract
 	);
 	const user = useSelector((state) => state.authReducer.user);
-	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 
 	function isAuctionExpired(expireAt) {
 		return new Date(expireAt).getTime() / 1000 < Date.now() / 1000;
@@ -369,33 +369,6 @@ export const ActionsComponent = ({ asset }) => {
 		console.log(resolved);
 	}
 
-	async function checkApproval() {
-		let isApproved = false;
-		try {
-			const currentAddress = await getWalletAddress();
-			// Check for approval
-			const approveAddress = await nftContract.methods
-				.getApproved(asset.token_id)
-				.call();
-			if (marketContract._address !== approveAddress) {
-				const isConfirmed = window.confirm(
-					"Before selling the NFT on Spriyo, please approve us as a operator for your NFT."
-				);
-				if (isConfirmed) {
-					await nftContract.methods
-						.approve(marketContract._address, asset.token_id)
-						.send({ from: currentAddress });
-					isApproved = true;
-				}
-			} else {
-				isApproved = true;
-			}
-		} catch (error) {
-			console.log(error);
-		}
-		return isApproved;
-	}
-
 	async function createAuction() {
 		const amount = prompt("Please enter the reserve amount.");
 		if (isNaN(parseFloat(amount))) return;
@@ -586,7 +559,11 @@ export const ActionsComponent = ({ asset }) => {
 					"Feature yet to come on ERC-1155 token, try on ERC721 token."
 				);
 			setLoading(true);
-			const isApproved = await checkApproval();
+			const isApproved = await checkApproval(
+				marketContract._address,
+				asset.contract_address,
+				asset.token_id
+			);
 			if (!isApproved) return setLoading(false);
 			await callback();
 			setLoading(false);
