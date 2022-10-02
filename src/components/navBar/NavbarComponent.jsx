@@ -3,15 +3,14 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SearchComponent } from "../search/SearchComponent";
 import { ConnectComponent } from "../ConnectComponent";
-import { CircularProfile } from "../CircularProfileComponent";
-import { Avatar, Box, IconButton, Menu, Stack } from "@mui/material";
+import { Box, IconButton, Menu, Stack } from "@mui/material";
 import logo from "../../assets/spriyo.png";
 import DiscordLogo from "../../assets/discord-logo.png";
 import { IoIosMore } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { RiNotification3Line } from "react-icons/ri";
 import { NotificationHttpService } from "../../api/notification";
-import { ButtonComponent } from "../ButtonComponent";
+import { RectangleProfile } from "../RectangleProfile";
 
 export function NavbarComponent() {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -185,7 +184,7 @@ export function NavbarComponent() {
 
 				{authenticated ? (
 					<Box onClick={() => navigate(`/${user.username}`)} m={1}>
-						<CircularProfile userImgUrl={user.displayImage} userId={user._id} />
+						<RectangleProfile userImgUrl={user.displayImage} userId={user._id} />
 					</Box>
 				) : (
 					<Box>

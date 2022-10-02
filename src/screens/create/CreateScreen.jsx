@@ -150,7 +150,7 @@ export function CreateScreen({ closeModal }) {
 
 	async function getCollections() {
 		try {
-			const resolved = await collectionHttpService.getCollections(user.address);
+			const resolved = await collectionHttpService.getCollections({user_address:user.address});
 			if (!resolved.error) {
 				setCollections(resolved.data);
 			}
