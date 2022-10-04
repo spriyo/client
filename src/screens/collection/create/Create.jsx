@@ -235,23 +235,29 @@ export const Create = () => {
 							}
 						/>
 					</Box>
-					<Box>
+					<Box width={"50vw"} sx={{ minWidth: "200px", maxWidth: "400px" }}>
 						<Typography variant="h3">Logo</Typography>
-						<Box mt={0.5}>
-							<ImportFile
-								onFileChange={(f) => setLogoFile(f)}
-								width="120px"
-								height="120px"
-							/>
+						<Box
+							mt={0.5}
+							sx={{
+								mt: 0.5,
+								textAlign: "center",
+								height: "200px",
+							}}
+						>
+							<ImportFile onFileChange={(f) => setLogoFile(f)} />
 						</Box>
 						&nbsp;
 						<Typography variant="h3">Banner Image</Typography>
-						<Box mt={0.5}>
-							<ImportFile
-								onFileChange={(f) => setBannerFile(f)}
-								width="380px"
-								height="120px"
-							/>
+						<Box
+							mt={0.5}
+							sx={{
+								mt: 0.5,
+								textAlign: "center",
+								height: "150px",
+							}}
+						>
+							<ImportFile onFileChange={(f) => setBannerFile(f)} />
 						</Box>
 						&nbsp;
 					</Box>

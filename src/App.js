@@ -47,6 +47,7 @@ import { Helmet } from "react-helmet";
 import { Collection } from "./screens/collection/Collection";
 import { Collections } from "./screens/collection/Collections";
 import { Create } from "./screens/collection/create/Create";
+import { Create as CreateDrop } from "./screens/collection/drop/Create";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -177,6 +178,7 @@ function App() {
 						element={<Collection />}
 					/>
 					{/* :collection_name can be contract_address or unique name */}
+					<Route path="/drop/create" exact element={<CreateDrop />} />
 					<Route path="/create" exact element={<CreateScreen />} />
 					<Route path="/connect" exact element={<Connect />} />
 					<Route path="/create/select" exact element={<SelectCreate />} />
