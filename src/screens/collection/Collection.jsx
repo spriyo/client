@@ -7,6 +7,7 @@ import {
 	Tooltip,
 	Typography,
 	Grid,
+	Divider,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { FooterComponent } from "../../components/FooterComponent";
@@ -22,17 +23,25 @@ import { TabContext, TabPanel } from "@mui/lab";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { CardComponent } from "../../components/card/CardComponent";
 import { EmptyNftComponent } from "../../components/EmptyNftComponent";
+import { DropHttpService } from "../../api/v2/drop";
+import NFTContractJSON from "../../contracts/Spriyo.json";
+import { ButtonComponent } from "../../components/ButtonComponent";
+import { getWalletAddress } from "../../utils/wallet";
 
 export const Collection = () => {
 	const { collection_name } = useParams();
 	const collectionHttpService = new CollectionHttpService();
 	const searchHttpService = new SearchHttpService();
+	const dropHttpService = new DropHttpService();
 	const [collection, setCollection] = useState({});
+	const [drop, setDrop] = useState({});
 	const [nfts, setNfts] = useState([]);
+	const [loading, setLoading] = useState(false);
 	const [nftLoading, setNftLoading] = useState(true);
 	const [tabValue, setTabValue] = useState("1");
 	const navigate = useNavigate();
 	let skip = useRef(0);
+	const NFTContract = useRef();
 
 	async function getCollection() {
 		try {
@@ -40,9 +49,9 @@ export const Collection = () => {
 				collection_name
 			);
 
-			console.log(resolve);
 			if (!resolve.error) {
 				setCollection(resolve.data);
+				getDrop(resolve.data._id);
 				getNFTS(resolve.data.contract_address);
 			}
 		} catch (error) {
@@ -66,8 +75,79 @@ export const Collection = () => {
 		}
 	}
 
+	async function getDrop(collection_id) {
+		try {
+			const resolved = await dropHttpService.getDropByCollectionId(
+				collection_id
+			);
+			if (!resolved.error) {
+				setDrop(resolved.data);
+				initializeContract(resolved.data.contract_address);
+			}
+		} catch (error) {
+			toast(error.message);
+		}
+	}
+
 	function handleTabChange(e, v) {
 		setTabValue(v);
+	}
+
+	async function initializeContract(contract_address) {
+		try {
+			const contract = new window.web3.eth.Contract(
+				NFTContractJSON.abi,
+				contract_address
+			);
+			NFTContract.current = contract;
+		} catch (error) {
+			toast(error.message);
+		}
+	}
+
+	async function mint() {
+		if (loading) return;
+		try {
+			setLoading(true);
+			const currentAddress = await getWalletAddress();
+			const transaction = await NFTContract.current.methods
+				.mint(drop.metadata_url)
+				.send({ from: currentAddress });
+
+			const resolved = await uploadToServer(
+				parseInt(transaction.events.Transfer.returnValues.tokenId),
+				transaction.events.Transfer.returnValues.to
+			);
+			if (!resolved.error) {
+				toast("Successfully minted", { type: "success" });
+				navigate("/");
+			}
+		} catch (error) {
+			toast(error.message, { type: "warning" });
+		}
+		setLoading(false);
+	}
+
+	async function uploadToServer(itemId, owner) {
+		try {
+			let data = {};
+			data["image"] = drop.image;
+			data["name"] = drop.title;
+			data["description"] = drop.description;
+			data["chain_id"] = "8080";
+			data["contract_address"] = drop.contract_address;
+			data["metadata_url"] = drop.metadata_url;
+			data["token_id"] = itemId;
+			data["type"] = "721";
+			data["owner"] = owner;
+			data["value"] = "1";
+			data["metadata"] = drop.metadata;
+
+			const resolved = await dropHttpService.createDropNFT(data);
+			return resolved;
+		} catch (error) {
+			toast(error.message, { type: "warning" });
+		}
 	}
 
 	useEffect(() => {
@@ -241,8 +321,8 @@ export const Collection = () => {
 				{/* Tabs */}
 				{collection.contract_address && (
 					<TabContext value={tabValue}>
-						<Box px={3}>
-							<Box sx={{}}>
+						<Box p={1}>
+							<Box>
 								<Tabs value={tabValue} onChange={handleTabChange}>
 									<Tab label="nfts" value="1" />
 									<Tab label="drop" value="2" />
@@ -284,13 +364,98 @@ export const Collection = () => {
 								)}
 							</TabPanel>
 							<TabPanel value="2" index={1}>
-								<Typography variant="h4">Drop page coming soon🚀</Typography>
+								{drop && (
+									<Box
+										sx={{
+											display: "flex",
+											w: "100%",
+											p: 1,
+											flexDirection: { xs: "column", md: "row" },
+											alignItems: "center",
+										}}
+									>
+										<Box
+											sx={{
+												flex: 1,
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												p: 3,
+											}}
+										>
+											<img
+												src={drop.image}
+												alt={drop.title}
+												style={{
+													objectFit: "cover",
+													overflow: "hidden",
+													width: "100%",
+													height: "100%",
+												}}
+											/>
+										</Box>
+										<Box
+											sx={{
+												flex: 1,
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												flexDirection: "column",
+												m: 1,
+												mt: 2,
+												width: "100%",
+												maxWidth: "40vw",
+											}}
+										>
+											<Typography variant="h2">Details</Typography>
+											<br />
+											<Box px={1} width="100%">
+												<Tile title={"Title"} value={drop.title} />
+												{drop.contract_address && (
+													<Tile
+														title={"Contract Address"}
+														value={`${drop.contract_address.substr(
+															0,
+															6
+														)}...${drop.contract_address.substr(-6)}`}
+													/>
+												)}
+												<Tile title={"Blockchain"} value={`Shardeum Liberty`} />
+												<Tile title={"Token Standard"} value={`ERC721`} />
+												<Tile title={"Price"} value={`${drop.amount} SHM`} />
+											</Box>
+											<Divider sx={{ width: "100%" }} />
+											{/* Create Button */}
+											<Box className="createscreen-create-button">
+												<ButtonComponent
+													text={loading ? "Loading..." : "Mint"}
+													onClick={mint}
+												/>
+											</Box>
+										</Box>
+									</Box>
+								)}
 							</TabPanel>
 						</Box>
 					</TabContext>
 				)}
 			</Box>
 			<FooterComponent />
+		</Box>
+	);
+};
+
+export const Tile = ({ title, value }) => {
+	return (
+		<Box
+			display={"flex"}
+			justifyContent="space-between"
+			width="100%"
+			alignItems="center"
+			my={1}
+		>
+			<Typography color="grey">{title}</Typography>
+			<Typography variant="h3">{value}</Typography>
 		</Box>
 	);
 };

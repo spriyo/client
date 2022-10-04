@@ -17,12 +17,14 @@ import { CollectionHttpService } from "../../../api/v2/collection";
 import { CgAddR } from "react-icons/cg";
 import { DropHttpService } from "../../../api/v2/drop";
 import { ButtonComponent } from "../../../components/ButtonComponent";
+import { NftStorageHttpService } from "../../../api/nftStorage";
 
 export const Create = () => {
 	const user = useSelector((state) => state.authReducer.user);
 	const dropHttpService = new DropHttpService();
 	const [collectionSelectValue, setCollectionSelectValue] = useState("");
 	const collectionHttpService = new CollectionHttpService();
+	const nftStorageHttpService = new NftStorageHttpService();
 	const [collections, setCollections] = useState([]);
 	const [image, setImage] = useState(null);
 	const [loading, setLoading] = useState(false);
@@ -31,6 +33,7 @@ export const Create = () => {
 	const [formInput, updateFormInput] = useState({
 		title: "",
 		description: "",
+		contract_address: "",
 		amount: "",
 		collection_id: "",
 	});
@@ -55,7 +58,25 @@ export const Create = () => {
 		return valid;
 	}
 
+	async function uploadToIPFS(file) {
+		try {
+			// 1. Upload file to ipfs
+			const assetURL = await nftStorageHttpService.pinFileToIPFS(file);
+
+			// 2. Upload data to ipfs
+			const metaDataURL = await nftStorageHttpService.pinJSONToIPFS(
+				{ title: formInput.title, description: formInput.description },
+				assetURL
+			);
+
+			return { metaDataURL, assetURL };
+		} catch (error) {
+			toast(error.message, { type: "error" });
+		}
+	}
+
 	async function createDrop() {
+		if (loading) return;
 		try {
 			setLoading(true);
 			const isValid = validateForm();
@@ -63,11 +84,22 @@ export const Create = () => {
 				setLoading(false);
 				return;
 			}
+			const { metaDataURL, assetURL } = await uploadToIPFS(image);
 			const formData = new FormData();
 			for (let key in formInput) {
 				formData.set(key, formInput[key]);
 			}
 			formData.append("image", image);
+			formData.set("metadata_url", metaDataURL);
+			let metadata = {
+				name: formInput.title,
+				description: formInput.description,
+				image: assetURL,
+			};
+			for (let previewKey in metadata) {
+				formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
+			}
+
 			const resolved = await dropHttpService.createDrop(formData);
 			if (!resolved.error) {
 				toast("Drop created successfully", { type: "success" });
@@ -157,6 +189,20 @@ export const Create = () => {
 							placeholder="Description about your drop"
 							onChange={(e) =>
 								updateFormInput({ ...formInput, description: e.target.value })
+							}
+						/>
+					</Box>
+					{/* Contract Address */}
+					<Box className="data-container-field">
+						<Typography variant="h3">Contract Address</Typography>
+						<input
+							type="text"
+							placeholder="Contract Address"
+							onChange={(e) =>
+								updateFormInput({
+									...formInput,
+									contract_address: e.target.value,
+								})
 							}
 						/>
 					</Box>

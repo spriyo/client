@@ -17,6 +17,18 @@ export class DropHttpService {
 		return resolved;
 	}
 
+	async createDropNFT(data) {
+		const resolved = await resolve(
+			axios.post(`${V2_WEB_API_BASE_URL}/drops/mint`, data, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "application/json",
+				},
+			})
+		);
+		return resolved;
+	}
+
 	async getDropByCollectionId(collection_id) {
 		const resolved = await resolve(
 			axios.get(`${V2_WEB_API_BASE_URL}/drops/${collection_id}`)
