@@ -383,7 +383,7 @@ export const Collection = () => {
 												p: 3,
 											}}
 										>
-											{drop.image.includes(".mp4") ? (
+											{drop.image && drop.image.includes(".mp4") ? (
 												<video
 													style={{
 														objectFit: "cover",
