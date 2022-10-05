@@ -3,15 +3,10 @@ import { useState } from "react";
 import { Box } from "@mui/material";
 import { RiImageAddLine } from "react-icons/ri";
 
-export const ImportFile = ({
-	onFileChange,
-	width = "100px",
-	height = "100px",
-	borderRadius = "8px",
-}) => {
+export const ImportFile = ({ onFileChange, borderRadius = "8px" }) => {
 	const [file, setFile] = useState(null);
 	const [imageUrl, setImageUrl] = useState();
-	const randomNumber = Math.random()
+	const randomNumber = Math.random();
 
 	async function onchange(e) {
 		try {
@@ -43,7 +38,6 @@ export const ImportFile = ({
 					const f = ev.dataTransfer.items[i].getAsFile();
 					const validFile = checkFileType(f.name);
 					if (!validFile) return;
-					console.log(f);
 					setFile(f);
 				}
 			}
@@ -75,7 +69,8 @@ export const ImportFile = ({
 			sx={{
 				border: "3px solid grey",
 				borderStyle: "dashed",
-				width: "fit-content",
+				width: "100%",
+				height: "100%",
 				p: "4px",
 				borderRadius,
 				"&:hover": { backgroundColor: "lightgrey" },
@@ -93,8 +88,8 @@ export const ImportFile = ({
 						backgroundSize: "cover",
 						backgroundRepeat: "no-repeat",
 						textAlign: "center",
-						height,
-						width,
+						height: "100%",
+						width: "100%",
 						cursor: "pointer",
 					}}
 					onDrop={(e) => dropHandler(e)}
@@ -107,8 +102,8 @@ export const ImportFile = ({
 									new Blob([file], { type: "video/mp4" })
 								)}
 								autoPlay
-								height={height}
-								width={width}
+								height="100%"
+								width="100%"
 								margin={0}
 								muted
 								loop

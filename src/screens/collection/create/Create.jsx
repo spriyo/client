@@ -11,6 +11,7 @@ import { NavbarComponent } from "../../../components/navBar/NavbarComponent";
 import FactoryContract from "../../../contracts/Factory.json";
 import { getWalletAddress } from "../../../utils/wallet";
 import { useNavigate } from "react-router-dom";
+import { validURL } from "../../../utils/validURL";
 
 export const Create = () => {
 	const [logoFile, setLogoFile] = useState(null);
@@ -29,6 +30,7 @@ export const Create = () => {
 			{ type: "website", url: "" },
 			{ type: "discord", url: "" },
 			{ type: "twitter", url: "" },
+			{ type: "telegram", url: "" },
 		],
 	});
 
@@ -76,7 +78,29 @@ export const Create = () => {
 		try {
 			setLoading(true);
 			const valid = validateForm();
-			if (!valid) return;
+			if (!valid) {
+				setLoading(false);
+				return;
+			}
+			var formData = new FormData();
+
+			// Socials validations
+			for (let i in formInput.socials) {
+				for (let key in formInput.socials[i]) {
+					if (formInput.socials[i]["url"] !== "") {
+						if (validURL(formInput.socials[i]["url"])) {
+							formData.append(
+								`socials[${i}][${key}]`,
+								formInput.socials[i][key]
+							);
+						} else {
+							throw new Error(
+								`Please enter valid ${formInput.socials[i]["url"]} address`
+							);
+						}
+					}
+				}
+			}
 
 			const currentAddress = await getWalletAddress();
 			// Contract Creation
@@ -87,7 +111,6 @@ export const Create = () => {
 				transaction.events.ContractCreation.returnValues.contractAddress;
 
 			// Formdata
-			var formData = new FormData();
 			formData.append("collectionimg", logoFile);
 			formData.append("collectionbannerimg", bannerFile);
 			formData.set("address", contractAddress);
@@ -96,15 +119,9 @@ export const Create = () => {
 			formData.set("chain_id", formInput.chain_id);
 			formData.set("uname", formInput.uname);
 			formData.set("description", formInput.description);
-			for (let i in formInput.socials) {
-				for (let key in formInput.socials[i]) {
-					formData.append(`socials[${i}][${key}]`, formInput.socials[i][key]);
-				}
-			}
 
 			// Collection Creation
 			const resolved = await collectionHttpService.createCollection(formData);
-			setLoading(false);
 			if (!resolved.error) {
 				toast("Successfully created an collection", { type: "success" });
 				navigate("/");
@@ -112,6 +129,7 @@ export const Create = () => {
 		} catch (error) {
 			toast(error.message, { type: "warning" });
 		}
+		setLoading(false);
 	}
 
 	async function initializeFactoryContract() {
@@ -217,23 +235,29 @@ export const Create = () => {
 							}
 						/>
 					</Box>
-					<Box>
+					<Box width={"50vw"} sx={{ minWidth: "200px", maxWidth: "400px" }}>
 						<Typography variant="h3">Logo</Typography>
-						<Box mt={0.5}>
-							<ImportFile
-								onFileChange={(f) => setLogoFile(f)}
-								width="120px"
-								height="120px"
-							/>
+						<Box
+							mt={0.5}
+							sx={{
+								mt: 0.5,
+								textAlign: "center",
+								height: "200px",
+							}}
+						>
+							<ImportFile onFileChange={(f) => setLogoFile(f)} />
 						</Box>
 						&nbsp;
 						<Typography variant="h3">Banner Image</Typography>
-						<Box mt={0.5}>
-							<ImportFile
-								onFileChange={(f) => setBannerFile(f)}
-								width="380px"
-								height="120px"
-							/>
+						<Box
+							mt={0.5}
+							sx={{
+								mt: 0.5,
+								textAlign: "center",
+								height: "150px",
+							}}
+						>
+							<ImportFile onFileChange={(f) => setBannerFile(f)} />
 						</Box>
 						&nbsp;
 					</Box>
@@ -254,6 +278,11 @@ export const Create = () => {
 							type="text"
 							placeholder="Twitter handle"
 							onChange={(e) => onSocialChange(2, e)}
+						/>
+						<input
+							type="text"
+							placeholder="Telegram channel"
+							onChange={(e) => onSocialChange(3, e)}
 						/>
 					</Box>
 					<Box className="createscreen-create-button" sx={{ width: "20vw" }}>
