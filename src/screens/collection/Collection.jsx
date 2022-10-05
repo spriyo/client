@@ -383,16 +383,32 @@ export const Collection = () => {
 												p: 3,
 											}}
 										>
-											<img
-												src={drop.image}
-												alt={drop.title}
-												style={{
-													objectFit: "cover",
-													overflow: "hidden",
-													width: "100%",
-													height: "100%",
-												}}
-											/>
+											{drop.image.includes(".mp4") ? (
+												<video
+													style={{
+														objectFit: "cover",
+														overflow: "hidden",
+														width: "100%",
+														height: "100%",
+													}}
+													autoPlay
+													muted
+													loop
+												>
+													<source src={drop.image} type="video/mp4" />
+												</video>
+											) : (
+												<img
+													src={drop.image}
+													alt={drop.title}
+													style={{
+														objectFit: "cover",
+														overflow: "hidden",
+														width: "100%",
+														height: "100%",
+													}}
+												/>
+											)}
 										</Box>
 										<Box
 											sx={{
