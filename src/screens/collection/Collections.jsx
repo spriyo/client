@@ -33,6 +33,9 @@ export const Collections = () => {
 
 	useEffect(() => {
 		getCollections();
+		return () => {
+			setCollections([]);
+		}
 	}, []);
 
 	return (
@@ -75,7 +78,6 @@ export const Collections = () => {
 							{collections.map((collection, index) => (
 								<Grid item xs={12} sm={4} md={4} key={index}>
 									<Box
-										onClick={() => navigate(`/collections/${collection.uname}`)}
 									>
 										<Box>
 											<Box
@@ -157,9 +159,7 @@ export const Collections = () => {
 										</Box>
 										&nbsp;
 										<Box
-											onClick={() =>
-												navigate(`/${collection.owners[0].username}`)
-											}
+											onClick={() => navigate(`/collections/${collection.uname}`)}
 											text="Create"
 											sx={{
 												backgroundColor: "#00e285",
