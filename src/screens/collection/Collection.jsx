@@ -14,8 +14,8 @@ import { FooterComponent } from "../../components/FooterComponent";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { toast } from "react-toastify";
 import { CollectionHttpService } from "../../api/v2/collection";
-import { useNavigate, useParams } from "react-router-dom";
-import { SiDiscord, SiTwitter } from "react-icons/si";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { SiDiscord, SiTelegram, SiTwitter } from "react-icons/si";
 import { IoGlobe, IoShare } from "react-icons/io5";
 import { TbMinusVertical } from "react-icons/tb";
 import { SearchHttpService } from "../../api/v2/search";
@@ -27,6 +27,14 @@ import { DropHttpService } from "../../api/v2/drop";
 import NFTContractJSON from "../../contracts/Spriyo.json";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { getWalletAddress } from "../../utils/wallet";
+
+
+const mapping = {
+	'twitter': <SiTwitter size={24} />,
+	'website': <IoGlobe size={24} />,
+	'discord': <SiDiscord size={24} />,
+	'telegram': <SiTelegram size={24} />
+}
 
 export const Collection = () => {
 	const { collection_name } = useParams();
@@ -40,8 +48,19 @@ export const Collection = () => {
 	const [nftLoading, setNftLoading] = useState(true);
 	const [tabValue, setTabValue] = useState("1");
 	const navigate = useNavigate();
+	const location = useLocation();
 	let skip = useRef(0);
 	const NFTContract = useRef();
+
+	// useEffect(() => {
+	// 	window.history.pushState(null, null, document.URL);
+	// 	window.addEventListener('popstate', function(event) {
+	// 	// console.log(this.window.location.origin, `/(${this.window.location.origin}/collections/*)\w+`)
+	// 	let reg = new RegExp(`/('/collections/*')\w+`, 'g');
+	// 	console.log(reg.test(location.pathname), location.pathname)
+	// 	reg.test(location.pathname) && navigate('/collections')
+	// });
+	// }, [])
 
 	async function getCollection() {
 		try {
@@ -228,72 +247,40 @@ export const Collection = () => {
 									{collection.name}
 								</Typography>
 							)}
-							{collection.socials && (
+							
 								<Stack
 									flexDirection="row"
 									justifyContent="space-between"
 									alignItems="center"
 								>
-									<Tooltip
+									{collection.socials && collection.socials.map((ele, i) => {
+										return (
+											<Tooltip
+											key={i}
 										placement="top"
 										title={
-											collection.socials[0].url === ""
+											ele.url === ""
 												? "Not Provided"
-												: "Website"
+												: ele.type
 										}
 										arrow
 									>
 										<IconButton
 											sx={{ mx: 1 }}
 											onClick={() => {
-												window.open(collection.socials[0].url, "_blank");
+												window.open(ele.url, "_blank");
 											}}
 										>
-											<IoGlobe size={24} />
+											{mapping[ele.type]}
 										</IconButton>
 									</Tooltip>
-									<Tooltip
-										placement="top"
-										title={
-											collection.socials[0].url === ""
-												? "Not Provided"
-												: "Discord"
-										}
-										arrow
-									>
-										<IconButton
-											sx={{ mx: 1 }}
-											onClick={() => {
-												window.open(collection.socials[1].url, "_blank");
-											}}
-										>
-											<SiDiscord size={24} />
-										</IconButton>
-									</Tooltip>
-									<Tooltip
-										placement="top"
-										title={
-											collection.socials[0].url === ""
-												? "Not Provided"
-												: "Twitter"
-										}
-										arrow
-									>
-										<IconButton
-											sx={{ mx: 1 }}
-											onClick={() => {
-												window.open(collection.socials[2].url, "_blank");
-											}}
-										>
-											<SiTwitter size={24} />
-										</IconButton>
-									</Tooltip>
+										)
+									})}
 									<TbMinusVertical />
 									<IconButton sx={{ mx: 1 }}>
 										<IoShare size={24} />
 									</IconButton>
 								</Stack>
-							)}
 						</Stack>
 
 						{collection.owners && (
@@ -451,6 +438,7 @@ export const Collection = () => {
 										</Box>
 									</Box>
 								)}
+								<p style={{textAlign: 'center'}}>Claim 100 Liberty SHM <a href="https://faucet.liberty20.shardeum.org/" target={'_blank'}>click here</a></p>
 							</TabPanel>
 						</Box>
 					</TabContext>
