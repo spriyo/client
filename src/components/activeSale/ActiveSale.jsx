@@ -43,10 +43,10 @@ export function ActiveSaleComponent({ asset }) {
 				{/* User */}
 				{asset.owners.length >0 && <div className="activebid-user-container">
 					<Box className="activebid-user-img">
-						{/* <CircularProfile
+						<CircularProfile
 							userId={asset.owners[0].user._id}
 							userImgUrl={asset.owners[0].user.displayImage}
-						/> */}
+						/>
 					</Box>
 					<div className="activebid-user-info">
 						<p className="activebid-user-info name">
