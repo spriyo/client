@@ -150,7 +150,9 @@ export function CreateScreen({ closeModal }) {
 
 	async function getCollections() {
 		try {
-			const resolved = await collectionHttpService.getCollections({user_address:user.address});
+			const resolved = await collectionHttpService.getCollections({
+				user_address: user.address,
+			});
 			if (!resolved.error) {
 				setCollections(resolved.data);
 			}
@@ -222,6 +224,9 @@ export function CreateScreen({ closeModal }) {
 
 	const [imageUrl, setImageUrl] = useState();
 	useEffect(() => {
+		// Remove this
+		alert("Under Maintaince");
+		navigate("/");
 		if (file) setImageUrl(URL.createObjectURL(file));
 		if (user) getCollections();
 		currentChainIdRef.current = stateChainId;
