@@ -119,6 +119,9 @@ export const Create1155 = () => {
 	}
 
 	useEffect(() => {
+		// Remove this
+		alert("Under Maintaince");
+		navigate("/");
 		currentChainIdRef.current = stateChainId;
 	}, [stateChainId]);
 
