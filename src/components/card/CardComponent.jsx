@@ -68,13 +68,11 @@ export function CardComponent({ asset }) {
 				""
 			)}
 			<div className="card-info">
-				{/* {asset.owners.length > 0 && (
+				{asset.owners.length > 0 && (
 					<div
 						className="card-info-profileimg"
 						style={{
 							backgroundImage: `url('${
-								asset.type === "ERC-721" &&
-								asset.owners[0].user &&
 								asset.owners[0].user.displayImage.includes(
 									"default-profile-icon"
 								)
@@ -83,7 +81,7 @@ export function CardComponent({ asset }) {
 							}')`,
 						}}
 					></div>
-				)} */}
+				)}
 				<div className="card-info-creator">
 					{/* created by */}
 					<Typography variant="h6">
