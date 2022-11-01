@@ -15,7 +15,7 @@ import {
 import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { BiLinkExternal } from "react-icons/bi";
-import { ChainsConfig } from "../../constants";
+import { ChainsConfig, DOTSHM_ADDRESS } from "../../constants";
 import { useSelector } from "react-redux";
 import { ActionsComponent } from "../../components/ActionsComponent";
 import { ActivityCardComponent } from "../../components/activityCard/ActivityCard";
@@ -32,6 +32,8 @@ import NoComment from "../../assets/no-comments.gif";
 import { Helmet } from "react-helmet";
 import NFTContractJSON from "../../contracts/Spriyo.json";
 import { toast } from "react-toastify";
+import DOTSHM_IMAGE from "../../assets/dotshm.png";
+import LOADING_IMG from "../../assets/loading-image.gif";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -206,6 +208,10 @@ export function AssetScreen() {
 		}
 	}
 
+	function addDefaultSrc(ev) {
+		ev.target.src = LOADING_IMG;
+	}
+
 	useEffect(() => {
 		getAsset();
 		getAssetsFromCollection();
@@ -278,17 +284,22 @@ export function AssetScreen() {
 								}
 								m={1}
 							>
-								{asset.image.includes(".mp4") ? (
+								{asset.image && asset.image.includes(".mp4") ? (
 									<video style={{ maxHeight: "40vh" }} autoPlay muted loop>
 										<source src={asset.image} type="video/mp4" />
 									</video>
 								) : (
 									<img
-										src={asset.image || asset.medias[0].path}
+										src={
+											asset.contract_address === DOTSHM_ADDRESS
+												? DOTSHM_IMAGE
+												: asset.image
+										}
 										alt={asset.name}
 										width="100%"
 										height="auto"
 										className="main-image"
+										onError={addDefaultSrc}
 									/>
 								)}
 							</Box>
@@ -296,7 +307,11 @@ export function AssetScreen() {
 							<Box flex={1} m={1}>
 								<Box display="flex" justifyContent={"space-between"}>
 									<Box mb={1}>
-										<Typography variant="h1">{asset.name}</Typography>
+										<Typography variant="h1">
+											{asset.contract_address === DOTSHM_ADDRESS
+												? asset.metadata_url
+												: asset.name || `#${asset.token_id}`}
+										</Typography>
 										<Typography
 											variant="subtitle2"
 											color={"text.secondary"}
@@ -304,23 +319,17 @@ export function AssetScreen() {
 										>
 											NFT ID : {asset.token_id}
 										</Typography>
-										{asset.type === "721" ? (
-											<Typography
-												sx={{ color: "text.secondary" }}
-												variant="subtitle2"
-											>
-												ERC-721
-											</Typography>
-										) : (
-											<Typography
-												sx={{ color: "text.secondary" }}
-												variant="subtitle2"
-											>
-												ERC-1155
-											</Typography>
-										)}
+										<Typography
+											sx={{ color: "text.secondary" }}
+											variant="subtitle2"
+										>
+											{asset.type}
+										</Typography>
 									</Box>
-									{user && asset && user._id === asset.owner._id ? (
+									{user &&
+									asset &&
+									asset.owners[0] &&
+									user._id === asset.owners[0]._id ? (
 										<Box>
 											<ButtonComponent
 												text={loading ? "Transfering..." : "Transfer ▶️"}
@@ -334,7 +343,7 @@ export function AssetScreen() {
 										""
 									)}
 								</Box>
-								{asset.owners.length>0 && (
+								{asset.owners.length > 0 && (
 									<Box>
 										<Typography
 											variant="body2"
@@ -344,26 +353,21 @@ export function AssetScreen() {
 											Owner
 										</Typography>
 										<ListItem
-											onClick={() => navigate(`/${asset.owner.username}`)}
+											onClick={() => navigate(`/${asset.owners[0].address}`)}
 											sx={{ cursor: "pointer" }}
 										>
 											<ListItemAvatar>
-												<CircularProfile
-													userId={asset.owner._id}
-													userImgUrl={asset.owner.displayImage}
-												/>
+												{asset.owners[0] && (
+													<CircularProfile
+														userId={asset.owners[0]._id}
+														userImgUrl={asset.owners[0].displayImage ?? ""}
+													/>
+												)}
 											</ListItemAvatar>
 											{user ? (
 												<ListItemText
-													primary={asset.owner.displayName}
-													secondary={`@${
-														asset.owner.username.length > 20
-															? `${asset.owner.username.substring(
-																	0,
-																	4
-															  )}...${asset.owner.username.slice(-4)}`
-															: asset.owner.username
-													}`}
+													primary={asset.owners[0].displayName || ""}
+													secondary={`@${asset.owners[0].address.slice(-6)}`}
 												/>
 											) : (
 												""

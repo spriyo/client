@@ -1,6 +1,7 @@
 export const BASE_URL = process.env.REACT_APP_BASE_URL;
 export const WEB_API_BASE_URL = `${BASE_URL}/website/v1`;
 export const V2_WEB_API_BASE_URL = `${BASE_URL}/website/v2`;
+export const DOTSHM_ADDRESS = "0x560dde815414953Acc097d9d29c10B46644bce02";
 
 export const ChainsConfig = {
 	BINANCE_SMART_CHAIN: {

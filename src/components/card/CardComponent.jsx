@@ -2,6 +2,9 @@ import { Avatar, Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { LikeHttpService } from "../../api/like";
+import { DOTSHM_ADDRESS } from "../../constants";
+import DOTSHM_IMAGE from "../../assets/dotshm.png";
+import LOADING_IMG from "../../assets/loading-image.gif";
 import "./card.css";
 
 export function CardComponent({ asset }) {
@@ -35,7 +38,11 @@ export function CardComponent({ asset }) {
 			style={{
 				backgroundImage: asset.image.includes(".mp4")
 					? "none"
-					: `url('${asset.image}')`,
+					: `url('${
+							asset.contract_address === DOTSHM_ADDRESS
+								? DOTSHM_IMAGE
+								: asset.image || LOADING_IMG
+					  }')`,
 			}}
 		>
 			{asset.image.includes(".mp4") ? (
@@ -86,13 +93,19 @@ export function CardComponent({ asset }) {
 					{/* created by */}
 					<Typography variant="h6">
 						{/* {asset.created_by && `Created : @${asset.created_by.displayName}`} */}
-						ERC-{asset.type}
+						{asset.type}
 					</Typography>
 				</div>
 				<div className="card-info-top">
 					{/* title */}
 					<div className="card-info-title">
-						<p>{asset.name}</p>
+						<p>
+							{asset.contract_address === DOTSHM_ADDRESS
+								? asset.metadata_url
+								: asset.name === ""
+								? asset.token_id
+								: asset.name}
+						</p>
 					</div>
 				</div>
 				<div className="card-info-bottom">
