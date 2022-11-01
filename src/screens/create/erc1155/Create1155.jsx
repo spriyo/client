@@ -109,7 +109,7 @@ export const Create1155 = () => {
 		formData.set("name", title);
 		formData.set("description", description);
 		formData.set("value", value);
-		const metadata = { name: title, description, image: assetUrl }
+		const metadata = { name: title, description, image: assetUrl };
 		for (let previewKey in metadata) {
 			formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
 		}
@@ -119,6 +119,9 @@ export const Create1155 = () => {
 	}
 
 	useEffect(() => {
+		// Remove this
+		alert("Under Maintaince");
+		navigate("/");
 		currentChainIdRef.current = stateChainId;
 	}, [stateChainId]);
 
