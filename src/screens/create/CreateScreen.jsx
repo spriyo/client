@@ -224,9 +224,6 @@ export function CreateScreen({ closeModal }) {
 
 	const [imageUrl, setImageUrl] = useState();
 	useEffect(() => {
-		// Remove this
-		alert("Under Maintaince");
-		navigate("/");
 		if (file) setImageUrl(URL.createObjectURL(file));
 		if (user) getCollections();
 		currentChainIdRef.current = stateChainId;
