@@ -65,7 +65,7 @@ export function CreateScreen({ closeModal }) {
 			);
 
 			// 3. After file is uploaded to IPFS, pass the URL to mint it on chain
-			const resolved = await mintAsset(metaDataUrl, {
+			await mintAsset(metaDataUrl, {
 				name: title,
 				description,
 				image: assetUrl,
@@ -73,9 +73,7 @@ export function CreateScreen({ closeModal }) {
 			setLoading(false);
 
 			// Redirect to home page
-			if (!resolved.error) {
-				navigate("/", { replace: true });
-			}
+			navigate("/", { replace: true });
 		} catch (error) {
 			console.log(error);
 			setLoading(false);
@@ -94,15 +92,18 @@ export function CreateScreen({ closeModal }) {
 			const transaction = await nftContract.methods
 				.mint(metaDataUrl)
 				.send({ from: currentAddress });
-
-			const resolved = await uploadToServer(
-				transaction.to,
-				parseInt(transaction.events.Transfer.returnValues.tokenId),
-				metaDataUrl,
-				transaction.events.Transfer.returnValues.to,
-				metadata
+			alert(
+				`NFT with token ID ${transaction.events.Transfer.returnValues.tokenId} has been minted, it can take some time to reflect in your profile.`
 			);
-			return resolved;
+
+			// const resolved = await uploadToServer(
+			// 	transaction.to,
+			// 	parseInt(transaction.events.Transfer.returnValues.tokenId),
+			// 	metaDataUrl,
+			// 	transaction.events.Transfer.returnValues.to,
+			// 	metadata
+			// );
+			return transaction;
 		} catch (error) {
 			alert(error.message);
 			console.log(error);
