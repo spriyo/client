@@ -68,7 +68,7 @@ export function CardComponent({ asset }) {
 				""
 			)}
 			<div className="card-info">
-				{asset.owners.length > 0 && (
+				{asset.owners.length > 0 && asset.owners[0].user && (
 					<div
 						className="card-info-profileimg"
 						style={{
