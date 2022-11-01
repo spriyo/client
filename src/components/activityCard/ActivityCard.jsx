@@ -198,7 +198,7 @@ export function ActivityCardComponent({ event, asset }) {
 				</ListItem>
 				{event.event_type === "offer_created" &&
 					user &&
-					user._id === asset.owner._id &&
+					user.address === asset.owner &&
 					event.data.sold === false && (
 						<Box
 							backgroundColor={"primary.main"}
