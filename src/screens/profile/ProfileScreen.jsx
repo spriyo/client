@@ -12,11 +12,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { CardComponent } from "../../components/card/CardComponent";
 import { AuthHttpService } from "../../api/auth";
 import { EmptyNftComponent } from "../../components/EmptyNftComponent";
-import { SearchHttpService } from "../../api/v2/search";
+import { UserHttpService } from "../../api/v2/user";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
 export function ProfileScreen() {
-	const searchHttpService = new SearchHttpService();
+	const userHttpService = new UserHttpService();
 	const authHttpService = new AuthHttpService();
 	const [assets, setAssets] = useState([]);
 	const [loggedUser, setLoggedUserUser] = useState({});
@@ -29,10 +29,15 @@ export function ProfileScreen() {
 		setNftLoading(true);
 		const localUser = await JSON.parse(localStorage.getItem("user"));
 		setLoggedUserUser(localUser ? localUser : {});
-		const resolved = await searchHttpService.searchAssets({
-			owner: address,
+		const resolved = await userHttpService.getUserNFTs(address);
+		const nfts = resolved.data.map((e) => {
+			let nft = e.nft;
+			delete e.nft;
+			nft.owners = [];
+			nft.owners.push(e);
+			return nft;
 		});
-		setAssets(resolved.data);
+		setAssets(nfts);
 		setNftLoading(false);
 	}
 
