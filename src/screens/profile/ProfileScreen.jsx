@@ -1,5 +1,5 @@
 import { Box, Button, Tooltip } from "@mui/material";
-import React from "react";
+import React, { useRef } from "react";
 import LoadingImage from "../../assets/loading-image.gif";
 import { useEffect, useState } from "react";
 import { FooterComponent } from "../../components/FooterComponent";
@@ -22,14 +22,16 @@ export function ProfileScreen() {
 	const [loggedUser, setLoggedUserUser] = useState({});
 	const [user, setUser] = useState({});
 	const { username } = useParams();
-	const [nftLoading, setNftLoading] = useState(false);
 	const navigate = useNavigate();
+	let skip = useRef(0);
+	let addressRef = useRef(0);
 
 	async function getUserAssets(address) {
-		setNftLoading(true);
 		const localUser = await JSON.parse(localStorage.getItem("user"));
 		setLoggedUserUser(localUser ? localUser : {});
-		const resolved = await userHttpService.getUserNFTs(address);
+		const resolved = await userHttpService.getUserNFTs(address, {
+			skip: skip.current,
+		});
 		const nfts = resolved.data.map((e) => {
 			let nft = e.nft;
 			delete e.nft;
@@ -37,14 +39,15 @@ export function ProfileScreen() {
 			nft.owners.push(e);
 			return nft;
 		});
-		setAssets(nfts);
-		setNftLoading(false);
+		setAssets((prevnfts) => [...nfts, ...prevnfts]);
+		skip.current += 10;
 	}
 
 	async function getUser() {
 		const resolved = await authHttpService.getUserById(username);
 		setUser(resolved.data);
 		if (!resolved.error) {
+			addressRef.current = resolved.data.address;
 			getUserAssets(resolved.data.address);
 		} else {
 			navigate("/user/notfound");
@@ -163,10 +166,11 @@ export function ProfileScreen() {
 				<Typography variant="h1">NFT's</Typography>
 				<Box mb={2}></Box>
 				<NFTList
-					nftLoading={nftLoading}
 					assets={assets}
 					isAuthenticated={loggedUser._id === user._id}
 					thirdParty={false}
+					getUserAssets={getUserAssets}
+					userAddress={addressRef.current}
 				/>
 			</Box>
 			<div style={{ marginBottom: "64px" }}>.</div>
@@ -176,21 +180,20 @@ export function ProfileScreen() {
 }
 
 export const NFTList = ({
-	nftLoading = true,
 	assets = [],
 	isAuthenticated = false,
 	thirdParty = true,
+	getUserAssets,
+	userAddress,
 }) => {
 	const navigate = useNavigate();
 
-	return nftLoading ? (
-		<p>loading</p>
-	) : assets.length === 0 ? (
+	return assets.length === 0 ? (
 		<EmptyNftComponent currentUser={isAuthenticated} />
 	) : (
 		<InfiniteScroll
 			dataLength={assets.length}
-			next={() => {}}
+			next={() => getUserAssets(userAddress)}
 			hasMore={true}
 			loader={<p></p>}
 			style={{ overflowX: "clip" }}
