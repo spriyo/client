@@ -15,7 +15,6 @@ import {
 	getWalletAddress,
 } from "./utils/wallet.js";
 import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
-import HomeScreen from "./screens/home/HomeScreen";
 import { CreateScreen } from "./screens/create/CreateScreen.jsx";
 import { ProfileScreen } from "./screens/profile/ProfileScreen";
 import { ThemeProvider } from "@mui/material";
@@ -48,6 +47,7 @@ import { Collection } from "./screens/collection/Collection";
 import { Collections } from "./screens/collection/Collections";
 import { Create } from "./screens/collection/create/Create";
 import { Create as CreateDrop } from "./screens/collection/drop/Create";
+import { HomeScreen2 } from "./screens/home/HomeScreen2";
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -162,7 +162,7 @@ function App() {
 			</Helmet>
 			<Router>
 				<Routes>
-					<Route path="/" exact element={<HomeScreen />} />
+					<Route path="/" exact element={<HomeScreen2 />} />
 					<Route path="/:username" exact element={<ProfileScreen />} />
 					{/* :username can be address, username or _id */}
 					<Route

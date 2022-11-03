@@ -35,4 +35,9 @@ export class NFTHttpService {
 		);
 		return resolved;
 	}
+
+	async getTotalNFTCount() {
+		const resolved = await resolve(axios.get(`${WEB_API_BASE_URL}/nfts/count`));
+		return resolved;
+	}
 }

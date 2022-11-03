@@ -1,16 +1,16 @@
 import "./navBar.css";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { SearchComponent } from "../search/SearchComponent";
 import { ConnectComponent } from "../ConnectComponent";
-import { Box, IconButton, Menu, Stack } from "@mui/material";
+import { Box, Menu, Stack } from "@mui/material";
 import logo from "../../assets/spriyo.png";
 import DiscordLogo from "../../assets/discord-logo.png";
-import { IoIosMore } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { RiNotification3Line } from "react-icons/ri";
 import { NotificationHttpService } from "../../api/notification";
 import { RectangleProfile } from "../RectangleProfile";
+import { MdOutlineExplore } from "react-icons/md";
+import { TbSearch } from "react-icons/tb";
 
 export function NavbarComponent() {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -18,14 +18,23 @@ export function NavbarComponent() {
 	const navigate = useNavigate();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
 	const [notificationCount, setNotificationCount] = useState(0);
 	const notificationHttpService = new NotificationHttpService();
+	const IconButtonStyle = {
+		width: 35,
+		height: 35,
+		border: "1px solid #c6c6c6",
+		cursor: "pointer",
+		borderRadius: "8px",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "Center",
+		mx: 0.5,
+	};
+
 	async function getNotificationCount() {
 		try {
 			const resolved = await notificationHttpService.getNotitficationCount();
@@ -45,9 +54,10 @@ export function NavbarComponent() {
 	return (
 		<Box
 			sx={{
-				backgroundColor: "background.default",
+				backgroundColor: "rgba(255, 255, 255, 0.75)",
 				padding: { xs: "9px 14px", md: "9px 45px" },
 				height: "auto",
+				backdropFilter: "blur(10px)",
 			}}
 			className="navbar-container"
 		>
@@ -62,28 +72,30 @@ export function NavbarComponent() {
 					<small>beta</small>
 					{/* search */}
 				</Box>
-				<Box sx={{ display: { xs: "none", md: "block" }, ml: "24px" }}>
+				{/* <Box sx={{ display: { xs: "none", md: "block" }, ml: "24px" }}>
 					<SearchComponent />
-				</Box>
+				</Box> */}
 			</Box>
 			<div className="navbar-actions">
 				{authenticated && (
 					<Box
-						mx={2}
 						style={{ position: "relative" }}
 						onClick={() => navigate("/notifications")}
 					>
 						<Box className="notification-count">
 							{notificationCount > 9 ? "9+" : notificationCount}
 						</Box>
-						<IconButton
-							onClick={() => {}}
-							sx={{ cursor: user ? "pointer" : "not-allowed" }}
-						>
-							<RiNotification3Line />
-						</IconButton>
+						<Box sx={IconButtonStyle}>
+							<RiNotification3Line size={20} color="#505050" />
+						</Box>
 					</Box>
 				)}
+				<Box onClick={() => navigate("/explore")} sx={IconButtonStyle}>
+					<TbSearch size={20} color="#505050" />
+				</Box>
+				<Box onClick={() => navigate("/explore")} sx={IconButtonStyle}>
+					<MdOutlineExplore size={20} color="#505050" />
+				</Box>
 				{authenticated ? (
 					<Box
 						mr={1}
@@ -109,27 +121,7 @@ export function NavbarComponent() {
 					<div></div>
 				)}
 				{/* profile */}
-				<Box sx={{ display: { xs: "block", md: "none" } }}>
-					<Box
-						onClick={handleClick}
-						aria-controls={open ? "menu" : undefined}
-						aria-haspopup="true"
-						aria-expanded={open ? "true" : undefined}
-						id="nav-button"
-						sx={{
-							width: 35,
-							height: 35,
-							bgcolor: "background.default",
-							border: "1px solid #d9d9d9",
-							cursor: "pointer",
-							borderRadius: "8px",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "Center",
-						}}
-					>
-						<IoIosMore color="#505050" />
-					</Box>
+				<Box>
 					<Menu
 						id="menu"
 						aria-labelledby="nav-button"
@@ -184,7 +176,10 @@ export function NavbarComponent() {
 
 				{authenticated ? (
 					<Box onClick={() => navigate(`/${user.username}`)} m={1}>
-						<RectangleProfile userImgUrl={user.displayImage} userId={user._id} />
+						<RectangleProfile
+							userImgUrl={user.displayImage}
+							userId={user._id}
+						/>
 					</Box>
 				) : (
 					<Box>
