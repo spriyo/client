@@ -83,7 +83,7 @@ export const HomeScreen2 = () => {
 							{/* Title */}
 							<Typography
 								sx={{
-									fontSize: "56px",
+									fontSize: { xs: "36px", sm: "48px", md: "56px" },
 									fontWeight: "700",
 									color: "white",
 									mb: "16px",
@@ -98,7 +98,7 @@ export const HomeScreen2 = () => {
 									sx={{
 										fontWeight: "500",
 										color: "white",
-										fontSize: "18px",
+										fontSize: { xs: "14px", md: "18px" },
 									}}
 								>
 									<span style={{ color: "#00c775" }}>{count}</span> NFTs minted
@@ -124,7 +124,7 @@ export const HomeScreen2 = () => {
 							{/* Search Bar */}
 							<Box
 								sx={{
-									width: "45vw",
+									width: { xs: "85vw", sm: "70vw", md: "45vw" },
 									backgroundColor: "white",
 									padding: "18px 4px 18px 24px",
 									display: "flex",
@@ -150,50 +150,64 @@ export const HomeScreen2 = () => {
 							</Box>
 
 							{/* Suggested */}
-							<Box sx={{ display: "flex", mt: "32px", alignItems: "center" }}>
-								<p style={{ color: "white", fontSize: "12px" }}>
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "column",
+									mt: "32px",
+									alignItems: "center",
+								}}
+							>
+								<p
+									style={{
+										color: "white",
+										fontSize: "12px",
+										marginBottom: "8px",
+									}}
+								>
 									Suggested searches
 								</p>
-								&nbsp; &nbsp;
-								<Chip
-									size="small"
-									sx={{ color: "white" }}
-									label="google.shm"
-									variant="outlined"
-									component="a"
-									href="explore?query=google.shm"
-									clickable
-								/>
-								&nbsp; &nbsp;
-								<Chip
-									size="small"
-									sx={{ color: "white" }}
-									label="elon"
-									variant="outlined"
-									component="a"
-									href="explore?query=elon"
-									clickable
-								/>
-								&nbsp; &nbsp;
-								<Chip
-									size="small"
-									sx={{ color: "white" }}
-									label="cryptopunks"
-									variant="outlined"
-									component="a"
-									href="explore?query=cryptopunk"
-									clickable
-								/>
-								&nbsp; &nbsp;
-								<Chip
-									size="small"
-									sx={{ color: "white" }}
-									label="shardeum"
-									variant="outlined"
-									component="a"
-									href="explore?query=shardeum"
-									clickable
-								/>
+								<Box>
+									<Chip
+										size="small"
+										sx={{ color: "white" }}
+										label="google.shm"
+										variant="outlined"
+										component="a"
+										href="explore?query=google.shm"
+										clickable
+									/>
+									&nbsp; &nbsp;
+									<Chip
+										size="small"
+										sx={{ color: "white" }}
+										label="elon"
+										variant="outlined"
+										component="a"
+										href="explore?query=elon"
+										clickable
+									/>
+									&nbsp; &nbsp;
+									<Chip
+										size="small"
+										sx={{ color: "white" }}
+										label="cryptopunks"
+										variant="outlined"
+										component="a"
+										href="explore?query=cryptopunk"
+										clickable
+									/>
+									&nbsp; &nbsp;
+									<Chip
+										size="small"
+										sx={{ color: "white" }}
+										label="shardeum"
+										variant="outlined"
+										component="a"
+										href="explore?query=shardeum"
+										clickable
+									/>
+								</Box>
 							</Box>
 
 							{/* Unsplash */}
