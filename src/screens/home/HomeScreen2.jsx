@@ -171,10 +171,20 @@ export const HomeScreen2 = () => {
 									<Chip
 										size="small"
 										sx={{ color: "white" }}
-										label="google.shm"
+										label="shm"
 										variant="outlined"
 										component="a"
-										href="explore?query=google.shm"
+										href="explore?query=shm"
+										clickable
+									/>
+									&nbsp; &nbsp;
+									<Chip
+										size="small"
+										sx={{ color: "white" }}
+										label="alexey.shm"
+										variant="outlined"
+										component="a"
+										href="explore?query=alexey.shm"
 										clickable
 									/>
 									&nbsp; &nbsp;
