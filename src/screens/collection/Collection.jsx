@@ -14,8 +14,9 @@ import { FooterComponent } from "../../components/FooterComponent";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { toast } from "react-toastify";
 import { CollectionHttpService } from "../../api/v2/collection";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { SiDiscord, SiTelegram, SiTwitter } from "react-icons/si";
+import { BiPlus, BiMinus } from "react-icons/bi";
 import { IoGlobe, IoShare } from "react-icons/io5";
 import { TbMinusVertical } from "react-icons/tb";
 import { SearchHttpService } from "../../api/v2/search";
@@ -24,20 +25,22 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { CardComponent } from "../../components/card/CardComponent";
 import { EmptyNftComponent } from "../../components/EmptyNftComponent";
 import { DropHttpService } from "../../api/v2/drop";
-import NFTContractJSON from "../../contracts/Spriyo.json";
+import YogamersContractJSON from "../../contracts/Yogamers.json";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { getWalletAddress } from "../../utils/wallet";
-
+import NoDrop from "../../assets/nodrop.jpg";
+import Web3 from "web3";
 
 const mapping = {
-	'twitter': <SiTwitter size={24} />,
-	'website': <IoGlobe size={24} />,
-	'discord': <SiDiscord size={24} />,
-	'telegram': <SiTelegram size={24} />
-}
+	twitter: <SiTwitter size={24} />,
+	website: <IoGlobe size={24} />,
+	discord: <SiDiscord size={24} />,
+	telegram: <SiTelegram size={24} />,
+};
 
 export const Collection = () => {
 	const { collection_name } = useParams();
+	const [searchParams] = useSearchParams();
 	const collectionHttpService = new CollectionHttpService();
 	const searchHttpService = new SearchHttpService();
 	const dropHttpService = new DropHttpService();
@@ -47,20 +50,10 @@ export const Collection = () => {
 	const [loading, setLoading] = useState(false);
 	const [nftLoading, setNftLoading] = useState(true);
 	const [tabValue, setTabValue] = useState("1");
+	const [quantity, setQuantity] = useState(1);
 	const navigate = useNavigate();
-	const location = useLocation();
 	let skip = useRef(0);
 	const NFTContract = useRef();
-
-	// useEffect(() => {
-	// 	window.history.pushState(null, null, document.URL);
-	// 	window.addEventListener('popstate', function(event) {
-	// 	// console.log(this.window.location.origin, `/(${this.window.location.origin}/collections/*)\w+`)
-	// 	let reg = new RegExp(`/('/collections/*')\w+`, 'g');
-	// 	console.log(reg.test(location.pathname), location.pathname)
-	// 	reg.test(location.pathname) && navigate('/collections')
-	// });
-	// }, [])
 
 	async function getCollection() {
 		try {
@@ -70,6 +63,12 @@ export const Collection = () => {
 
 			if (!resolve.error) {
 				setCollection(resolve.data);
+				const tab = searchParams.get("tab");
+				if (tab && tab === "0") {
+					setTabValue("1");
+				} else if (tab && tab === "1") {
+					setTabValue("2");
+				}
 				getDrop(resolve.data._id);
 				getNFTS(resolve.data.contract_address);
 			}
@@ -115,7 +114,7 @@ export const Collection = () => {
 	async function initializeContract(contract_address) {
 		try {
 			const contract = new window.web3.eth.Contract(
-				NFTContractJSON.abi,
+				YogamersContractJSON.abi,
 				contract_address
 			);
 			NFTContract.current = contract;
@@ -130,44 +129,56 @@ export const Collection = () => {
 			setLoading(true);
 			const currentAddress = await getWalletAddress();
 			const transaction = await NFTContract.current.methods
-				.mint(drop.metadata_url)
-				.send({ from: currentAddress });
+				.mint(currentAddress, quantity)
+				.send({
+					from: currentAddress,
+					value: Web3.utils.toWei(drop.amount) * quantity,
+				});
 
-			const resolved = await uploadToServer(
-				parseInt(transaction.events.Transfer.returnValues.tokenId),
-				transaction.events.Transfer.returnValues.to
-			);
-			if (!resolved.error) {
-				toast("Successfully minted", { type: "success" });
-				navigate("/");
+			// const resolved = await uploadToServer(
+			// 	parseInt(transaction.events.Transfer.returnValues.tokenId),
+			// 	transaction.events.Transfer.returnValues.to
+			// );
+			// if (!resolved.error) {
+			// 	toast("Successfully minted", { type: "success" });
+			// }
+			let ids;
+			if (Array.isArray(transaction.events.Transfer)) {
+				ids = transaction.events.Transfer.map((a) => a.returnValues.tokenId).join(", ");
+			} else {
+				ids = transaction.events.Transfer.returnValues.tokenId;
 			}
+			alert(
+				`Token with ID ${ids} is minted and will be reflected in your profile shortly🥳`
+			);
+			navigate("/");
 		} catch (error) {
 			toast(error.message, { type: "warning" });
 		}
 		setLoading(false);
 	}
 
-	async function uploadToServer(itemId, owner) {
-		try {
-			let data = {};
-			data["image"] = drop.image;
-			data["name"] = drop.title;
-			data["description"] = drop.description;
-			data["chain_id"] = "8080";
-			data["contract_address"] = drop.contract_address;
-			data["metadata_url"] = drop.metadata_url;
-			data["token_id"] = itemId;
-			data["type"] = "721";
-			data["owner"] = owner;
-			data["value"] = "1";
-			data["metadata"] = drop.metadata;
+	// async function uploadToServer(itemId, owner) {
+	// 	try {
+	// 		let data = {};
+	// 		data["image"] = drop.image;
+	// 		data["name"] = drop.title;
+	// 		data["description"] = drop.description;
+	// 		data["chain_id"] = "8080";
+	// 		data["contract_address"] = drop.contract_address;
+	// 		data["metadata_url"] = drop.metadata_url;
+	// 		data["token_id"] = itemId;
+	// 		data["type"] = "721";
+	// 		data["owner"] = owner;
+	// 		data["value"] = "1";
+	// 		data["metadata"] = drop.metadata;
 
-			const resolved = await dropHttpService.createDropNFT(data);
-			return resolved;
-		} catch (error) {
-			toast(error.message, { type: "warning" });
-		}
-	}
+	// 		const resolved = await dropHttpService.createDropNFT(data);
+	// 		return resolved;
+	// 	} catch (error) {
+	// 		toast(error.message, { type: "warning" });
+	// 	}
+	// }
 
 	useEffect(() => {
 		getCollection();
@@ -228,7 +239,18 @@ export const Collection = () => {
 							borderRadius: "10px",
 							backgroundImage: `url(${collection.image})`,
 						}}
-					></Box>
+					>
+						{collection.image && collection.image.includes(".mp4") && (
+							<video
+								style={{ height: "100%", width: "100%", borderRadius: "10px" }}
+								autoPlay
+								muted
+								loop
+							>
+								<source src={collection.image} type="video/mp4" />
+							</video>
+						)}
+					</Box>
 				</Box>
 				<Box p={3}>
 					<Box
@@ -247,40 +269,37 @@ export const Collection = () => {
 									{collection.name}
 								</Typography>
 							)}
-							
-								<Stack
-									flexDirection="row"
-									justifyContent="space-between"
-									alignItems="center"
-								>
-									{collection.socials && collection.socials.map((ele, i) => {
+
+							<Stack
+								flexDirection="row"
+								justifyContent="space-between"
+								alignItems="center"
+							>
+								{collection.socials &&
+									collection.socials.map((ele, i) => {
 										return (
 											<Tooltip
-											key={i}
-										placement="top"
-										title={
-											ele.url === ""
-												? "Not Provided"
-												: ele.type
-										}
-										arrow
-									>
-										<IconButton
-											sx={{ mx: 1 }}
-											onClick={() => {
-												window.open(ele.url, "_blank");
-											}}
-										>
-											{mapping[ele.type]}
-										</IconButton>
-									</Tooltip>
-										)
+												key={i}
+												placement="top"
+												title={ele.url === "" ? "Not Provided" : ele.type}
+												arrow
+											>
+												<IconButton
+													sx={{ mx: 1 }}
+													onClick={() => {
+														window.open(ele.url, "_blank");
+													}}
+												>
+													{mapping[ele.type]}
+												</IconButton>
+											</Tooltip>
+										);
 									})}
-									<TbMinusVertical />
-									<IconButton sx={{ mx: 1 }}>
-										<IoShare size={24} />
-									</IconButton>
-								</Stack>
+								<TbMinusVertical />
+								<IconButton sx={{ mx: 1 }}>
+									<IoShare size={24} />
+								</IconButton>
+							</Stack>
 						</Stack>
 
 						{collection.owners && (
@@ -351,7 +370,7 @@ export const Collection = () => {
 								)}
 							</TabPanel>
 							<TabPanel value="2" index={1}>
-								{drop && (
+								{drop && drop.title ? (
 									<Box
 										sx={{
 											display: "flex",
@@ -426,8 +445,49 @@ export const Collection = () => {
 												<Tile title={"Blockchain"} value={`Shardeum Liberty`} />
 												<Tile title={"Token Standard"} value={`ERC721`} />
 												<Tile title={"Price"} value={`${drop.amount} SHM`} />
+												<Divider sx={{ width: "100%" }} />
+												<Box
+													display={"flex"}
+													justifyContent="space-between"
+													alignItems="center"
+													width="100%"
+												>
+													<Box>
+														<Typography variant="h5">Quantity</Typography>
+													</Box>
+													<Box
+														display="flex"
+														sx={{
+															border: "1px solid lightgrey",
+															borderRadius: "6px",
+															m: 1,
+														}}
+													>
+														{/* Minus */}
+														<IconButton
+															onClick={() => {
+																let val;
+																quantity > 1
+																	? (val = quantity - 1)
+																	: (val = quantity);
+																setQuantity(val);
+															}}
+														>
+															<BiMinus />
+														</IconButton>
+														{/* Number */}
+														<Box p={1} sx={{ borderRadius: "4px" }}>
+															{quantity}
+														</Box>
+														{/* Plus */}
+														<IconButton
+															onClick={() => setQuantity((q) => q + 1)}
+														>
+															<BiPlus />
+														</IconButton>
+													</Box>
+												</Box>
 											</Box>
-											<Divider sx={{ width: "100%" }} />
 											{/* Create Button */}
 											<Box className="createscreen-create-button">
 												<ButtonComponent
@@ -437,8 +497,57 @@ export const Collection = () => {
 											</Box>
 										</Box>
 									</Box>
+								) : (
+									<Box
+										sx={{
+											maxWidth: "100%",
+											display: "flex",
+											alignItems: "center",
+											flexDirection: "column",
+											justifyContent: "center",
+										}}
+									>
+										<Box
+											sx={{
+												maxWidth: "40vw",
+											}}
+										>
+											<img src={NoDrop} alt="no drop" width="100%" />
+										</Box>
+										&nbsp;
+										<h3>Hold on, they are dropping it!</h3>
+									</Box>
 								)}
-								<p style={{textAlign: 'center'}}>Claim 100 Liberty SHM <a href="https://faucet.liberty20.shardeum.org/" target={'_blank'}>click here</a></p>
+								&nbsp;
+								<Box
+									style={{
+										textAlign: "center",
+										display: "flex",
+										justifyContent: "center",
+									}}
+								>
+									<Box
+										sx={{
+											padding: "8px",
+											whiteSpace: "nowrap",
+											backgroundColor: "#00c775",
+											display: "flex",
+											borderRadius: "8px",
+											color: "black",
+											fontWeight: "600",
+										}}
+									>
+										Claim 100 Liberty SHM &nbsp;
+										<a
+											href="https://faucet.liberty20.shardeum.org/"
+											target={"_blank"}
+											rel="noreferrer"
+											style={{ color: "white" }}
+										>
+											click here
+										</a>
+									</Box>
+								</Box>
 							</TabPanel>
 						</Box>
 					</TabContext>
@@ -458,7 +567,9 @@ export const Tile = ({ title, value }) => {
 			alignItems="center"
 			my={1}
 		>
-			<Typography color="grey">{title}</Typography>
+			<Typography color="grey" variant="h5">
+				{title}
+			</Typography>
 			<Typography variant="h3">{value}</Typography>
 		</Box>
 	);

@@ -465,7 +465,7 @@ export function AssetScreen() {
 											flexDirection: "column",
 										}}
 									>
-										<img width={"75px"} src={NoComment}></img>
+										<img width={"75px"} src={NoComment} alt="no comment"></img>
 										<Typography variant="h5">
 											Be the first to comment😃
 										</Typography>

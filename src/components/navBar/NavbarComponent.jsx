@@ -10,7 +10,8 @@ import { RiNotification3Line } from "react-icons/ri";
 import { NotificationHttpService } from "../../api/notification";
 import { RectangleProfile } from "../RectangleProfile";
 import { MdOutlineExplore } from "react-icons/md";
-import { TbSearch } from "react-icons/tb";
+import { BsCollection } from "react-icons/bs";
+import { SearchComponent } from "../search/SearchComponent";
 
 export function NavbarComponent() {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -70,11 +71,11 @@ export function NavbarComponent() {
 				>
 					<img src={logo} alt="logo" height={36} />
 					<small>beta</small>
-					{/* search */}
 				</Box>
-				{/* <Box sx={{ display: { xs: "none", md: "block" }, ml: "24px" }}>
+				{/* search */}
+				<Box sx={{ display: { xs: "none", md: "block" }, ml: "24px" }}>
 					<SearchComponent />
-				</Box> */}
+				</Box>
 			</Box>
 			<div className="navbar-actions">
 				{authenticated && (
@@ -90,8 +91,8 @@ export function NavbarComponent() {
 						</Box>
 					</Box>
 				)}
-				<Box onClick={() => navigate("/explore")} sx={IconButtonStyle}>
-					<TbSearch size={20} color="#505050" />
+				<Box onClick={() => navigate("/collections")} sx={IconButtonStyle}>
+					<BsCollection size={20} color="#505050" />
 				</Box>
 				<Box onClick={() => navigate("/explore")} sx={IconButtonStyle}>
 					<MdOutlineExplore size={20} color="#505050" />

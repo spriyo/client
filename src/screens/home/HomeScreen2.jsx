@@ -9,6 +9,9 @@ import { addNotification } from "../../state/actions/notifications";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { TopNotification } from "../../components/topNotification/TopNotification";
 import { useNavigate } from "react-router-dom";
+import YogamaImage from "../../assets/yogama.jpg";
+import YogamaIcon from "../../assets/yogamaicon.gif";
+import { FooterComponent } from "../../components/FooterComponent";
 
 export const HomeScreen2 = () => {
 	const dispatch = useDispatch();
@@ -58,20 +61,21 @@ export const HomeScreen2 = () => {
 			<TopNotification />
 			<div>
 				<div className="navbar">
-					<Box
-						sx={{
-							backgroundImage:
-								"url('https://images.unsplash.com/photo-1633783156075-a01661455344?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80')",
-							backgroundPosition: "center",
-							backgroundSize: "cover",
-							backgroundRepeat: "no-repeat",
-							backgroundColor: "#3b28147f" /* Tint color */,
-							backgroundBlendMode: "multiply",
-						}}
-					>
-						<NavbarComponent />
+					<Box sx={{}}>
+						<Box sx={{ zIndex: 100 }}>
+							<NavbarComponent />
+						</Box>
+						{/* Page 1 */}
+						{/* Set display to flex to add search back */}
 						<Box
 							sx={{
+								backgroundImage:
+									"url('https://images.unsplash.com/photo-1633783156075-a01661455344?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80')",
+								backgroundPosition: "center",
+								backgroundSize: "auto",
+								backgroundRepeat: "no-repeat",
+								backgroundColor: "#3b28147f" /* Tint color */,
+								backgroundBlendMode: "multiply",
 								height: "90vh",
 								display: "flex",
 								justifyContent: "center",
@@ -249,6 +253,89 @@ export const HomeScreen2 = () => {
 								</a>
 							</Box>
 						</Box>
+
+						{/* Mint Page */}
+						<Box
+							sx={{
+								height: "100vh",
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								flexDirection: "column",
+								// Remove from below
+								backgroundColor: "#272727f6" /* Tint color */,
+								backgroundImage: `url(${YogamaImage})`,
+								backgroundBlendMode: "multiply",
+							}}
+						>
+							<Box
+								sx={{
+									width: "85vw",
+									height: "75vh",
+									borderRadius: "12px",
+									backgroundImage: `url(${YogamaImage})`,
+									backgroundPosition: "center",
+									backgroundSize: "cover",
+									backgroundRepeat: "no-repeat",
+									backgroundColor: "#2e24185b" /* Tint color */,
+									backgroundBlendMode: "multiply",
+									display: "flex",
+									flexDirection: "column",
+									justifyContent: "end",
+								}}
+							>
+								<Box
+									sx={{
+										display: "flex",
+										justifyContent: "space-between",
+										alignItems: { xs: "start", md: "end" },
+										flexDirection: { xs: "column", md: "row" },
+										p: 2,
+										color: "white",
+									}}
+								>
+									{/* About */}
+									<Box>
+										{/* Icon */}
+										<Box mb={1}>
+											<img
+												src={YogamaIcon}
+												alt="Drop Icon"
+												width="75px"
+												style={{
+													borderRadius: "10px",
+												}}
+											/>
+										</Box>
+										{/* Title */}
+										<Box>
+											<h1>Yogamers</h1>
+										</Box>
+										<p>
+											By <b>Yogamers</b>
+										</p>
+									</Box>
+									{/* Button */}
+									<Box
+										sx={{
+											borderRadius: "6px",
+											border: "2px solid white",
+											padding: "10px 8px",
+											backgroundColor: "#252525d9",
+											cursor: "pointer",
+											height: "min-content",
+											mt: 2,
+										}}
+										onClick={() => navigate("/collections/yogamers?tab=1")}
+									>
+										<p style={{ fontWeight: "bold", fontSize: "16px" }}>
+											View Drop
+										</p>
+									</Box>
+								</Box>
+							</Box>
+						</Box>
+						<FooterComponent />
 					</Box>
 				</div>
 			</div>
