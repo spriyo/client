@@ -72,7 +72,7 @@ export const HomeScreen2 = () => {
 								backgroundImage:
 									"url('https://images.unsplash.com/photo-1633783156075-a01661455344?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80')",
 								backgroundPosition: "center",
-								backgroundSize: "auto",
+								backgroundSize: "cover",
 								backgroundRepeat: "no-repeat",
 								backgroundColor: "#3b28147f" /* Tint color */,
 								backgroundBlendMode: "multiply",
@@ -326,7 +326,7 @@ export const HomeScreen2 = () => {
 											height: "min-content",
 											mt: 2,
 										}}
-										onClick={() => navigate("/collections/yogamers?tab=1")}
+										onClick={() => navigate("/collections/yogamatnt?tab=1")}
 									>
 										<p style={{ fontWeight: "bold", fontSize: "16px" }}>
 											View Drop
