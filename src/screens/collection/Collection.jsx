@@ -144,7 +144,9 @@ export const Collection = () => {
 			// }
 			let ids;
 			if (Array.isArray(transaction.events.Transfer)) {
-				ids = transaction.events.Transfer.map((a) => a.returnValues.tokenId).join(", ");
+				ids = transaction.events.Transfer.map(
+					(a) => a.returnValues.tokenId
+				).join(", ");
 			} else {
 				ids = transaction.events.Transfer.returnValues.tokenId;
 			}
@@ -287,6 +289,8 @@ export const Collection = () => {
 												<IconButton
 													sx={{ mx: 1 }}
 													onClick={() => {
+														if (!ele.url.includes("https://"))
+															ele.url = `https://${ele.url}`;
 														window.open(ele.url, "_blank");
 													}}
 												>

@@ -309,10 +309,10 @@ export const HomeScreen2 = () => {
 										</Box>
 										{/* Title */}
 										<Box>
-											<h1>Yogamers</h1>
+											<h1>Yogama</h1>
 										</Box>
 										<p>
-											By <b>Yogamers</b>
+											By <b>Yogama</b>
 										</p>
 									</Box>
 									{/* Button */}
