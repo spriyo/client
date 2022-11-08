@@ -61,7 +61,17 @@ export const HomeScreen2 = () => {
 			<TopNotification />
 			<div>
 				<div className="navbar">
-					<Box sx={{}}>
+					<Box
+						sx={{
+							backgroundImage:
+								"url('https://images.unsplash.com/photo-1633783156075-a01661455344?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80')",
+							backgroundPosition: "center",
+							backgroundSize: "cover",
+							backgroundRepeat: "no-repeat",
+							backgroundColor: "#3b28147f" /* Tint color */,
+							backgroundBlendMode: "multiply",
+						}}
+					>
 						<Box sx={{ zIndex: 100 }}>
 							<NavbarComponent />
 						</Box>
@@ -69,15 +79,8 @@ export const HomeScreen2 = () => {
 						{/* Set display to flex to add search back */}
 						<Box
 							sx={{
-								backgroundImage:
-									"url('https://images.unsplash.com/photo-1633783156075-a01661455344?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80')",
-								backgroundPosition: "center",
-								backgroundSize: "cover",
-								backgroundRepeat: "no-repeat",
-								backgroundColor: "#3b28147f" /* Tint color */,
-								backgroundBlendMode: "multiply",
 								height: "90vh",
-								display: "flex",
+								display: "none",
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
@@ -257,8 +260,8 @@ export const HomeScreen2 = () => {
 						{/* Mint Page */}
 						<Box
 							sx={{
-								height: "100vh",
-								display: "none",
+								height: "90vh",
+								display: "flex",
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
@@ -335,7 +338,7 @@ export const HomeScreen2 = () => {
 								</Box>
 							</Box>
 						</Box>
-						<FooterComponent />
+						{/* <FooterComponent /> */}
 					</Box>
 				</div>
 			</div>
