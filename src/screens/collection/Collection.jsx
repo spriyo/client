@@ -398,8 +398,9 @@ export const Collection = () => {
 													style={{
 														objectFit: "cover",
 														overflow: "hidden",
-														width: "100%",
-														height: "100%",
+														width: "90%",
+														height: "90%",
+														borderRadius: "12px",
 													}}
 													autoPlay
 													muted
@@ -414,8 +415,9 @@ export const Collection = () => {
 													style={{
 														objectFit: "cover",
 														overflow: "hidden",
-														width: "100%",
-														height: "100%",
+														width: "90%",
+														height: "90%",
+														borderRadius: "12px",
 													}}
 												/>
 											)}

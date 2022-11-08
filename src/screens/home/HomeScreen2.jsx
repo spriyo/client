@@ -258,7 +258,7 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "100vh",
-								display: "flex",
+								display: "none",
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
