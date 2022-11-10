@@ -80,7 +80,7 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "none",
+								display: "flex",
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
@@ -261,13 +261,13 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "flex",
+								display: "none", // Change to flex
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
 								// Remove from below
 								backgroundColor: "#272727f6" /* Tint color */,
-								backgroundImage: `url(${YogamaImage})`,
+								// backgroundImage: `url(${YogamaImage})`, // Change Image here for future drops
 								backgroundBlendMode: "multiply",
 							}}
 						>
