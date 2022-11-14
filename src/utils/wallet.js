@@ -65,13 +65,13 @@ export function getChainId() {
 			if (
 				chainId !== 56 &&
 				chainId !== 97 &&
-				chainId !== 8080 &&
+				chainId !== 8081 &&
 				chainId !== 80001
 			) {
-				chainId = 97;
+				chainId = 8081;
 			}
 		} else {
-			if (chainId !== 56 && chainId !== 8080) {
+			if (chainId !== 56 && chainId !== 8081) {
 				chainId = process.env.REACT_APP_CHAIN_ID;
 			}
 		}

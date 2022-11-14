@@ -4,26 +4,19 @@ export const V2_WEB_API_BASE_URL = `${BASE_URL}/website/v2`;
 export const DOTSHM_ADDRESS = "0x560dde815414953Acc097d9d29c10B46644bce02";
 
 export const ChainsConfig = {
-	BINANCE_SMART_CHAIN: {
-		chainId: 56,
-		chainName: "BNB Smart Chain",
-		nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-		rpcUrls: ["https://bsc-dataseed1.binance.org/"],
-		blockExplorerUrls: ["https://bscscan.com/"],
-	},
-	BINANCE_TESTNET: {
-		chainId: 97,
-		chainName: "BNB Smart Chain Testnet",
-		nativeCurrency: { name: "BNB", symbol: "tBNB", decimals: 18 },
-		rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
-		blockExplorerUrls: ["https://testnet.bscscan.com/"],
-	},
 	SHARDEUM_LIBERTY: {
 		chainId: 8080,
 		chainName: "Shardeum Liberty",
 		nativeCurrency: { name: "Shardeum", symbol: "SHM", decimals: 18 },
 		rpcUrls: ["https://liberty10.shardeum.org/"],
 		blockExplorerUrls: ["https://explorer.liberty10.shardeum.org/"],
+	},
+	SHARDEUM_LIBERTY_2: {
+		chainId: 8081,
+		chainName: "Shardeum Liberty 2.0",
+		nativeCurrency: { name: "Shardeum", symbol: "SHM", decimals: 18 },
+		rpcUrls: ["https://liberty20.shardeum.org/"],
+		blockExplorerUrls: ["https://explorer-liberty20.shardeum.org/"],
 	},
 	POLYGON_TESTNET: {
 		chainId: 80001,

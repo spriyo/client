@@ -270,7 +270,7 @@ export const Create = () => {
 												<img
 													height="25px"
 													src={c.image}
-													alt="Foundation Logo"
+													alt="logo"
 												/>
 												<Box pl={1}>{c.name}</Box>
 											</Box>

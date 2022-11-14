@@ -14,7 +14,7 @@ export const ChangeNetworkComponent = ({
 	onNetworkChange,
 	enableAll = false,
 }) => {
-	const [networkid, setNetworkid] = useState(56);
+	const [networkid, setNetworkid] = useState(8081);
 	const cid = getChainId();
 	const env = process.env.REACT_APP_ENV;
 
@@ -54,12 +54,10 @@ export const ChangeNetworkComponent = ({
 						onChange={(e) => handleNetworkChange(e.target.value)}
 					>
 						{enableAll && <MenuItem value={0}>All</MenuItem>}
-						<ListSubheader>Mainnet</ListSubheader>
-						<MenuItem value={56}>Binance Smart Chain</MenuItem>
 						<ListSubheader>Testnets</ListSubheader>
 						<MenuItem value={97}>Binance Testnet</MenuItem>
 						<MenuItem value={80001}>Polygon Testnet</MenuItem>
-						<MenuItem value={8080}>Shardeum Liberty 1.0</MenuItem>
+						<MenuItem value={8081}>Shardeum Liberty 2.0</MenuItem>
 					</Select>
 				) : (
 					<Select
@@ -69,7 +67,6 @@ export const ChangeNetworkComponent = ({
 						label="Select Chain"
 						onChange={(e) => handleNetworkChange(e.target.value)}
 					>
-						<MenuItem value={56}>Binance Smart Chain</MenuItem>
 						<ListSubheader>Testnets</ListSubheader>
 						<MenuItem value={8080}>Shardeum Liberty 1.0</MenuItem>
 					</Select>
