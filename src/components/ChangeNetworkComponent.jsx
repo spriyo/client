@@ -58,6 +58,8 @@ export const ChangeNetworkComponent = ({
 						<MenuItem value={97}>Binance Testnet</MenuItem>
 						<MenuItem value={80001}>Polygon Testnet</MenuItem>
 						<MenuItem value={8081}>Shardeum Liberty 2.0</MenuItem>
+						<MenuItem value={8080}>Shardeum Liberty 1.0</MenuItem>
+
 					</Select>
 				) : (
 					<Select
@@ -67,7 +69,9 @@ export const ChangeNetworkComponent = ({
 						label="Select Chain"
 						onChange={(e) => handleNetworkChange(e.target.value)}
 					>
+						{enableAll && <MenuItem value={0}>All</MenuItem>}
 						<ListSubheader>Testnets</ListSubheader>
+						<MenuItem value={8081}>Shardeum Liberty 2.0</MenuItem>
 						<MenuItem value={8080}>Shardeum Liberty 1.0</MenuItem>
 					</Select>
 				)}

@@ -30,8 +30,8 @@ export const Connect = () => {
 
 	async function connectAndListenWallet() {
 		try {
-			await changeChain(ChainsConfig.SHARDEUM_LIBERTY);
-			dispatch(switchChain(ChainsConfig.SHARDEUM_LIBERTY.chainId));
+			await changeChain(ChainsConfig.SHARDEUM_LIBERTY_2);
+			dispatch(switchChain(ChainsConfig.SHARDEUM_LIBERTY_2.chainId));
 
 			const walletConnected = await connectWalletToSite();
 			if (walletConnected) {
