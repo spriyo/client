@@ -94,6 +94,7 @@ export function CardComponent({ asset }) {
 					<Typography variant="h6">
 						{/* {asset.created_by && `Created : @${asset.created_by.displayName}`} */}
 						{asset.type}
+						{`(${asset.chain_id === "8080" ? "Lib 1.x" : "Lib 2.0"})`}
 					</Typography>
 				</div>
 				<div className="card-info-top">

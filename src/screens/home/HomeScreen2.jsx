@@ -9,8 +9,6 @@ import { addNotification } from "../../state/actions/notifications";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { TopNotification } from "../../components/topNotification/TopNotification";
 import { useNavigate } from "react-router-dom";
-import YogamaImage from "../../assets/yogama.jpg";
-import YogamaIcon from "../../assets/yogamaicon.gif";
 import { FooterComponent } from "../../components/FooterComponent";
 
 export const HomeScreen2 = () => {
@@ -276,7 +274,7 @@ export const HomeScreen2 = () => {
 									width: "85vw",
 									height: "75vh",
 									borderRadius: "12px",
-									backgroundImage: `url(${YogamaImage})`,
+									// backgroundImage: `url(${YogamaImage})`,
 									backgroundPosition: "center",
 									backgroundSize: "cover",
 									backgroundRepeat: "no-repeat",
@@ -302,7 +300,7 @@ export const HomeScreen2 = () => {
 										{/* Icon */}
 										<Box mb={1}>
 											<img
-												src={YogamaIcon}
+												// src={YogamaIcon}
 												alt="Drop Icon"
 												width="75px"
 												style={{

@@ -48,6 +48,8 @@ import { Collections } from "./screens/collection/Collections";
 import { Create } from "./screens/collection/create/Create";
 import { Create as CreateDrop } from "./screens/collection/drop/Create";
 import { HomeScreen2 } from "./screens/home/HomeScreen2";
+import ReactGA from "react-ga";
+ReactGA.initialize(process.env.REACT_APP_GA_TRACKING);
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -149,6 +151,7 @@ function App() {
 	useEffect(() => {
 		connectAndListenWallet();
 		fetchCurrentUser();
+		ReactGA.pageview(window.location.pathname + window.location.search);
 	});
 
 	return (
