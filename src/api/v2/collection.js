@@ -44,4 +44,16 @@ export class CollectionHttpService {
 		);
 		return resolved;
 	}
+
+	async getUserContracts() {
+		const resolved = await resolve(
+			axios.get(`${V2_WEB_API_BASE_URL}/contracts`, {
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "multipart/form-data",
+				},
+			})
+		);
+		return resolved;
+	}
 }

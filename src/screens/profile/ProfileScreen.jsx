@@ -1,4 +1,12 @@
-import { Box, Button, Tooltip } from "@mui/material";
+import {
+	Box,
+	Button,
+	CardActionArea,
+	CardActions,
+	Tab,
+	Tabs,
+	Tooltip,
+} from "@mui/material";
 import React, { useRef } from "react";
 import LoadingImage from "../../assets/loading-image.gif";
 import { useEffect, useState } from "react";
@@ -13,15 +21,20 @@ import { CardComponent } from "../../components/card/CardComponent";
 import { AuthHttpService } from "../../api/auth";
 import { EmptyNftComponent } from "../../components/EmptyNftComponent";
 import { UserHttpService } from "../../api/v2/user";
+import { TabContext, TabPanel } from "@mui/lab";
+import { CollectionHttpService } from "../../api/v2/collection";
 const { NavbarComponent } = require("../../components/navBar/NavbarComponent");
 
 export function ProfileScreen() {
 	const userHttpService = new UserHttpService();
 	const authHttpService = new AuthHttpService();
+	const collectionHttpService = new CollectionHttpService();
 	const [assets, setAssets] = useState([]);
+	const [contracts, setContracts] = useState([]);
 	const [loggedUser, setLoggedUserUser] = useState({});
 	const [user, setUser] = useState({});
 	const { username } = useParams();
+	const [tabValue, setTabValue] = useState("1");
 	const navigate = useNavigate();
 	let skip = useRef(0);
 	let addressRef = useRef(0);
@@ -43,6 +56,10 @@ export function ProfileScreen() {
 		skip.current += 10;
 	}
 
+	function handleTabChange(e, v) {
+		setTabValue(v);
+	}
+
 	async function getUser() {
 		const resolved = await authHttpService.getUserById(username);
 		setUser(resolved.data);
@@ -51,6 +68,13 @@ export function ProfileScreen() {
 			getUserAssets(resolved.data.address);
 		} else {
 			navigate("/user/notfound");
+		}
+	}
+
+	async function getUserContracts() {
+		const resolved = await collectionHttpService.getUserContracts();
+		if (!resolved.error) {
+			setContracts(resolved.data);
 		}
 	}
 
@@ -69,6 +93,7 @@ export function ProfileScreen() {
 
 	useEffect(() => {
 		getUser();
+		getUserContracts();
 	}, [username]);
 
 	return (
@@ -158,21 +183,105 @@ export function ProfileScreen() {
 					</Box>
 				</Box>
 			</Box>
-			<Box
-				p={2}
-				borderRadius={"4px"}
-				style={{ margin: "16px", backgroundColor: "white" }}
-			>
-				<Typography variant="h1">NFT's</Typography>
-				<Box mb={2}></Box>
-				<NFTList
-					assets={assets}
-					isAuthenticated={loggedUser._id === user._id}
-					thirdParty={false}
-					getUserAssets={getUserAssets}
-					userAddress={addressRef.current}
-				/>
-			</Box>
+			<TabContext value={tabValue}>
+				<Box p={1}>
+					<Box sx={{ padding: "8px" }}>
+						<Tabs value={tabValue} onChange={handleTabChange}>
+							<Tab label="NFTs" value="1" />
+							{loggedUser._id && <Tab label="Collections" value="2" />}
+						</Tabs>
+					</Box>
+					<TabPanel value="1" index={0} sx={{ padding: 0 }}>
+						<Box p={2} borderRadius={"4px"}>
+							<NFTList
+								assets={assets}
+								isAuthenticated={loggedUser._id === user._id}
+								thirdParty={false}
+								getUserAssets={getUserAssets}
+								userAddress={addressRef.current}
+							/>
+						</Box>
+					</TabPanel>
+					{loggedUser._id && (
+						<TabPanel value="2" index={1}>
+							<Box p={2} borderRadius={"4px"}>
+								<Grid
+									container
+									spacing={{ xs: 2, md: 3 }}
+									columns={{ xs: 4, sm: 8, md: 12 }}
+								>
+									{contracts.map((a, i) => (
+										<Grid item xs={12} sm={4} md={4} key={i}>
+											<Card sx={{ maxWidth: 345 }}>
+												<CardActionArea>
+													<CardMedia
+														component="img"
+														height="140"
+														image={
+															a.collection ? a.collection.image : LoadingImage
+														}
+														alt="col-img"
+													/>
+													<CardContent>
+														<Typography
+															gutterBottom
+															variant="h5"
+															component="div"
+														>
+															{a.collection
+																? a.collection.name
+																: `${a.address.substring(
+																		0,
+																		4
+																  )}...${a.address.slice(-4)}`}
+														</Typography>
+														{a.collection && (
+															<Typography
+																variant="body2"
+																color="text.secondary"
+															>
+																{a.collection.description}
+															</Typography>
+														)}
+													</CardContent>
+												</CardActionArea>
+												<CardActions>
+													<Button
+														sx={{
+															cursor: a.collection ? "not-allowed" : "pointer",
+														}}
+														size="small"
+														color="primary"
+														variant="contained"
+														onClick={() => {
+															if (!a.collection)
+																navigate(
+																	`/collections/create?contract_address=${a.address}`
+																);
+														}}
+													>
+														Edit
+													</Button>
+													<Button
+														size="small"
+														color="primary"
+														variant="contained"
+														onClick={() => {
+															navigate(`/collections/${a.address}`);
+														}}
+													>
+														Explore
+													</Button>
+												</CardActions>
+											</Card>
+										</Grid>
+									))}
+								</Grid>
+							</Box>
+						</TabPanel>
+					)}
+				</Box>
+			</TabContext>
 			<div style={{ marginBottom: "64px" }}>.</div>
 			<FooterComponent />
 		</div>
