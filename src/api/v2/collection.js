@@ -37,4 +37,11 @@ export class CollectionHttpService {
 		);
 		return resolved;
 	}
+
+	async getContract(address) {
+		const resolved = await resolve(
+			axios.get(`${V2_WEB_API_BASE_URL}/contracts/${address}`)
+		);
+		return resolved;
+	}
 }

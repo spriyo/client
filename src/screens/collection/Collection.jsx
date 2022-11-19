@@ -19,6 +19,7 @@ import { SiDiscord, SiTelegram, SiTwitter } from "react-icons/si";
 import { BiPlus, BiMinus } from "react-icons/bi";
 import { IoGlobe, IoShare } from "react-icons/io5";
 import { TbMinusVertical } from "react-icons/tb";
+import { AiOutlineBlock } from "react-icons/ai";
 import { SearchHttpService } from "../../api/v2/search";
 import { TabContext, TabPanel } from "@mui/lab";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -44,7 +45,8 @@ export const Collection = () => {
 	const collectionHttpService = new CollectionHttpService();
 	const searchHttpService = new SearchHttpService();
 	const dropHttpService = new DropHttpService();
-	const [collection, setCollection] = useState({});
+	const [collection, setCollection] = useState(undefined);
+	const [contract, setContract] = useState(undefined);
 	const [drop, setDrop] = useState({});
 	const [nfts, setNfts] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -70,10 +72,35 @@ export const Collection = () => {
 					setTabValue("2");
 				}
 				getDrop(resolve.data._id);
-				getNFTS(resolve.data.contract_address);
+				getContract(resolve.data.contract_address);
 			}
 		} catch (error) {
 			toast(error.message);
+		}
+	}
+
+	async function getContract(address) {
+		try {
+			const resolved = await collectionHttpService.getContract(address);
+			if (!resolved.error) {
+				if (!resolved.data.collection) {
+					const col = {
+						banner_image: "",
+						image: "",
+						contract_address: resolved.data.address,
+						socials: [],
+						owners: [{ username: resolved.data.creator }],
+					};
+					setCollection(col);
+				} else {
+					setCollection(resolved.data.collection);
+				}
+				setContract(resolved.data);
+				getNFTS(resolved.data.address);
+			}
+			return resolved;
+		} catch (error) {
+			alert(error.message);
 		}
 	}
 
@@ -183,7 +210,11 @@ export const Collection = () => {
 	// }
 
 	useEffect(() => {
-		getCollection();
+		if (Web3.utils.isAddress(collection_name)) {
+			getContract(collection_name);
+		} else {
+			getCollection();
+		}
 	}, []);
 
 	return (
@@ -205,80 +236,112 @@ export const Collection = () => {
 					p: 2,
 				}}
 			>
-				<Box
-					sx={{
-						display: "flex",
-						alignItems: "center",
-						width: "100%",
-						flexDirection: "column",
-						position: "relative",
-						marginBottom: "72px",
-					}}
-				>
-					<Box
-						style={{
-							backgroundImage: `url(${collection.banner_image}`,
-							height: "40vh",
-							width: "100%",
-							borderRadius: "10px",
-							backgroundPosition: "center",
-							backgroundSize: "cover",
-							backgroundRepeat: "norepeat",
-						}}
-					></Box>
+				{collection && (
 					<Box
 						sx={{
-							backgroundPosition: "center",
-							backgroundSize: "cover",
-							backgroundRepeat: "no-repeat",
-							width: { xs: "auto", md: "40vw" },
-							left: { xs: "auto", md: "60px" },
-							width: "150px",
-							height: "150px",
-							bottom: "-64px",
-							left: "64px",
-							position: "absolute",
-							borderRadius: "10px",
-							backgroundImage: `url(${collection.image})`,
+							display: "flex",
+							alignItems: "center",
+							width: "100%",
+							flexDirection: "column",
+							position: "relative",
+							marginBottom: "72px",
 						}}
 					>
-						{collection.image && collection.image.includes(".mp4") && (
-							<video
-								style={{ height: "100%", width: "100%", borderRadius: "10px" }}
-								autoPlay
-								muted
-								loop
-							>
-								<source src={collection.image} type="video/mp4" />
-							</video>
-						)}
-					</Box>
-				</Box>
-				<Box p={3}>
-					<Box
-						display="flex"
-						height="100%"
-						// alignItems="center"
-						flexDirection="column"
-					>
-						<Stack
-							flexDirection="row"
-							justifyContent="space-between"
-							alignItems="center"
+						<Box
+							style={{
+								backgroundImage: `url(${collection.banner_image}`,
+								height: "40vh",
+								width: "100%",
+								borderRadius: "10px",
+								backgroundPosition: "center",
+								backgroundSize: "cover",
+								backgroundRepeat: "norepeat",
+								backgroundColor: "currentcolor",
+							}}
+						></Box>
+						<Box
+							sx={{
+								backgroundPosition: "center",
+								backgroundSize: "cover",
+								backgroundRepeat: "no-repeat",
+								width: { xs: "auto", md: "40vw" },
+								left: { xs: "auto", md: "60px" },
+								width: "150px",
+								height: "150px",
+								bottom: "-48px",
+								left: "64px",
+								position: "absolute",
+								borderRadius: "10px",
+								backgroundImage: `url(${collection.image})`,
+							}}
 						>
-							{collection.name && (
-								<Typography variant="h1" fontWeight="bold" mb={1}>
-									{collection.name}
-								</Typography>
-							)}
-
+							{collection.image &&
+								typeof collection.image === String &&
+								collection.image.includes(".mp4") && (
+									<video
+										style={{
+											height: "100%",
+											width: "100%",
+											borderRadius: "10px",
+										}}
+										autoPlay
+										muted
+										loop
+									>
+										<source src={collection.image} type="video/mp4" />
+									</video>
+								)}
+						</Box>
+					</Box>
+				)}
+				<Box p={1}>
+					{collection && (
+						<Box
+							display="flex"
+							height="100%"
+							// alignItems="center"
+							flexDirection="column"
+						>
 							<Stack
 								flexDirection="row"
 								justifyContent="space-between"
 								alignItems="center"
+								mb={2}
 							>
-								{collection.socials &&
-									collection.socials.map((ele, i) => {
+								<Typography style={{ fontWeight: "600", fontSize: "40px" }}>
+									{collection.name}
+								</Typography>
+
+								<Stack
+									flexDirection="row"
+									justifyContent="space-between"
+									alignItems="center"
+								>
+									<Tooltip
+										placement="top"
+										title={
+											<Box>
+												<p>View on Explorer</p>
+												<small>{`${collection.contract_address.substring(
+													0,
+													6
+												)}...${collection.contract_address.slice(-4)}`}</small>
+											</Box>
+										}
+										componentsProps={{
+											tooltip: {
+												sx: {
+													textAlign: "center",
+												},
+											},
+										}}
+										arrow
+									>
+										<IconButton sx={{ mx: 1 }} onClick={() => {}}>
+											<AiOutlineBlock />
+										</IconButton>
+									</Tooltip>
+									{collection.socials.map((ele, i) => {
 										return (
 											<Tooltip
 												key={i}
@@ -299,37 +362,87 @@ export const Collection = () => {
 											</Tooltip>
 										);
 									})}
-								<TbMinusVertical />
-								<IconButton sx={{ mx: 1 }}>
-									<IoShare size={24} />
-								</IconButton>
+									<TbMinusVertical />
+									<IconButton sx={{ mx: 1 }}>
+										<IoShare size={24} />
+									</IconButton>
+								</Stack>
 							</Stack>
-						</Stack>
-
-						{collection.owners && (
-							<Typography
-								variant="h3"
-								fontWeight="normal"
-								mb={1}
-								onClick={() => navigate(`/${collection.owners[0].username}`)}
-								sx={{ cursor: "pointer" }}
-							>
-								by&nbsp;
-								<span style={{ fontWeight: "bold" }}>
-									@{collection.owners[0].username}
-								</span>
+							{/* Creation Date */}
+							<Typography variant="h3" color={"text.secondary"}>
+								{`Created ${new Date(
+									contract && (contract.timestamp || contract.createdAt)
+								).toLocaleString("default", {
+									month: "short",
+									year: "numeric",
+								})}`}
 							</Typography>
-						)}
 
-						{collection.description && (
-							<Typography variant="h3" fontWeight="normal">
-								{collection.description}
+							{contract && (
+								<Typography
+									variant="h3"
+									fontWeight="normal"
+									onClick={() =>
+										navigate(
+											`/${
+												contract.owners[0]
+													? contract.owners[0].username
+													: contract.creator
+											}`
+										)
+									}
+									sx={{ cursor: "pointer", my: 1 }}
+								>
+									<b style={{ fontWeight: "600" }}>By&nbsp;</b>
+									<span style={{ fontWeight: "bold" }}>
+										{contract.owners[0]
+											? contract.owners[0].username
+											: contract.creator}
+									</span>
+								</Typography>
+							)}
+							{contract && (
+								<Box display="flex">
+									<Box mt={1} mr={5}>
+										<Typography variant="h2" fontWeight={"bold"}>
+											{contract.nfts_count.count}
+										</Typography>
+										<Typography variant="h3" fontWeight="medium">
+											Items
+										</Typography>
+									</Box>
+									<Box mt={1} mr={5}>
+										<Typography variant="h2" fontWeight={"bold"}>
+											{contract.owners_count.count}
+										</Typography>
+										<Typography variant="h3" fontWeight="medium">
+											Owners
+										</Typography>
+									</Box>
+									<Box mt={1} mr={5}>
+										<Typography variant="h2" fontWeight={"bold"}>
+											{Math.floor(
+												(contract.owners_count.count /
+													contract.nfts_count.count) *
+													100
+											)}
+											%
+										</Typography>
+										<Typography variant="h3" fontWeight="medium">
+											Unique Owners
+										</Typography>
+									</Box>
+								</Box>
+							)}
+							<Typography variant="h3" fontWeight="medium" mt={2}>
+								{collection.description ||
+									`Explore the best NFTs in this collection exclusively on Spriyo🌈`}
 							</Typography>
-						)}
-					</Box>
+						</Box>
+					)}
 				</Box>
 				{/* Tabs */}
-				{collection.contract_address && (
+				{collection && (
 					<TabContext value={tabValue}>
 						<Box p={1}>
 							<Box>

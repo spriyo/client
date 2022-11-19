@@ -1,20 +1,9 @@
 import "./asset.css";
 import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
-import {
-	Box,
-	Chip,
-	IconButton,
-	ListItem,
-	ListItemAvatar,
-	ListItemText,
-	Stack,
-	TextField,
-	Typography,
-} from "@mui/material";
+import { Box, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
-import { BiLinkExternal } from "react-icons/bi";
 import { ChainsConfig, DOTSHM_ADDRESS } from "../../constants";
 import { useSelector } from "react-redux";
 import { ActionsComponent } from "../../components/ActionsComponent";
@@ -408,7 +397,20 @@ export function AssetScreen() {
 													<Typography variant="h5" color="grey">
 														Collection
 													</Typography>
-													<Box display="flex" alignItems="center" mt={1}>
+													<Box
+														display="flex"
+														alignItems="center"
+														mt={1}
+														onClick={() =>
+															navigate(
+																`/collections/${
+																	asset.collection
+																		? asset.collection.uname
+																		: asset.contract_address
+																}`
+															)
+														}
+													>
 														{/* Image */}
 														<Box>
 															<CircularProfile
@@ -419,7 +421,7 @@ export function AssetScreen() {
 															/>
 														</Box>
 														{/* Name/Address */}
-														<Box ml={0.5}>
+														<Box ml={0.5} sx={{ cursor: "pointer" }}>
 															<Typography variant="h5">
 																{(asset.collection && asset.collection.name) ||
 																	asset.contract.address.slice(-6)}
@@ -505,7 +507,9 @@ export function AssetScreen() {
 									{/* Activity */}
 									<Typography variant="h3">Activity</Typography>
 									{asset.events.length === 0 ? (
-										<Typography variant="h3" color="lightgrey">No Activity</Typography>
+										<Typography variant="h3" color="lightgrey">
+											No Activity
+										</Typography>
 									) : (
 										<Box>
 											<ActionsComponent asset={asset} />
