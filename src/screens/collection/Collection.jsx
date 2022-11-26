@@ -26,7 +26,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { CardComponent } from "../../components/card/CardComponent";
 import { EmptyNftComponent } from "../../components/EmptyNftComponent";
 import { DropHttpService } from "../../api/v2/drop";
-import YogamersContractJSON from "../../contracts/Yogamers.json";
+import GalacticContractJSON from "../../contracts/Galactic.json";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { getWalletAddress } from "../../utils/wallet";
 import NoDrop from "../../assets/nodrop.jpg";
@@ -141,7 +141,7 @@ export const Collection = () => {
 	async function initializeContract(contract_address) {
 		try {
 			const contract = new window.web3.eth.Contract(
-				YogamersContractJSON.abi,
+				GalacticContractJSON.abi,
 				contract_address
 			);
 			NFTContract.current = contract;
@@ -405,7 +405,7 @@ export const Collection = () => {
 								<Box display="flex">
 									<Box mt={1} mr={5}>
 										<Typography variant="h2" fontWeight={"bold"}>
-											{contract.nfts_count.count}
+											{contract.nfts_count ? contract.nfts_count.count : 0}
 										</Typography>
 										<Typography variant="h3" fontWeight="medium">
 											Items
@@ -413,7 +413,7 @@ export const Collection = () => {
 									</Box>
 									<Box mt={1} mr={5}>
 										<Typography variant="h2" fontWeight={"bold"}>
-											{contract.owners_count.count}
+											{contract.owners_count ? contract.owners_count.count : 0}
 										</Typography>
 										<Typography variant="h3" fontWeight="medium">
 											Owners
@@ -422,9 +422,11 @@ export const Collection = () => {
 									<Box mt={1} mr={5}>
 										<Typography variant="h2" fontWeight={"bold"}>
 											{Math.floor(
-												(contract.owners_count.count /
-													contract.nfts_count.count) *
-													100
+												(contract.owners_count
+													? contract.owners_count.count
+													: 0 / contract.nfts_count
+													? contract.nfts_count.count
+													: 0) * 100
 											)}
 											%
 										</Typography>

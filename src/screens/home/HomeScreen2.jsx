@@ -9,7 +9,8 @@ import { addNotification } from "../../state/actions/notifications";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { TopNotification } from "../../components/topNotification/TopNotification";
 import { useNavigate } from "react-router-dom";
-import { FooterComponent } from "../../components/FooterComponent";
+import GalacticBanner from "../../assets/galactic_banner.jpg";
+import GalacticIcon from "../../assets/galactic_icon.jpg";
 
 export const HomeScreen2 = () => {
 	const dispatch = useDispatch();
@@ -78,7 +79,7 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "flex",
+								display: "none",
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
@@ -259,13 +260,13 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "none", // Change to flex
+								display: "flex", // Change to flex
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
 								// Remove from below
 								backgroundColor: "#272727f6" /* Tint color */,
-								// backgroundImage: `url(${YogamaImage})`, // Change Image here for future drops
+								backgroundImage: `url(${GalacticBanner})`, // Change Image here for future drops
 								backgroundBlendMode: "multiply",
 							}}
 						>
@@ -274,7 +275,7 @@ export const HomeScreen2 = () => {
 									width: "85vw",
 									height: "75vh",
 									borderRadius: "12px",
-									// backgroundImage: `url(${YogamaImage})`,
+									backgroundImage: `url(${GalacticBanner})`,
 									backgroundPosition: "center",
 									backgroundSize: "cover",
 									backgroundRepeat: "no-repeat",
@@ -300,7 +301,7 @@ export const HomeScreen2 = () => {
 										{/* Icon */}
 										<Box mb={1}>
 											<img
-												// src={YogamaIcon}
+												src={GalacticIcon}
 												alt="Drop Icon"
 												width="75px"
 												style={{
@@ -310,10 +311,10 @@ export const HomeScreen2 = () => {
 										</Box>
 										{/* Title */}
 										<Box>
-											<h1>Yogama</h1>
+											<h1>Galactic Warriors</h1>
 										</Box>
 										<p>
-											By <b>Yogama</b>
+											By <b>Galactic</b>
 										</p>
 									</Box>
 									{/* Button */}
@@ -327,7 +328,7 @@ export const HomeScreen2 = () => {
 											height: "min-content",
 											mt: 2,
 										}}
-										onClick={() => navigate("/collections/yogamatnt?tab=1")}
+										onClick={() => navigate("/collections/GalacticWarriors?tab=1")}
 									>
 										<p style={{ fontWeight: "bold", fontSize: "16px" }}>
 											View Drop
