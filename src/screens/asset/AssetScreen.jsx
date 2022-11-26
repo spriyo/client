@@ -207,7 +207,7 @@ export function AssetScreen() {
 		getAsset();
 		getAssetsFromCollection();
 		return () => {
-			// window.scrollTo({ top: 0, behavior: "smooth" });
+			window.scrollTo({ top: 0, behavior: "smooth" });
 		};
 	}, [contract_address, token_id]);
 

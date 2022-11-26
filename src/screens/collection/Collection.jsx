@@ -155,12 +155,10 @@ export const Collection = () => {
 		try {
 			setLoading(true);
 			const currentAddress = await getWalletAddress();
-			const transaction = await NFTContract.current.methods
-				.mint(currentAddress, quantity)
-				.send({
-					from: currentAddress,
-					value: Web3.utils.toWei(drop.amount) * quantity,
-				});
+			const transaction = await NFTContract.current.methods.Mint().send({
+				from: currentAddress,
+				value: Web3.utils.toWei(drop.amount) * quantity,
+			});
 
 			// const resolved = await uploadToServer(
 			// 	parseInt(transaction.events.Transfer.returnValues.tokenId),
@@ -586,6 +584,7 @@ export const Collection = () => {
 													>
 														{/* Minus */}
 														<IconButton
+															disabled
 															onClick={() => {
 																let val;
 																quantity > 1
@@ -602,6 +601,7 @@ export const Collection = () => {
 														</Box>
 														{/* Plus */}
 														<IconButton
+															disabled
 															onClick={() => setQuantity((q) => q + 1)}
 														>
 															<BiPlus />
