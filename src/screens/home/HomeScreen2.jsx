@@ -79,7 +79,7 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "none",
+								display: "flex",
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
@@ -260,7 +260,7 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "flex", // Change to flex
+								display: "none", // Change to flex
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
