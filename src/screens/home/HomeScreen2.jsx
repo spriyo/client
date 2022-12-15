@@ -9,8 +9,8 @@ import { addNotification } from "../../state/actions/notifications";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { TopNotification } from "../../components/topNotification/TopNotification";
 import { useNavigate } from "react-router-dom";
-import GalacticBanner from "../../assets/galactic_banner.jpg";
-import GalacticIcon from "../../assets/galactic_icon.jpg";
+import LionForceBanner from "../../assets/lionforce_banner.png";
+import LionForceIcon from "../../assets/lionforce_icon.png";
 
 export const HomeScreen2 = () => {
 	const dispatch = useDispatch();
@@ -79,7 +79,7 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "flex",
+								display: "none",
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
@@ -260,13 +260,13 @@ export const HomeScreen2 = () => {
 						<Box
 							sx={{
 								height: "90vh",
-								display: "none", // Change to flex
+								display: "flex", // Change to flex
 								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
 								// Remove from below
 								backgroundColor: "#272727f6" /* Tint color */,
-								backgroundImage: `url(${GalacticBanner})`, // Change Image here for future drops
+								backgroundImage: `url(${LionForceBanner})`, // Change Image here for future drops
 								backgroundBlendMode: "multiply",
 							}}
 						>
@@ -275,7 +275,7 @@ export const HomeScreen2 = () => {
 									width: "85vw",
 									height: "75vh",
 									borderRadius: "12px",
-									backgroundImage: `url(${GalacticBanner})`,
+									backgroundImage: `url(${LionForceBanner})`,
 									backgroundPosition: "center",
 									backgroundSize: "cover",
 									backgroundRepeat: "no-repeat",
@@ -301,7 +301,7 @@ export const HomeScreen2 = () => {
 										{/* Icon */}
 										<Box mb={1}>
 											<img
-												src={GalacticIcon}
+												src={LionForceIcon}
 												alt="Drop Icon"
 												width="75px"
 												style={{
@@ -328,10 +328,15 @@ export const HomeScreen2 = () => {
 											height: "min-content",
 											mt: 2,
 										}}
-										onClick={() => navigate("/collections/GalacticWarriors?tab=1")}
+										onClick={() =>
+											window.open(
+												"https://lionforce-polygon.vercel.app/",
+												"_blank"
+											)
+										}
 									>
 										<p style={{ fontWeight: "bold", fontSize: "16px" }}>
-											View Drop
+											Visit Drop
 										</p>
 									</Box>
 								</Box>
