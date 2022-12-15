@@ -311,10 +311,10 @@ export const HomeScreen2 = () => {
 										</Box>
 										{/* Title */}
 										<Box>
-											<h1>Galactic Warriors</h1>
+											<h1>Lion Force NFT</h1>
 										</Box>
 										<p>
-											By <b>Galactic</b>
+											By <b>Lion Force</b>
 										</p>
 									</Box>
 									{/* Button */}
