@@ -223,36 +223,36 @@ export function AssetScreen() {
 						{/* <!-- Primary Meta Tags --> */}
 						<title>{asset.name} - Shardeum NFT - Spriyo.xyz</title>
 						<meta
-							name="title"
+							name='title'
 							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
 						/>
-						<meta name="description" content={asset.description} />
+						<meta name='description' content={asset.description} />
 
 						{/* <!-- Open Graph / Facebook --> */}
-						<meta property="og:type" content="website" />
+						<meta property='og:type' content='website' />
 						<meta
-							property="og:url"
+							property='og:url'
 							content={`${process.env.REACT_APP_BASE_URL}/assets/${asset.contract_address}/${asset.token_id}`}
 						/>
 						<meta
-							property="og:title"
+							property='og:title'
 							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
 						/>
-						<meta property="og:description" content={asset.description} />
-						<meta property="og:image" content={asset.image} />
+						<meta property='og:description' content={asset.description} />
+						<meta property='og:image' content={asset.image} />
 
 						{/* <!-- Twitter --> */}
-						<meta property="twitter:card" content="summary_large_image" />
+						<meta property='twitter:card' content='summary_large_image' />
 						<meta
-							property="twitter:url"
+							property='twitter:url'
 							content={`${process.env.REACT_APP_BASE_URL}/assets/${asset.contract_address}/${asset.token_id}`}
 						/>
 						<meta
-							property="twitter:title"
+							property='twitter:title'
 							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
 						/>
-						<meta property="twitter:description" content={asset.description} />
-						<meta property="twitter:image" content={asset.image} />
+						<meta property='twitter:description' content={asset.description} />
+						<meta property='twitter:image' content={asset.image} />
 					</Helmet>
 
 					<Stack
@@ -264,10 +264,10 @@ export function AssetScreen() {
 						{/* Image */}
 						<Box
 							flex={1}
-							overflow="auto"
-							height="auto"
+							overflow='auto'
+							height='auto'
 							display={"flex"}
-							justifyContent="center"
+							justifyContent='center'
 							onClick={() =>
 								window.open(asset.image || asset.medias[0].path, "_blank")
 							}
@@ -280,7 +280,7 @@ export function AssetScreen() {
 									muted
 									loop
 								>
-									<source src={asset.image} type="video/mp4" />
+									<source src={asset.image} type='video/mp4' />
 								</video>
 							) : (
 								<img
@@ -290,12 +290,12 @@ export function AssetScreen() {
 											: asset.image
 									}
 									alt={asset.name}
-									width="auto"
+									width='auto'
 									style={{
 										maxWidth: "90vw",
 										overflowX: "hidden",
 									}}
-									className="main-image"
+									className='main-image'
 									onError={addDefaultSrc}
 								/>
 							)}
@@ -312,13 +312,13 @@ export function AssetScreen() {
 						}}
 					>
 						<Stack
-							width="100%"
-							maxWidth="1240px"
+							width='100%'
+							maxWidth='1240px'
 							flexDirection={{
 								xs: "column",
 								md: "row",
 							}}
-							justifyContent="space-between"
+							justifyContent='space-between'
 							p={1}
 						>
 							<Box
@@ -334,7 +334,7 @@ export function AssetScreen() {
 							>
 								{/* Details */}
 								<Box flex={1} m={1}>
-									<Box display="flex" justifyContent={"space-between"}>
+									<Box display='flex' justifyContent={"space-between"}>
 										<Box mb={1}>
 											{/* Title */}
 											<Box>
@@ -346,23 +346,23 @@ export function AssetScreen() {
 														: asset.name || `#${asset.token_id}`}
 												</Typography>
 												<Typography
-													variant="subtitle2"
+													variant='subtitle2'
 													color={"text.secondary"}
-													component="p"
+													component='p'
 												>
 													#{asset.token_id}
 												</Typography>
 											</Box>
 											{/* Owned and Collection */}
-											<Box mt={2} display="flex">
+											<Box mt={2} display='flex'>
 												{asset.owners.length > 0 && (
 													<Box>
-														<Typography variant="h5" color="grey">
+														<Typography variant='h5' color='grey'>
 															Owned By
 														</Typography>
 														<Box
-															display="flex"
-															alignItems="center"
+															display='flex'
+															alignItems='center'
 															mt={1}
 															onClick={() =>
 																navigate(`/${asset.owners[0].address}`)
@@ -382,7 +382,7 @@ export function AssetScreen() {
 															{/* Name/Address */}
 															<Box ml={0.5}>
 																<Typography
-																	variant="h5"
+																	variant='h5'
 																	sx={{ cursor: "pointer" }}
 																>
 																	@
@@ -394,12 +394,12 @@ export function AssetScreen() {
 													</Box>
 												)}
 												<Box ml={8}>
-													<Typography variant="h5" color="grey">
+													<Typography variant='h5' color='grey'>
 														Collection
 													</Typography>
 													<Box
-														display="flex"
-														alignItems="center"
+														display='flex'
+														alignItems='center'
 														mt={1}
 														onClick={() =>
 															navigate(
@@ -422,9 +422,9 @@ export function AssetScreen() {
 														</Box>
 														{/* Name/Address */}
 														<Box ml={0.5} sx={{ cursor: "pointer" }}>
-															<Typography variant="h5">
+															<Typography variant='h5'>
 																{(asset.collection && asset.collection.name) ||
-																	asset.contract.address.slice(-6)}
+																	asset.contract_address.slice(-6)}
 															</Typography>
 														</Box>
 													</Box>
@@ -432,17 +432,17 @@ export function AssetScreen() {
 											</Box>
 											{/* Description */}
 											<Box mt={4}>
-												<Typography variant="h3">Description</Typography>
-												<Typography variant="body1" fontWeight="500">
+												<Typography variant='h3'>Description</Typography>
+												<Typography variant='body1' fontWeight='500'>
 													{asset.description}
 												</Typography>
 											</Box>
 											{/* Details */}
 											<Box mt={4}>
-												<Typography variant="h3">Details</Typography>
-												<Stack mt={2} alignItems="center" direction="row">
+												<Typography variant='h3'>Details</Typography>
+												<Stack mt={2} alignItems='center' direction='row'>
 													<ShardeumLogoSVG />
-													<Typography variant="h5" ml={1}>
+													<Typography variant='h5' ml={1}>
 														{asset.chain_id === "8080"
 															? `Liberty 1.X (${asset.type})`
 															: `Liberty 2.0 (${asset.type})`}
@@ -450,21 +450,21 @@ export function AssetScreen() {
 												</Stack>
 												<Stack
 													mt={2}
-													alignItems="center"
-													direction="row"
+													alignItems='center'
+													direction='row'
 													onClick={handleExploreClick}
 													sx={{ cursor: "pointer" }}
 												>
 													<FiGlobe size={20} />
-													<Typography variant="h5" ml={1} mr={0.5}>
+													<Typography variant='h5' ml={1} mr={0.5}>
 														View on Explorer
 													</Typography>
-													<FiExternalLink color="grey" />
+													<FiExternalLink color='grey' />
 												</Stack>
 												<Stack
 													mt={2}
-													alignItems="center"
-													direction="row"
+													alignItems='center'
+													direction='row'
 													sx={{
 														cursor: asset.metadata_url
 															? "pointer"
@@ -475,10 +475,10 @@ export function AssetScreen() {
 													}
 												>
 													<FiEye size={20} />
-													<Typography variant="h5" ml={1} mr={0.5}>
+													<Typography variant='h5' ml={1} mr={0.5}>
 														View Metadata
 													</Typography>
-													<FiExternalLink color="grey" />
+													<FiExternalLink color='grey' />
 												</Stack>
 											</Box>
 										</Box>
@@ -505,15 +505,15 @@ export function AssetScreen() {
 							<Box flex={1} mt={4}>
 								<Box>
 									{/* Activity */}
-									<Typography variant="h3">Activity</Typography>
+									<Typography variant='h3'>Activity</Typography>
 									{asset.events.length === 0 ? (
-										<Typography variant="h3" color="lightgrey">
+										<Typography variant='h3' color='lightgrey'>
 											No Activity
 										</Typography>
 									) : (
 										<Box>
 											<ActionsComponent asset={asset} />
-											<Box className="activityScroll">
+											<Box className='activityScroll'>
 												{asset.events.map((e, i) => (
 													<Box key={i}>
 														<ActivityCardComponent event={e} asset={asset} />
@@ -524,10 +524,10 @@ export function AssetScreen() {
 									)}
 								</Box>
 								<Box mt={4}>
-									<Typography variant="h3">Comments</Typography>
+									<Typography variant='h3'>Comments</Typography>
 									<Box mt={"20px"}>
 										{/* Write Comment */}
-										<Box display="flex">
+										<Box display='flex'>
 											<CircularProfile
 												userId={user ? user._id : ""}
 												userImgUrl={user ? user.displayImage : ""}
@@ -542,7 +542,7 @@ export function AssetScreen() {
 															paddingX: "12px",
 															paddingY: "10px",
 														}}
-														variant="standard"
+														variant='standard'
 														InputProps={{
 															disableUnderline: true,
 															endAdornment: (
@@ -565,7 +565,7 @@ export function AssetScreen() {
 																? "Write your comment"
 																: "Connect wallet to comment"
 														}
-														id="fullWidth"
+														id='fullWidth'
 														value={comment}
 														onChange={(e) => commentOnChange(e.target.value)}
 													/>
@@ -589,16 +589,16 @@ export function AssetScreen() {
 												<img
 													width={"75px"}
 													src={NoComment}
-													alt="no comment"
+													alt='no comment'
 												></img>
-												<Typography variant="h5">
+												<Typography variant='h5'>
 													Be the first to comment😃
 												</Typography>
 											</Box>
 										) : (
 											comments.map((comment, i) => {
 												return (
-													<Box display="flex" mt={"14px"} key={i}>
+													<Box display='flex' mt={"14px"} key={i}>
 														<CircularProfile
 															userId={comment.userId._id}
 															userImgUrl={comment.userId.displayImage}
@@ -613,15 +613,15 @@ export function AssetScreen() {
 																}}
 															>
 																<Stack
-																	flexDirection="row"
-																	justifyContent="space-between"
+																	flexDirection='row'
+																	justifyContent='space-between'
 																>
-																	<Typography variant="h6">
+																	<Typography variant='h6'>
 																		{comment.userId.username}
 																	</Typography>
 																	{comment.userId._id === user._id && (
 																		<IconButton
-																			size="small"
+																			size='small'
 																			sx={{
 																				"&:hover": {
 																					color: "red",
@@ -669,10 +669,10 @@ export function AssetScreen() {
 				</Box>
 			) : (
 				<Box
-					height="50vh"
-					display="flex"
-					justifyContent="center"
-					alignItems="center"
+					height='50vh'
+					display='flex'
+					justifyContent='center'
+					alignItems='center'
 				>
 					<p>loading</p>
 				</Box>

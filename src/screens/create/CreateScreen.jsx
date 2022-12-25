@@ -42,7 +42,7 @@ export function CreateScreen({ closeModal }) {
 	const stateChainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
 	const collectionHttpService = new CollectionHttpService();
-	const spriyoNFTAddress = "0x8fACa5D5899115e0A00763e9Ca45b4ED945DaDA4";
+	const spriyoNFTAddress = "0x11480b80d1ae24b1a5efc8a4476502ea21e2d9fa";
 	const [collectionSelectValue, setCollectionSelectValue] =
 		useState(spriyoNFTAddress);
 	const [collections, setCollections] = useState([]);

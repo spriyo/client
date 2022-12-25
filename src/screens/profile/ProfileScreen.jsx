@@ -97,15 +97,15 @@ export function ProfileScreen() {
 	}, [username]);
 
 	return (
-		<div className="profile-container">
+		<div className='profile-container'>
 			<NavbarComponent></NavbarComponent>
 			<Box
-				className="profile-header"
+				className='profile-header'
 				sx={{ display: "flex", justifyContent: "center" }}
 			>
-				<div className="banner-image"></div>
+				<div className='banner-image'></div>
 				<Box
-					className="profile-details"
+					className='profile-details'
 					sx={{
 						width: { xs: "auto", md: "40vw" },
 						left: { xs: "auto", md: "60px" },
@@ -113,7 +113,7 @@ export function ProfileScreen() {
 				>
 					{user.displayImage && (
 						<div
-							className="profile-details-image"
+							className='profile-details-image'
 							style={{
 								backgroundImage: `url(${
 									user.displayImage.includes("default-profile-icon")
@@ -123,7 +123,7 @@ export function ProfileScreen() {
 							}}
 						></div>
 					)}
-					<Box display="flex" height="100%" alignItems="center">
+					<Box display='flex' height='100%' alignItems='center'>
 						<div>
 							{user.displayName && (
 								<p style={{ fontWeight: "bold" }}>{user.displayName}</p>
@@ -142,8 +142,8 @@ export function ProfileScreen() {
 											<br />
 											{user.following === false && (
 												<Button
-													variant="outlined"
-													color="success"
+													variant='outlined'
+													color='success'
 													sx={{ mt: 1 }}
 													onClick={updateFollowUser}
 												>
@@ -152,8 +152,8 @@ export function ProfileScreen() {
 											)}
 											{user.following === true && (
 												<Button
-													variant="outlined"
-													color="error"
+													variant='outlined'
+													color='error'
 													sx={{ mt: 1 }}
 													onClick={updateFollowUser}
 												>
@@ -168,13 +168,13 @@ export function ProfileScreen() {
 						{loggedUser._id === user._id && (
 							<Box sx={{ position: "absolute", top: "16px", right: "16px" }}>
 								<Box
-									display="flex"
-									alignItems="center"
+									display='flex'
+									alignItems='center'
 									onClick={() => setOpen(true)}
 									sx={{ cursor: "pointer" }}
 								>
-									<Box display="flex" alignItems="center" marginRight="4px">
-										<MdOutlineModeEditOutline size="20" />
+									<Box display='flex' alignItems='center' marginRight='4px'>
+										<MdOutlineModeEditOutline size='20' />
 									</Box>
 								</Box>
 								<SettingComponent open={open} onClose={handleClose} />
@@ -349,9 +349,9 @@ const NftCard = ({ asset }) => {
 	return (
 		<Card sx={{ maxWidth: 345 }}>
 			<CardMedia
-				component="img"
-				alt="nft-image"
-				height="180"
+				component='img'
+				alt='nft-image'
+				height='180'
 				image={image === "" ? LoadingImage : image}
 				onError={({ currentTarget }) => {
 					currentTarget.onerror = null; // prevents looping
@@ -360,10 +360,10 @@ const NftCard = ({ asset }) => {
 				}}
 			/>
 			<CardContent>
-				<Typography gutterBottom variant="h5" component="div">
+				<Typography gutterBottom variant='h5' component='div'>
 					{asset.name}
 				</Typography>
-				<Typography variant="body2" color="text.secondary">
+				<Typography variant='body2' color='text.secondary'>
 					{asset.description
 						? asset.description.length > 50
 							? asset.description.slice(0, 50) + "..."
