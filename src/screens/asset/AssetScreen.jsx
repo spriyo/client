@@ -25,6 +25,7 @@ import DOTSHM_IMAGE from "../../assets/dotshm.png";
 import LOADING_IMG from "../../assets/loading-image.gif";
 import { ReactComponent as ShardeumLogoSVG } from "../../assets/shardeum-logo.svg";
 import { FiGlobe, FiEye, FiExternalLink } from "react-icons/fi";
+import { ActivityCardComponent2 } from "../../components/activityCard/ActivityCard2";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -516,7 +517,7 @@ export function AssetScreen() {
 											<Box className='activityScroll'>
 												{asset.events.map((e, i) => (
 													<Box key={i}>
-														<ActivityCardComponent event={e} asset={asset} />
+														<ActivityCardComponent2 event={e} asset={asset} />
 													</Box>
 												))}
 											</Box>
