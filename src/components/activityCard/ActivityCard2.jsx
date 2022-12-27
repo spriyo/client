@@ -128,13 +128,18 @@ export function ActivityCardComponent2({ event, asset }) {
 			<Stack>
 				<ListItem
 					secondaryAction={
-						<IconButton
-							onClick={() =>
-								handleExploreClick(asset.chain_id, event.transaction_hash)
-							}
-						>
-							<FiExternalLink />
-						</IconButton>
+						<Stack direction={"row"} alignItems={"center"}>
+							{(event.transaction_hash === "0x0" || event.value !== 0) && (
+								<h4>{web3.utils.fromWei(event.value.toString())} SHM</h4>
+							)}
+							<IconButton
+								onClick={() =>
+									handleExploreClick(asset.chain_id, event.transaction_hash)
+								}
+							>
+								<FiExternalLink />
+							</IconButton>
+						</Stack>
 					}
 				>
 					<ListItemText

@@ -7,7 +7,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChainsConfig, DOTSHM_ADDRESS } from "../../constants";
 import { useSelector } from "react-redux";
 import { ActionsComponent } from "../../components/ActionsComponent";
-import { ActivityCardComponent } from "../../components/activityCard/ActivityCard";
 import { CircularProfile } from "../../components/CircularProfileComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { getNetworkByChainId } from "../../utils/getNetwork";
@@ -26,6 +25,7 @@ import LOADING_IMG from "../../assets/loading-image.gif";
 import { ReactComponent as ShardeumLogoSVG } from "../../assets/shardeum-logo.svg";
 import { FiGlobe, FiEye, FiExternalLink } from "react-icons/fi";
 import { ActivityCardComponent2 } from "../../components/activityCard/ActivityCard2";
+import { ActionsComponent2 } from "../../components/ActionsComponent2";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -513,7 +513,7 @@ export function AssetScreen() {
 										</Typography>
 									) : (
 										<Box>
-											<ActionsComponent asset={asset} />
+											<ActionsComponent2 asset={asset} />
 											<Box className='activityScroll'>
 												{asset.events.map((e, i) => (
 													<Box key={i}>

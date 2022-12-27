@@ -54,10 +54,10 @@ export class SaleHttpService {
 		return resolved;
 	}
 
-	async buySale(saleId) {
+	async buySale(nft_id) {
 		const resolved = await resolve(
 			axios.patch(
-				`${WEB_API_BASE_URL}/sales/buy/${saleId}`,
+				`${WEB_API_BASE_URL}/sales/buy/${nft_id}`,
 				{},
 				{
 					headers: {
