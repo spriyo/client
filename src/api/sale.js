@@ -26,9 +26,9 @@ export class SaleHttpService {
 		return resolved;
 	}
 
-	async updateSale(saleId, data) {
+	async updateSale(nft_id, data) {
 		const resolved = await resolve(
-			axios.patch(`${WEB_API_BASE_URL}/sales/update/${saleId}`, data, {
+			axios.patch(`${WEB_API_BASE_URL}/sales/update/${nft_id}`, data, {
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 					"Content-Type": "application/json",
@@ -38,10 +38,10 @@ export class SaleHttpService {
 		return resolved;
 	}
 
-	async cancelSale(saleId) {
+	async cancelSale(nft_id) {
 		const resolved = await resolve(
 			axios.patch(
-				`${WEB_API_BASE_URL}/sales/cancel/${saleId}`,
+				`${WEB_API_BASE_URL}/sales/cancel/${nft_id}`,
 				{},
 				{
 					headers: {

@@ -67,7 +67,7 @@ export const ActionsComponent2 = ({ asset }) => {
 						  // 	user._id === asset.owner._id)
 						  [
 								{
-									title: "Sell",
+									title: "Sell NFT",
 									action: () => approveMiddleware(sellAsset),
 								},
 								// {
@@ -152,12 +152,14 @@ export const ActionsComponent2 = ({ asset }) => {
 				break;
 			case "0x798bac8d": // sale_created
 			case "List":
-			case "sale_update_price": // sale_update_price
 				actions =
+					sale.seller !== utils.toChecksumAddress(user.address) ||
 					event.from !== utils.toChecksumAddress(user.address)
 						? [
 								{
-									title: `Buy for ${utils.fromWei(sale.amount)}SHM`,
+									title: `Buy for ${utils.fromWei(
+										sale ? sale.amount : "0"
+									)}SHM`,
 									action: () => loadMiddleware(buyAsset),
 								},
 						  ]
@@ -169,6 +171,28 @@ export const ActionsComponent2 = ({ asset }) => {
 								{
 									title: "Cancel Sale",
 									action: () => loadMiddleware(cancelSale),
+								},
+						  ];
+				break;
+			case "Update": // sale_update_price
+				actions =
+					sale.seller === utils.toChecksumAddress(user.address)
+						? [
+								{
+									title: "Update Price",
+									action: () => loadMiddleware(updateAsset),
+								},
+								{
+									title: "Cancel Sale",
+									action: () => loadMiddleware(cancelSale),
+								},
+						  ]
+						: [
+								{
+									title: `Buy for ${utils.fromWei(
+										sale ? sale.amount : "0"
+									)}SHM`,
+									action: () => loadMiddleware(buyAsset),
 								},
 						  ];
 				break;
@@ -339,20 +363,28 @@ export const ActionsComponent2 = ({ asset }) => {
 		const convertedAmount = window.web3.utils.toWei(amount);
 		const currentAddress = await getWalletAddress();
 		window.web3.eth.handleRevert = true;
-		console.log(asset);
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.updateBuyPrice(sale.id, convertedAmount)
+			.estimateGas({
+				from: currentAddress,
+			});
 
 		const tx = await marketContract.methods
-			.updateBuyPrice(asset.events[0].data.sale_id, convertedAmount)
+			.updateBuyPrice(sale.id, convertedAmount)
 			.send({
 				from: currentAddress,
+				gasPrice,
+				gas,
 			});
 		console.log(tx);
 
 		// Server Event
-		const resolved = await saleHttpService.updateSale(
-			asset.events[0].data._id,
-			{ amount: convertedAmount }
-		);
+		const resolved = await saleHttpService.updateSale(asset._id, {
+			amount: convertedAmount,
+		});
 		if (!resolved.error) {
 			window.location.reload();
 		}
@@ -369,15 +401,13 @@ export const ActionsComponent2 = ({ asset }) => {
 		window.web3.eth.handleRevert = true;
 		console.log(asset);
 
-		const tx = await marketContract.methods
-			.cancelBuyPrice(asset.events[0].data.sale_id)
-			.send({
-				from: currentAddress,
-			});
+		const tx = await marketContract.methods.cancelBuyPrice(sale.id).send({
+			from: currentAddress,
+		});
 		console.log(tx);
 
 		// Server Event
-		const resolved = await saleHttpService.cancelSale(asset.events[0].data._id);
+		const resolved = await saleHttpService.cancelSale(asset._id);
 		if (!resolved.error) {
 			window.location.reload();
 		}
