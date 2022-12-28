@@ -129,7 +129,8 @@ export function ActivityCardComponent2({ event, asset }) {
 				<ListItem
 					secondaryAction={
 						<Stack direction={"row"} alignItems={"center"}>
-							{(event.transaction_hash === "0x0" || event.value !== 0) && (
+							{(event.transaction_hash === "0x0" ||
+								(event.value && event.value !== 0)) && (
 								<h4>{web3.utils.fromWei(event.value.toString())} SHM</h4>
 							)}
 							<IconButton
