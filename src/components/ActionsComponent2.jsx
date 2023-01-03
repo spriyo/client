@@ -53,14 +53,13 @@ export const ActionsComponent2 = ({ asset }) => {
 
 	const user = useSelector((state) => state.authReducer.user);
 
-	function getActions(event) {
+	function getActions() {
 		let actions = [];
 		if (!user) return actions;
-		if (sale && !sale.sold) {
+		if (sale && !sale.sold && sale.id !== "0") {
 			// If sale exist's and if sale is not over
 			actions =
-				sale.seller !== utils.toChecksumAddress(user.address) ||
-				event.from !== utils.toChecksumAddress(user.address)
+				sale.seller !== utils.toChecksumAddress(user.address)
 					? [
 							{
 								title: `Buy for ${utils.fromWei(sale ? sale.amount : "0")}SHM`,
@@ -218,7 +217,7 @@ export const ActionsComponent2 = ({ asset }) => {
 		const currentAddress = await getWalletAddress();
 		window.web3.eth.handleRevert = true;
 		const convertedAmount = window.web3.utils.toWei(amount);
-		await marketContract.methods
+		marketContract.methods
 			.setBuyPrice(asset.contract_address, asset.token_id, convertedAmount)
 			.send({ from: currentAddress })
 			.on("transactionHash", function (hash) {
@@ -254,7 +253,7 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (receipt) {
+			.on("receipt", function (_) {
 				setTransactionCompleted(true);
 			});
 	}
@@ -302,7 +301,7 @@ export const ActionsComponent2 = ({ asset }) => {
 		window.web3.eth.handleRevert = true;
 		console.log(asset);
 
-		await marketContract.methods
+		marketContract.methods
 			.cancelBuyPrice(sale.id)
 			.send({
 				from: currentAddress,

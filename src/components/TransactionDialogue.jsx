@@ -10,11 +10,12 @@ const TransactionDialogue = ({ transactionHash, transactionStatus }) => {
 	const [transactionFinished, setTransactionFinished] = useState(false);
 
 	useEffect(() => {
-		if (transactionHash !== "") {
+		if (transactionHash) {
 			setClosed(true);
 			setTransactionFinished(false);
 		}
 		if (transactionStatus) {
+			setClosed(true);
 			setTransactionFinished(true);
 		}
 	}, [transactionStatus, transactionHash]);

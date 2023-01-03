@@ -36,7 +36,7 @@ export function CardComponent({ asset }) {
 			className="card-container"
 			position="relative"
 			style={{
-				backgroundImage: asset.image.includes(".mp4")
+				backgroundImage: asset.image && asset.image.includes(".mp4")
 					? "none"
 					: `url('${
 							asset.contract_address === DOTSHM_ADDRESS
@@ -45,7 +45,7 @@ export function CardComponent({ asset }) {
 					  }')`,
 			}}
 		>
-			{asset.image.includes(".mp4") ? (
+			{asset.image && asset.image.includes(".mp4") ? (
 				<video className="video-component" autoPlay muted loop>
 					<source src={asset.image} type="video/mp4" />
 				</video>
