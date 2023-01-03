@@ -6,6 +6,7 @@ import { ButtonComponent } from "./ButtonComponent";
 import { ConnectComponent } from "./ConnectComponent";
 import { checkApproval } from "../utils/checkApproval";
 import { utils } from "web3";
+import TransactionDialogue from "./TransactionDialogue";
 
 const loaderStyle = {
 	backgroundImage:
@@ -19,6 +20,8 @@ const loaderStyle = {
 };
 
 export const ActionsComponent2 = ({ asset }) => {
+	const [transactionHash, setTransactionHash] = useState("");
+	const [transactionCompleted, setTransactionCompleted] = useState(false);
 	const [owner, setOwner] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [sale, setSale] = useState(false);
@@ -215,21 +218,15 @@ export const ActionsComponent2 = ({ asset }) => {
 		const currentAddress = await getWalletAddress();
 		window.web3.eth.handleRevert = true;
 		const convertedAmount = window.web3.utils.toWei(amount);
-		const tx = await marketContract.methods
+		await marketContract.methods
 			.setBuyPrice(asset.contract_address, asset.token_id, convertedAmount)
-			.send({ from: currentAddress });
-		console.log(tx.events.EventSale.returnValues.id);
-
-		// // Server Event
-		// const resolved = await saleHttpService.createSale({
-		// 	asset_id: asset._id,
-		// 	amount: convertedAmount,
-		// 	sale_id: parseInt(tx.events.EventSale.returnValues.id),
-		// });
-		// console.log(resolved);
-		// if (!resolved.error) {
-		// 	window.location.reload();
-		// }
+			.send({ from: currentAddress })
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
 	}
 
 	async function buyAsset() {
@@ -246,21 +243,20 @@ export const ActionsComponent2 = ({ asset }) => {
 				value: sale.amount,
 			});
 
-		await marketContract.methods
+		marketContract.methods
 			.buy(asset.contract_address, asset.token_id, sale.id)
 			.send({
 				from: currentAddress,
 				value: sale.amount,
 				gasPrice,
 				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (receipt) {
+				setTransactionCompleted(true);
 			});
-
-		// // Server Event
-		// const resolved = await saleHttpService.buySale(asset._id);
-		// if (!resolved.error) {
-		// 	window.location.reload();
-		// }
-		// console.log(resolved);
 	}
 
 	async function updateAsset() {
@@ -281,22 +277,19 @@ export const ActionsComponent2 = ({ asset }) => {
 				from: currentAddress,
 			});
 
-		const tx = await marketContract.methods
+		marketContract.methods
 			.updateBuyPrice(sale.id, convertedAmount)
 			.send({
 				from: currentAddress,
 				gasPrice,
 				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
 			});
-		console.log(tx);
-
-		// // Server Event
-		// const resolved = await saleHttpService.updateSale(asset._id, {
-		// 	amount: convertedAmount,
-		// });
-		// if (!resolved.error) {
-		// 	window.location.reload();
-		// }
 	}
 
 	async function cancelSale() {
@@ -309,17 +302,17 @@ export const ActionsComponent2 = ({ asset }) => {
 		window.web3.eth.handleRevert = true;
 		console.log(asset);
 
-		const tx = await marketContract.methods.cancelBuyPrice(sale.id).send({
-			from: currentAddress,
-		});
-		console.log(tx);
-
-		// // Server Event
-		// const resolved = await saleHttpService.cancelSale(asset._id);
-		// if (!resolved.error) {
-		// 	window.location.reload();
-		// }
-		// console.log(resolved);
+		await marketContract.methods
+			.cancelBuyPrice(sale.id)
+			.send({
+				from: currentAddress,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
 	}
 
 	async function approveMiddleware(callback) {
@@ -364,6 +357,10 @@ export const ActionsComponent2 = ({ asset }) => {
 		</Box>
 	) : (
 		<Box display={"flex"} sx={{ justifyContent: { xs: "center", md: "end" } }}>
+			<TransactionDialogue
+				transactionHash={transactionHash}
+				transactionStatus={transactionCompleted}
+			/>
 			{getActions(asset.events[0]).map((e, i) => (
 				<Box key={i} width='auto' p={1} display='flex'>
 					<ButtonComponent
