@@ -1,12 +1,9 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { SaleHttpService } from "../api/sale";
-import { OfferHttpService } from "../api/offer";
 import { getWalletAddress } from "../utils/wallet";
 import { ButtonComponent } from "./ButtonComponent";
 import { ConnectComponent } from "./ConnectComponent";
-import { AuctionHttpService } from "../api/auction";
 import { checkApproval } from "../utils/checkApproval";
 import { utils } from "web3";
 
@@ -22,17 +19,26 @@ const loaderStyle = {
 };
 
 export const ActionsComponent2 = ({ asset }) => {
+	const [owner, setOwner] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [sale, setSale] = useState(false);
-	const saleHttpService = new SaleHttpService();
-	const offerHttpService = new OfferHttpService();
-	const auctionHttpService = new AuctionHttpService();
 	const marketContract = useSelector(
 		(state) => state.contractReducer.marketContract
 	);
+	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 
 	useEffect(() => {
 		if (asset && marketContract) {
+			// Get Owner
+			if (asset.type === "721" && nftContract) {
+				nftContract.methods
+					.ownerOf(asset.token_id)
+					.call()
+					.then((owner) => {
+						setOwner(owner);
+					});
+			}
+			// Get Sale
 			marketContract.methods
 				.sales_by_address_id(asset.contract_address, asset.token_id)
 				.call()
@@ -40,235 +46,138 @@ export const ActionsComponent2 = ({ asset }) => {
 					setSale(saleData);
 				});
 		}
-	}, [asset, marketContract]);
+	}, [asset, marketContract, nftContract]);
 
 	const user = useSelector((state) => state.authReducer.user);
-
-	function isAuctionExpired(expireAt) {
-		return new Date(expireAt).getTime() / 1000 < Date.now() / 1000;
-	}
 
 	function getActions(event) {
 		let actions = [];
 		if (!user) return actions;
-		switch (event.method) {
-			case "0xa59ac6dd": // sale_accepted
-			case "0xb62deb65": // sale_canceled
-			case "offer_canceled":
-			case "offer_accepted":
-			case "imported":
-			case "transfer":
-			case "auction_canceled":
-			case "Sale":
-			case "0xd85d3d27": // mint
-				actions =
-					utils.toChecksumAddress(user.address) === event.to
-						? // || (event.event_type === "offer_canceled" &&
-						  // 	user._id === asset.owner._id)
-						  [
-								{
-									title: "Sell NFT",
-									action: () => approveMiddleware(sellAsset),
-								},
-								// {
-								// 	title: "Create Auction",
-								// 	action: () => approveMiddleware(createAuction),
-								// },
-						  ]
-						: [
-								// {
-								// 	title: "Make Offer",
-								// 	action: () => loadMiddleware(makeOffer),
-								// },
-						  ];
-				break;
-			case "offer_created":
-				actions =
-					user._id === asset.owner._id
-						? [
-								{
-									title: "Sell",
-									action: () => approveMiddleware(sellAsset),
-								},
-								{
-									title: "Auction",
-									action: () => approveMiddleware(createAuction),
-								},
-								// {
-								// 	title: "Accept Offer",
-								// 	action: () => approveMiddleware(acceptOffer),
-								// },
-						  ]
-						: event.user_id._id === user._id
-						? [
-								{
-									title: "Cancel Offer",
-									action: () => loadMiddleware(cancelOffer),
-								},
-						  ]
-						: [
-								{
-									title: "Make Offer",
-									action: () => loadMiddleware(makeOffer),
-								},
-						  ];
-				break;
-			case "bid":
-			case "auction_update_price":
-			case "auction_create":
-				actions =
-					event.user_id._id === user._id && user._id === asset.owner._id
-						? isAuctionExpired(event.data.expireAt)
-							? [
-									{
-										title: "Settle Auction",
-										action: () => loadMiddleware(settleAuction),
-									},
-							  ]
-							: [
-									{
-										title: "Cancel Auction",
-										action: () => loadMiddleware(cancelAuction),
-									},
-									{
-										title: "Update Price",
-										action: () => loadMiddleware(updateReservePrice),
-									},
-							  ]
-						: isAuctionExpired(event.data.expireAt) &&
-						  user._id === event.user_id._id
-						? [
-								{
-									title: "Settle Auction",
-									action: () => loadMiddleware(settleAuction),
-								},
-						  ]
-						: [
-								{
-									title: "Place Bid",
-									action: () => loadMiddleware(bidAuction),
-								},
-						  ];
-				break;
-			case "0x798bac8d": // sale_created
-			case "List":
-				actions =
-					sale.seller !== utils.toChecksumAddress(user.address) ||
-					event.from !== utils.toChecksumAddress(user.address)
-						? [
-								{
-									title: `Buy for ${utils.fromWei(
-										sale ? sale.amount : "0"
-									)}SHM`,
-									action: () => loadMiddleware(buyAsset),
-								},
-						  ]
-						: [
-								{
-									title: "Update Price",
-									action: () => loadMiddleware(updateAsset),
-								},
-								{
-									title: "Cancel Sale",
-									action: () => loadMiddleware(cancelSale),
-								},
-						  ];
-				break;
-			case "Update": // sale_update_price
-				actions =
-					sale.seller === utils.toChecksumAddress(user.address)
-						? [
-								{
-									title: "Update Price",
-									action: () => loadMiddleware(updateAsset),
-								},
-								{
-									title: "Cancel Sale",
-									action: () => loadMiddleware(cancelSale),
-								},
-						  ]
-						: [
-								{
-									title: `Buy for ${utils.fromWei(
-										sale ? sale.amount : "0"
-									)}SHM`,
-									action: () => loadMiddleware(buyAsset),
-								},
-						  ];
-				break;
-			default:
-				actions = [
-					{
-						title: "Invalid Event",
-						action: function () {
-							alert("Invalid Event");
-						},
-					},
-				];
-				break;
+		if (sale && !sale.sold) {
+			// If sale exist's and if sale is not over
+			actions =
+				sale.seller !== utils.toChecksumAddress(user.address) ||
+				event.from !== utils.toChecksumAddress(user.address)
+					? [
+							{
+								title: `Buy for ${utils.fromWei(sale ? sale.amount : "0")}SHM`,
+								action: () => loadMiddleware(buyAsset),
+							},
+					  ]
+					: [
+							{
+								title: "Update Price",
+								action: () => loadMiddleware(updateAsset),
+							},
+							{
+								title: "Cancel Sale",
+								action: () => loadMiddleware(cancelSale),
+							},
+					  ];
+		} else {
+			actions =
+				utils.toChecksumAddress(user.address) === owner
+					? // || (event.event_type === "offer_canceled" &&
+					  // 	user._id === asset.owner._id)
+					  [
+							{
+								title: "Sell NFT",
+								action: () => approveMiddleware(sellAsset),
+							},
+							// {
+							// 	title: "Create Auction",
+							// 	action: () => approveMiddleware(createAuction),
+							// },
+					  ]
+					: [
+							// {
+							// 	title: "Make Offer",
+							// 	action: () => loadMiddleware(makeOffer),
+							// },
+					  ];
 		}
 		return actions;
-	}
-
-	async function makeOffer() {
-		const amount = prompt("Please enter the amount in SHM");
-		if (isNaN(parseFloat(amount))) return;
-
-		const currentAddress = await getWalletAddress();
-		const convertedAmount = window.web3.utils.toWei(amount);
-		// Gas Calculation
-		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.makeOffer(asset.contract_address, asset.token_id, convertedAmount)
-			.estimateGas({
-				from: currentAddress,
-				value: convertedAmount,
-			});
-
-		const transaction = await marketContract.methods
-			.makeOffer(asset.contract_address, asset.token_id, convertedAmount)
-			.send({
-				from: currentAddress,
-				gasPrice,
-				gas,
-				value: convertedAmount,
-			});
-		console.log(transaction);
-
-		// Server Event
-		const resolved = await offerHttpService.createOffer({
-			asset_id: asset._id,
-			amount: convertedAmount,
-			offer_id: parseInt(transaction.events.EventOffer.returnValues.id),
-		});
-		console.log(resolved);
-		if (!resolved.error) {
-			window.location.reload();
-		}
-	}
-
-	async function cancelOffer() {
-		const confirm = window.confirm(
-			"Are you sure you want to cancel the offer?"
-		);
-		if (!confirm) return;
-
-		const currentAddress = await getWalletAddress();
-		const transaction = await marketContract.methods
-			.cancelOffer(asset.events[0].data.offer_id)
-			.send({
-				from: currentAddress,
-			});
-		console.log(transaction);
-
-		// Server Event
-		const resolved = await offerHttpService.cancelOffer(
-			asset.events[0].data._id
-		);
-		console.log(resolved);
-		if (!resolved.error) {
-			window.location.reload();
-		}
+		// switch (event.log.topics[0]) {
+		// 	case ERC1155_BATCH_TRANSFER_EVENT_HASH:
+		// 	case ERC1155_TRANSFER_EVENT_HASH:
+		// 	case ERC721_TRANSFER_EVENT_HASH:
+		// 		actions =
+		// 			utils.toChecksumAddress(user.address) === event.to
+		// 				? // || (event.event_type === "offer_canceled" &&
+		// 				  // 	user._id === asset.owner._id)
+		// 				  [
+		// 						{
+		// 							title: "Sell NFT",
+		// 							action: () => approveMiddleware(sellAsset),
+		// 						},
+		// 						// {
+		// 						// 	title: "Create Auction",
+		// 						// 	action: () => approveMiddleware(createAuction),
+		// 						// },
+		// 				  ]
+		// 				: [
+		// 						// {
+		// 						// 	title: "Make Offer",
+		// 						// 	action: () => loadMiddleware(makeOffer),
+		// 						// },
+		// 				  ];
+		// 		break;
+		// 	case SALE_EVENT_HASH:
+		// 		actions =
+		// 			sale.seller !== utils.toChecksumAddress(user.address) ||
+		// 			event.from !== utils.toChecksumAddress(user.address)
+		// 				? [
+		// 						{
+		// 							title: `Buy for ${utils.fromWei(
+		// 								sale ? sale.amount : "0"
+		// 							)}SHM`,
+		// 							action: () => loadMiddleware(buyAsset),
+		// 						},
+		// 				  ]
+		// 				: [
+		// 						{
+		// 							title: "Update Price",
+		// 							action: () => loadMiddleware(updateAsset),
+		// 						},
+		// 						{
+		// 							title: "Cancel Sale",
+		// 							action: () => loadMiddleware(cancelSale),
+		// 						},
+		// 				  ];
+		// 		break;
+		// 	case "Update": // sale_update_price
+		// 		actions =
+		// 			sale.seller === utils.toChecksumAddress(user.address)
+		// 				? [
+		// 						{
+		// 							title: "Update Price",
+		// 							action: () => loadMiddleware(updateAsset),
+		// 						},
+		// 						{
+		// 							title: "Cancel Sale",
+		// 							action: () => loadMiddleware(cancelSale),
+		// 						},
+		// 				  ]
+		// 				: [
+		// 						{
+		// 							title: `Buy for ${utils.fromWei(
+		// 								sale ? sale.amount : "0"
+		// 							)}SHM`,
+		// 							action: () => loadMiddleware(buyAsset),
+		// 						},
+		// 				  ];
+		// 		break;
+		// 	default:
+		// 		actions = [
+		// 			{
+		// 				title: "Invalid Event",
+		// 				action: function () {
+		// 					alert("Invalid Event");
+		// 				},
+		// 			},
+		// 		];
+		// 		break;
+		// }
 	}
 
 	// async function acceptOffer() {
@@ -311,16 +220,16 @@ export const ActionsComponent2 = ({ asset }) => {
 			.send({ from: currentAddress });
 		console.log(tx.events.EventSale.returnValues.id);
 
-		// Server Event
-		const resolved = await saleHttpService.createSale({
-			asset_id: asset._id,
-			amount: convertedAmount,
-			sale_id: parseInt(tx.events.EventSale.returnValues.id),
-		});
-		console.log(resolved);
-		if (!resolved.error) {
-			window.location.reload();
-		}
+		// // Server Event
+		// const resolved = await saleHttpService.createSale({
+		// 	asset_id: asset._id,
+		// 	amount: convertedAmount,
+		// 	sale_id: parseInt(tx.events.EventSale.returnValues.id),
+		// });
+		// console.log(resolved);
+		// if (!resolved.error) {
+		// 	window.location.reload();
+		// }
 	}
 
 	async function buyAsset() {
@@ -346,12 +255,12 @@ export const ActionsComponent2 = ({ asset }) => {
 				gas,
 			});
 
-		// Server Event
-		const resolved = await saleHttpService.buySale(asset._id);
-		if (!resolved.error) {
-			window.location.reload();
-		}
-		console.log(resolved);
+		// // Server Event
+		// const resolved = await saleHttpService.buySale(asset._id);
+		// if (!resolved.error) {
+		// 	window.location.reload();
+		// }
+		// console.log(resolved);
 	}
 
 	async function updateAsset() {
@@ -381,14 +290,13 @@ export const ActionsComponent2 = ({ asset }) => {
 			});
 		console.log(tx);
 
-		// Server Event
-		const resolved = await saleHttpService.updateSale(asset._id, {
-			amount: convertedAmount,
-		});
-		if (!resolved.error) {
-			window.location.reload();
-		}
-		console.log(resolved);
+		// // Server Event
+		// const resolved = await saleHttpService.updateSale(asset._id, {
+		// 	amount: convertedAmount,
+		// });
+		// if (!resolved.error) {
+		// 	window.location.reload();
+		// }
 	}
 
 	async function cancelSale() {
@@ -406,195 +314,12 @@ export const ActionsComponent2 = ({ asset }) => {
 		});
 		console.log(tx);
 
-		// Server Event
-		const resolved = await saleHttpService.cancelSale(asset._id);
-		if (!resolved.error) {
-			window.location.reload();
-		}
-		console.log(resolved);
-	}
-
-	async function createAuction() {
-		const amount = prompt("Please enter the reserve amount.");
-		if (isNaN(parseFloat(amount))) return;
-
-		const currentAddress = await getWalletAddress();
-		const convertedAmount = window.web3.utils.toWei(amount);
-		window.web3.eth.handleRevert = true;
-
-		// Gas Calculation
-		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.createReserveAuction(
-				asset.contract_address,
-				asset.token_id,
-				convertedAmount
-			)
-			.estimateGas({
-				from: currentAddress,
-			});
-
-		const tx = await marketContract.methods
-			.createReserveAuction(
-				asset.contract_address,
-				asset.token_id,
-				convertedAmount
-			)
-			.send({
-				from: currentAddress,
-				gasPrice,
-				gas,
-			});
-
-		// Server Event
-		const resolved = await auctionHttpService.createAuction({
-			asset_id: asset._id,
-			reserve_price: convertedAmount,
-			auction_id: parseInt(tx.events.EventAuction.returnValues.id),
-		});
-
-		if (!resolved.error) {
-			window.location.reload();
-		}
-	}
-
-	async function updateReservePrice() {
-		const amount = prompt("Please enter new reserve amount.");
-		if (isNaN(parseFloat(amount))) return;
-
-		const currentAddress = await getWalletAddress();
-		const convertedAmount = window.web3.utils.toWei(amount);
-		window.web3.eth.handleRevert = true;
-
-		// Gas Calculation
-		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.updateReservePrice(asset.events[0].data.auction_id, convertedAmount)
-			.estimateGas({
-				from: currentAddress,
-			});
-		await marketContract.methods
-			.updateReservePrice(asset.events[0].data.auction_id, convertedAmount)
-			.send({
-				from: currentAddress,
-				gasPrice,
-				gas,
-			});
-
-		// Server Event
-		const resolved = await auctionHttpService.updateReservePrice(
-			asset.events[0].data._id,
-			{
-				reserve_price: convertedAmount,
-			}
-		);
-		if (!resolved.error) {
-			window.location.reload();
-		}
-	}
-
-	async function cancelAuction() {
-		const confirmed = window.confirm(
-			"Are you sure you want to cancel this auction?"
-		);
-		if (!confirmed) return;
-
-		const currentAddress = await getWalletAddress();
-		window.web3.eth.handleRevert = true;
-
-		// Gas Calculation
-		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.cancelReserveAuction(asset.events[0].data.auction_id)
-			.estimateGas({
-				from: currentAddress,
-			});
-
-		await marketContract.methods
-			.cancelReserveAuction(asset.events[0].data.auction_id)
-			.send({
-				from: currentAddress,
-				gasPrice,
-				gas,
-			});
-
-		// Server Event
-		const resolved = await auctionHttpService.cancelAuction(
-			asset.events[0].data._id
-		);
-		if (!resolved.error) {
-			window.location.reload();
-		}
-	}
-
-	async function settleAuction() {
-		const confirmed = window.confirm(
-			"Are you sure you want to settle this auction?"
-		);
-		if (!confirmed) return;
-
-		const currentAddress = await getWalletAddress();
-		window.web3.eth.handleRevert = true;
-
-		// Gas Calculation
-		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.settleAuction(asset.events[0].data.auction_id)
-			.estimateGas({
-				from: currentAddress,
-			});
-
-		await marketContract.methods
-			.settleAuction(asset.events[0].data.auction_id)
-			.send({
-				from: currentAddress,
-				gasPrice,
-				gas,
-			});
-
-		// Server Event
-		const resolved = await auctionHttpService.settleAuction(
-			asset.events[0].data._id
-		);
-		if (!resolved.error) {
-			window.location.reload();
-		}
-	}
-
-	async function bidAuction() {
-		const amount = prompt("Please enter bid amount.");
-		if (isNaN(parseFloat(amount))) return;
-
-		const currentAddress = await getWalletAddress();
-		const convertedAmount = window.web3.utils.toWei(amount);
-		window.web3.eth.handleRevert = true;
-
-		// Gas Calculation
-		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.placeBid(asset.events[0].data.auction_id)
-			.estimateGas({
-				from: currentAddress,
-				value: convertedAmount,
-			});
-
-		await marketContract.methods
-			.placeBid(asset.events[0].data.auction_id)
-			.send({
-				from: currentAddress,
-				value: convertedAmount,
-				gasPrice,
-				gas,
-			});
-
-		// Server Event
-		const resolved = await auctionHttpService.bidAuction({
-			auction_id: asset.events[0].data._id,
-			amount: convertedAmount,
-		});
-		if (!resolved.error) {
-			window.location.reload();
-		}
+		// // Server Event
+		// const resolved = await saleHttpService.cancelSale(asset._id);
+		// if (!resolved.error) {
+		// 	window.location.reload();
+		// }
+		// console.log(resolved);
 	}
 
 	async function approveMiddleware(callback) {
