@@ -33,6 +33,61 @@
 					"type": "uint256"
 				},
 				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "expireAt",
+					"type": "uint256"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "contractAddress",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "offerFrom",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "bool",
+					"name": "sold",
+					"type": "bool"
+				},
+				{
+					"indexed": true,
+					"internalType": "enum Market.TypeOffer",
+					"name": "eventType",
+					"type": "uint8"
+				}
+			],
+			"name": "EventOffer",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "itemId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "amount",
+					"type": "uint256"
+				},
+				{
 					"indexed": true,
 					"internalType": "address",
 					"name": "contractAddress",
@@ -108,6 +163,19 @@
 		{
 			"inputs": [
 				{
+					"internalType": "uint256",
+					"name": "_offerId",
+					"type": "uint256"
+				}
+			],
+			"name": "acceptOffer",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
 					"internalType": "address",
 					"name": "_contractAddress",
 					"type": "address"
@@ -139,6 +207,217 @@
 			"name": "cancelBuyPrice",
 			"outputs": [],
 			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_offerId",
+					"type": "uint256"
+				}
+			],
+			"name": "cancelOffer",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contractAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_itemId",
+					"type": "uint256"
+				}
+			],
+			"name": "getOffersByAddressAndId",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "id",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "itemId",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "amount",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "expireAt",
+							"type": "uint256"
+						},
+						{
+							"internalType": "address",
+							"name": "contractAddress",
+							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "offerFrom",
+							"type": "address"
+						},
+						{
+							"internalType": "bool",
+							"name": "sold",
+							"type": "bool"
+						}
+					],
+					"internalType": "struct Market.Offer[]",
+					"name": "",
+					"type": "tuple[]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contractAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_itemId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_amount",
+					"type": "uint256"
+				}
+			],
+			"name": "makeOffer",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "offers",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "itemId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "amount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "expireAt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "contractAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "offerFrom",
+					"type": "address"
+				},
+				{
+					"internalType": "bool",
+					"name": "sold",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "offers_by_address_id",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "itemId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "amount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "expireAt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "contractAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "offerFrom",
+					"type": "address"
+				},
+				{
+					"internalType": "bool",
+					"name": "sold",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
 			"type": "function"
 		},
 		{
@@ -421,7 +700,7 @@
 		"8081": {
 			"events": {},
 			"links": {},
-			"address": "0xA94C7e938C51351B8ec9400a010154f563fA2218",
+			"address": "0x7Ccc21914D65C1F812582b3ac4f96b176274D727",
 			"transactionHash": "0x6c500f0c89d176300b1f7be71a4c1a96e90a1cf7d8bf899b13104acf4467fae2"
 		}
 	},

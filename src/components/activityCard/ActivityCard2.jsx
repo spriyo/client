@@ -19,6 +19,7 @@ import {
 	ERC721_TRANSFER_EVENT_HASH,
 	NULL_ADDRESS,
 	SALE_EVENT_HASH,
+	OFFER_EVENT_HASH,
 } from "../../constants";
 import { getShortAddress } from "../../utils/addressShort";
 
@@ -39,22 +40,34 @@ export function ActivityCardComponent2({ event, asset }) {
 		"Updated Sale",
 		"Canceled Sale",
 	];
+	const offerTypes = [
+		"Created Offer",
+		"Accepted Offer",
+		"Canceled Offer",
+	];
 
 	function getKeyword(event) {
+		let data;
+		let type;
 		switch (event.log.topics[0]) {
 			case ERC1155_BATCH_TRANSFER_EVENT_HASH:
 			case ERC1155_TRANSFER_EVENT_HASH:
 			case ERC721_TRANSFER_EVENT_HASH:
 				return event.from === NULL_ADDRESS ? "Minted" : "Transfer";
 			case SALE_EVENT_HASH:
-				const data = web3.eth.abi.decodeParameters(
+				data = web3.eth.abi.decodeParameters(
 					["uint", "uint256", "address", "uint8"],
 					event.data
 				);
-				const type = web3.utils.hexToNumberString(event.log.topics[3]);
+				type = web3.utils.hexToNumberString(event.log.topics[3]);
 				return `${saleTypes[type]} for ${web3.utils.fromWei(data[1])} SHM`;
-			case "sale_update_price":
-				return "Buy Now Price Updated";
+			case OFFER_EVENT_HASH:
+				data = web3.eth.abi.decodeParameters(
+					["uint", "uint256", "uint256", "address", "bool"],
+					event.data
+				);
+				type = web3.utils.hexToNumberString(event.log.topics[3]);
+				return `${offerTypes[type]} for ${web3.utils.fromWei(data[1])} SHM`;
 			case "0xa59ac6dd": // buy
 				return (
 					<>
@@ -147,7 +160,7 @@ export function ActivityCardComponent2({ event, asset }) {
 								<Stack direction={"row"}>
 									<Stack>
 										<Stack direction={"row"}>
-											<Typography variant='h3' color={"black"}>
+											<Typography variant="h3" color={"black"}>
 												{getKeyword(event)}
 												{event.from === NULL_ADDRESS ? "" : <small></small>}
 											</Typography>
@@ -155,7 +168,7 @@ export function ActivityCardComponent2({ event, asset }) {
 										<Stack direction={"row"}>
 											<Typography
 												onClick={() => navigate(`/${event.from}`)}
-												variant='h6'
+												variant="h6"
 												color={"text.primary"}
 												sx={{ cursor: "pointer" }}
 											>
@@ -165,7 +178,7 @@ export function ActivityCardComponent2({ event, asset }) {
 											</Typography>
 											<Typography
 												onClick={() => navigate(`/${event.to}`)}
-												variant='h6'
+												variant="h6"
 												color={"text.primary"}
 												sx={{ cursor: "pointer" }}
 											>
@@ -217,5 +230,5 @@ export const Timer = ({ expireAt }) => {
 		}
 	}, 1000);
 
-	return <Typography variant='h6'>{`(Expires in ${expiringIn})`}</Typography>;
+	return <Typography variant="h6">{`(Expires in ${expiringIn})`}</Typography>;
 };

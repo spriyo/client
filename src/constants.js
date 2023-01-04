@@ -12,6 +12,8 @@ export const ERC1155_BATCH_TRANSFER_EVENT_HASH =
 	"0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb";
 export const SALE_EVENT_HASH =
 	"0x0cd43fd9c12c0b040dc330b451adcefd47851dfa029dec57f23f570054ef4688";
+export const OFFER_EVENT_HASH =
+	"0x3d44ddf83a852335fb93dea137ad2410905452f00c66ea62151f153d0a11ae5e";
 
 export const ChainsConfig = {
 	SHARDEUM_LIBERTY: {

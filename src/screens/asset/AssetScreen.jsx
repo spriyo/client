@@ -6,7 +6,6 @@ import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChainsConfig, DOTSHM_ADDRESS } from "../../constants";
 import { useSelector } from "react-redux";
-import { ActionsComponent } from "../../components/ActionsComponent";
 import { CircularProfile } from "../../components/CircularProfileComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { getNetworkByChainId } from "../../utils/getNetwork";
@@ -26,11 +25,15 @@ import { ReactComponent as ShardeumLogoSVG } from "../../assets/shardeum-logo.sv
 import { FiGlobe, FiEye, FiExternalLink } from "react-icons/fi";
 import { ActivityCardComponent2 } from "../../components/activityCard/ActivityCard2";
 import { ActionsComponent2 } from "../../components/ActionsComponent2";
+import { OfferCardComponent } from "../../components/activityCard/OfferCard";
+import { OfferHttpService } from "../../api/offer";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
 	const [asset, setAsset] = useState(null);
+	const [offers, setOffers] = useState([]);
 	const nftHttpService = new NFTHttpService();
+	const offerHttpService = new OfferHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
@@ -55,6 +58,7 @@ export function AssetScreen() {
 			setAsset(fetchedAsset);
 			initializeContract(fetchedAsset.contract_address);
 			getComments(fetchedAsset._id);
+			getOffers(fetchedAsset._id);
 		}
 	};
 
@@ -204,6 +208,17 @@ export function AssetScreen() {
 		ev.target.src = LOADING_IMG;
 	}
 
+	async function getOffers(nft_id) {
+		try {
+			const resolved = await offerHttpService.getOffers(nft_id);
+			if (!resolved.error) {
+				setOffers(resolved.data);
+			}
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
+
 	useEffect(() => {
 		getAsset();
 		getAssetsFromCollection();
@@ -224,36 +239,36 @@ export function AssetScreen() {
 						{/* <!-- Primary Meta Tags --> */}
 						<title>{asset.name} - Shardeum NFT - Spriyo.xyz</title>
 						<meta
-							name='title'
+							name="title"
 							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
 						/>
-						<meta name='description' content={asset.description} />
+						<meta name="description" content={asset.description} />
 
 						{/* <!-- Open Graph / Facebook --> */}
-						<meta property='og:type' content='website' />
+						<meta property="og:type" content="website" />
 						<meta
-							property='og:url'
+							property="og:url"
 							content={`${process.env.REACT_APP_BASE_URL}/assets/${asset.contract_address}/${asset.token_id}`}
 						/>
 						<meta
-							property='og:title'
+							property="og:title"
 							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
 						/>
-						<meta property='og:description' content={asset.description} />
-						<meta property='og:image' content={asset.image} />
+						<meta property="og:description" content={asset.description} />
+						<meta property="og:image" content={asset.image} />
 
 						{/* <!-- Twitter --> */}
-						<meta property='twitter:card' content='summary_large_image' />
+						<meta property="twitter:card" content="summary_large_image" />
 						<meta
-							property='twitter:url'
+							property="twitter:url"
 							content={`${process.env.REACT_APP_BASE_URL}/assets/${asset.contract_address}/${asset.token_id}`}
 						/>
 						<meta
-							property='twitter:title'
+							property="twitter:title"
 							content={`${asset.name} - Shardeum NFT - Spriyo.xyz`}
 						/>
-						<meta property='twitter:description' content={asset.description} />
-						<meta property='twitter:image' content={asset.image} />
+						<meta property="twitter:description" content={asset.description} />
+						<meta property="twitter:image" content={asset.image} />
 					</Helmet>
 
 					<Stack
@@ -265,10 +280,10 @@ export function AssetScreen() {
 						{/* Image */}
 						<Box
 							flex={1}
-							overflow='auto'
-							height='auto'
+							overflow="auto"
+							height="auto"
 							display={"flex"}
-							justifyContent='center'
+							justifyContent="center"
 							onClick={() =>
 								window.open(asset.image || asset.medias[0].path, "_blank")
 							}
@@ -281,7 +296,7 @@ export function AssetScreen() {
 									muted
 									loop
 								>
-									<source src={asset.image} type='video/mp4' />
+									<source src={asset.image} type="video/mp4" />
 								</video>
 							) : (
 								<img
@@ -291,12 +306,12 @@ export function AssetScreen() {
 											: asset.image
 									}
 									alt={asset.name}
-									width='auto'
+									width="auto"
 									style={{
 										maxWidth: "90vw",
 										overflowX: "hidden",
 									}}
-									className='main-image'
+									className="main-image"
 									onError={addDefaultSrc}
 								/>
 							)}
@@ -313,13 +328,13 @@ export function AssetScreen() {
 						}}
 					>
 						<Stack
-							width='100%'
-							maxWidth='1240px'
+							width="100%"
+							maxWidth="1240px"
 							flexDirection={{
 								xs: "column",
 								md: "row",
 							}}
-							justifyContent='space-between'
+							justifyContent="space-between"
 							p={1}
 						>
 							<Box
@@ -335,7 +350,7 @@ export function AssetScreen() {
 							>
 								{/* Details */}
 								<Box flex={1} m={1}>
-									<Box display='flex' justifyContent={"space-between"}>
+									<Box display="flex" justifyContent={"space-between"}>
 										<Box mb={1}>
 											{/* Title */}
 											<Box>
@@ -347,23 +362,23 @@ export function AssetScreen() {
 														: asset.name || `#${asset.token_id}`}
 												</Typography>
 												<Typography
-													variant='subtitle2'
+													variant="subtitle2"
 													color={"text.secondary"}
-													component='p'
+													component="p"
 												>
 													#{asset.token_id}
 												</Typography>
 											</Box>
 											{/* Owned and Collection */}
-											<Box mt={2} display='flex'>
+											<Box mt={2} display="flex">
 												{asset.owners.length > 0 && (
 													<Box>
-														<Typography variant='h5' color='grey'>
+														<Typography variant="h5" color="grey">
 															Owned By
 														</Typography>
 														<Box
-															display='flex'
-															alignItems='center'
+															display="flex"
+															alignItems="center"
 															mt={1}
 															onClick={() =>
 																navigate(`/${asset.owners[0].address}`)
@@ -383,7 +398,7 @@ export function AssetScreen() {
 															{/* Name/Address */}
 															<Box ml={0.5}>
 																<Typography
-																	variant='h5'
+																	variant="h5"
 																	sx={{ cursor: "pointer" }}
 																>
 																	@
@@ -395,12 +410,12 @@ export function AssetScreen() {
 													</Box>
 												)}
 												<Box ml={8}>
-													<Typography variant='h5' color='grey'>
+													<Typography variant="h5" color="grey">
 														Collection
 													</Typography>
 													<Box
-														display='flex'
-														alignItems='center'
+														display="flex"
+														alignItems="center"
 														mt={1}
 														onClick={() =>
 															navigate(
@@ -423,7 +438,7 @@ export function AssetScreen() {
 														</Box>
 														{/* Name/Address */}
 														<Box ml={0.5} sx={{ cursor: "pointer" }}>
-															<Typography variant='h5'>
+															<Typography variant="h5">
 																{(asset.collection && asset.collection.name) ||
 																	asset.contract_address.slice(-6)}
 															</Typography>
@@ -433,17 +448,17 @@ export function AssetScreen() {
 											</Box>
 											{/* Description */}
 											<Box mt={4}>
-												<Typography variant='h3'>Description</Typography>
-												<Typography variant='body1' fontWeight='500'>
+												<Typography variant="h3">Description</Typography>
+												<Typography variant="body1" fontWeight="500">
 													{asset.description}
 												</Typography>
 											</Box>
 											{/* Details */}
 											<Box mt={4}>
-												<Typography variant='h3'>Details</Typography>
-												<Stack mt={2} alignItems='center' direction='row'>
+												<Typography variant="h3">Details</Typography>
+												<Stack mt={2} alignItems="center" direction="row">
 													<ShardeumLogoSVG />
-													<Typography variant='h5' ml={1}>
+													<Typography variant="h5" ml={1}>
 														{asset.chain_id === "8080"
 															? `Liberty 1.X (${asset.type})`
 															: `Liberty 2.0 (${asset.type})`}
@@ -451,21 +466,21 @@ export function AssetScreen() {
 												</Stack>
 												<Stack
 													mt={2}
-													alignItems='center'
-													direction='row'
+													alignItems="center"
+													direction="row"
 													onClick={handleExploreClick}
 													sx={{ cursor: "pointer" }}
 												>
 													<FiGlobe size={20} />
-													<Typography variant='h5' ml={1} mr={0.5}>
+													<Typography variant="h5" ml={1} mr={0.5}>
 														View on Explorer
 													</Typography>
-													<FiExternalLink color='grey' />
+													<FiExternalLink color="grey" />
 												</Stack>
 												<Stack
 													mt={2}
-													alignItems='center'
-													direction='row'
+													alignItems="center"
+													direction="row"
 													sx={{
 														cursor: asset.metadata_url
 															? "pointer"
@@ -476,11 +491,158 @@ export function AssetScreen() {
 													}
 												>
 													<FiEye size={20} />
-													<Typography variant='h5' ml={1} mr={0.5}>
+													<Typography variant="h5" ml={1} mr={0.5}>
 														View Metadata
 													</Typography>
-													<FiExternalLink color='grey' />
+													<FiExternalLink color="grey" />
 												</Stack>
+											</Box>
+											{/* Commnents */}
+											<Box mt={4}>
+												<Typography variant="h3">Comments</Typography>
+												<Box mt={"20px"}>
+													{/* Write Comment */}
+													<Box display="flex">
+														<CircularProfile
+															userId={user ? user._id : ""}
+															userImgUrl={user ? user.displayImage : ""}
+														/>
+														<Box sx={{ width: "100%", ml: "16px" }}>
+															{/* Custom Textfield */}
+															<Box sx={{ borderRadius: "12px" }}>
+																<TextField
+																	sx={{
+																		backgroundColor: "white",
+																		borderRadius: "12px",
+																		paddingX: "12px",
+																		paddingY: "10px",
+																	}}
+																	variant="standard"
+																	InputProps={{
+																		disableUnderline: true,
+																		endAdornment: (
+																			<IconButton
+																				onClick={() => {
+																					if (!user) return;
+																					writeComment(asset._id, comment);
+																				}}
+																				sx={{
+																					cursor: user
+																						? "pointer"
+																						: "not-allowed",
+																				}}
+																			>
+																				<RiSendPlane2Line size={16} />
+																			</IconButton>
+																		),
+																	}}
+																	fullWidth
+																	placeholder={
+																		user
+																			? "Write your comment"
+																			: "Connect wallet to comment"
+																	}
+																	id="fullWidth"
+																	value={comment}
+																	onChange={(e) =>
+																		commentOnChange(e.target.value)
+																	}
+																/>
+															</Box>
+														</Box>
+													</Box>
+													{/* Comment List */}
+													{comments.length === 0 ? (
+														<Box
+															sx={{
+																backgroundColor: "white",
+																mt: "8px",
+																p: 2,
+																borderRadius: "12px",
+																display: "flex",
+																alignItems: "center",
+																justifyContent: "center",
+																flexDirection: "column",
+															}}
+														>
+															<img
+																width={"75px"}
+																src={NoComment}
+																alt="no comment"
+															></img>
+															<Typography variant="h5">
+																Be the first to comment😃
+															</Typography>
+														</Box>
+													) : (
+														comments.map((comment, i) => {
+															return (
+																<Box display="flex" mt={"14px"} key={i}>
+																	<CircularProfile
+																		userId={comment.userId._id}
+																		userImgUrl={comment.userId.displayImage}
+																	/>
+																	<Box sx={{ width: "100%", ml: "16px" }}>
+																		<Box
+																			sx={{
+																				backgroundColor: "white",
+																				borderRadius: "12px",
+																				paddingX: "12px",
+																				paddingY: "10px",
+																			}}
+																		>
+																			<Stack
+																				flexDirection="row"
+																				justifyContent="space-between"
+																			>
+																				<Typography variant="h6">
+																					{comment.userId.username}
+																				</Typography>
+																				{comment.userId._id === user._id && (
+																					<IconButton
+																						size="small"
+																						sx={{
+																							"&:hover": {
+																								color: "red",
+																							},
+																						}}
+																						onClick={() =>
+																							deleteComment(comment._id)
+																						}
+																					>
+																						<RiDeleteBin5Line size={14} />
+																					</IconButton>
+																				)}
+																			</Stack>
+																			<Typography
+																				sx={{
+																					fontSize: "12px",
+																					color: "text.primary",
+																				}}
+																			>
+																				{comment.content}
+																			</Typography>
+																			<Box mt={"4px"}></Box>
+																			<p
+																				style={{
+																					fontSize: "10px",
+																					fontWeight: "500",
+																					color: "text.secondary",
+																				}}
+																			>
+																				{`${new Date(
+																					comment.createdAt
+																				).toDateString()}, ${new Date(
+																					comment.createdAt
+																				).toLocaleTimeString()}`}
+																			</p>
+																		</Box>
+																	</Box>
+																</Box>
+															);
+														})
+													)}
+												</Box>
 											</Box>
 										</Box>
 										{user &&
@@ -502,19 +664,38 @@ export function AssetScreen() {
 									</Box>
 								</Box>
 							</Box>
-							{/* Activity & Comments */}
+							{/* Activity & Offers */}
 							<Box flex={1} mt={4}>
+								{/* Offers */}
 								<Box>
-									{/* Activity */}
-									<Typography variant='h3'>Activity</Typography>
+									<Typography variant="h3">Offers</Typography>
 									{asset.events.length === 0 ? (
-										<Typography variant='h3' color='lightgrey'>
+										<Typography variant="h3" color="lightgrey">
 											No Activity
 										</Typography>
 									) : (
 										<Box>
 											<ActionsComponent2 asset={asset} />
-											<Box className='activityScroll'>
+											<Box className="activityScroll">
+												{offers.map((e, i) => (
+													<Box key={i}>
+														<OfferCardComponent asset={asset} offer={e} />
+													</Box>
+												))}
+											</Box>
+										</Box>
+									)}
+								</Box>
+								<Box>
+									{/* Activity */}
+									<Typography variant="h3">Activity</Typography>
+									{asset.events.length === 0 ? (
+										<Typography variant="h3" color="lightgrey">
+											No Activity
+										</Typography>
+									) : (
+										<Box>
+											<Box className="activityScroll">
 												{asset.events.map((e, i) => (
 													<Box key={i}>
 														<ActivityCardComponent2 event={e} asset={asset} />
@@ -524,156 +705,16 @@ export function AssetScreen() {
 										</Box>
 									)}
 								</Box>
-								<Box mt={4}>
-									<Typography variant='h3'>Comments</Typography>
-									<Box mt={"20px"}>
-										{/* Write Comment */}
-										<Box display='flex'>
-											<CircularProfile
-												userId={user ? user._id : ""}
-												userImgUrl={user ? user.displayImage : ""}
-											/>
-											<Box sx={{ width: "100%", ml: "16px" }}>
-												{/* Custom Textfield */}
-												<Box sx={{ borderRadius: "12px" }}>
-													<TextField
-														sx={{
-															backgroundColor: "white",
-															borderRadius: "12px",
-															paddingX: "12px",
-															paddingY: "10px",
-														}}
-														variant='standard'
-														InputProps={{
-															disableUnderline: true,
-															endAdornment: (
-																<IconButton
-																	onClick={() => {
-																		if (!user) return;
-																		writeComment(asset._id, comment);
-																	}}
-																	sx={{
-																		cursor: user ? "pointer" : "not-allowed",
-																	}}
-																>
-																	<RiSendPlane2Line size={16} />
-																</IconButton>
-															),
-														}}
-														fullWidth
-														placeholder={
-															user
-																? "Write your comment"
-																: "Connect wallet to comment"
-														}
-														id='fullWidth'
-														value={comment}
-														onChange={(e) => commentOnChange(e.target.value)}
-													/>
-												</Box>
-											</Box>
-										</Box>
-										{/* Comment List */}
-										{comments.length === 0 ? (
-											<Box
-												sx={{
-													backgroundColor: "white",
-													mt: "8px",
-													p: 2,
-													borderRadius: "12px",
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "center",
-													flexDirection: "column",
-												}}
-											>
-												<img
-													width={"75px"}
-													src={NoComment}
-													alt='no comment'
-												></img>
-												<Typography variant='h5'>
-													Be the first to comment😃
-												</Typography>
-											</Box>
-										) : (
-											comments.map((comment, i) => {
-												return (
-													<Box display='flex' mt={"14px"} key={i}>
-														<CircularProfile
-															userId={comment.userId._id}
-															userImgUrl={comment.userId.displayImage}
-														/>
-														<Box sx={{ width: "100%", ml: "16px" }}>
-															<Box
-																sx={{
-																	backgroundColor: "white",
-																	borderRadius: "12px",
-																	paddingX: "12px",
-																	paddingY: "10px",
-																}}
-															>
-																<Stack
-																	flexDirection='row'
-																	justifyContent='space-between'
-																>
-																	<Typography variant='h6'>
-																		{comment.userId.username}
-																	</Typography>
-																	{comment.userId._id === user._id && (
-																		<IconButton
-																			size='small'
-																			sx={{
-																				"&:hover": {
-																					color: "red",
-																				},
-																			}}
-																			onClick={() => deleteComment(comment._id)}
-																		>
-																			<RiDeleteBin5Line size={14} />
-																		</IconButton>
-																	)}
-																</Stack>
-																<Typography
-																	sx={{
-																		fontSize: "12px",
-																		color: "text.primary",
-																	}}
-																>
-																	{comment.content}
-																</Typography>
-																<Box mt={"4px"}></Box>
-																<p
-																	style={{
-																		fontSize: "10px",
-																		fontWeight: "500",
-																		color: "text.secondary",
-																	}}
-																>
-																	{`${new Date(
-																		comment.createdAt
-																	).toDateString()}, ${new Date(
-																		comment.createdAt
-																	).toLocaleTimeString()}`}
-																</p>
-															</Box>
-														</Box>
-													</Box>
-												);
-											})
-										)}
-									</Box>
-								</Box>
 							</Box>
 						</Stack>
 					</Box>
 				</Box>
 			) : (
 				<Box
-					height='50vh'
-					display='flex'
-					justifyContent='center'
-					alignItems='center'
+					height="50vh"
+					display="flex"
+					justifyContent="center"
+					alignItems="center"
 				>
 					<p>loading</p>
 				</Box>

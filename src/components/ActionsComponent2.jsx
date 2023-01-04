@@ -7,6 +7,7 @@ import { ConnectComponent } from "./ConnectComponent";
 import { checkApproval } from "../utils/checkApproval";
 import { utils } from "web3";
 import TransactionDialogue from "./TransactionDialogue";
+import nftJsonInterface from "../contracts/Spriyo.json";
 
 const loaderStyle = {
 	backgroundImage:
@@ -28,13 +29,16 @@ export const ActionsComponent2 = ({ asset }) => {
 	const marketContract = useSelector(
 		(state) => state.contractReducer.marketContract
 	);
-	const nftContract = useSelector((state) => state.contractReducer.nftContract);
 
 	useEffect(() => {
 		if (asset && marketContract) {
 			// Get Owner
-			if (asset.type === "721" && nftContract) {
-				nftContract.methods
+			if (asset.type === "721") {
+				const contract = new window.web3.eth.Contract(
+					nftJsonInterface.abi,
+					asset.contract_address
+				);
+				contract.methods
 					.ownerOf(asset.token_id)
 					.call()
 					.then((owner) => {
@@ -49,7 +53,7 @@ export const ActionsComponent2 = ({ asset }) => {
 					setSale(saleData);
 				});
 		}
-	}, [asset, marketContract, nftContract]);
+	}, [asset, marketContract]);
 
 	const user = useSelector((state) => state.authReducer.user);
 
@@ -79,9 +83,7 @@ export const ActionsComponent2 = ({ asset }) => {
 		} else {
 			actions =
 				utils.toChecksumAddress(user.address) === owner
-					? // || (event.event_type === "offer_canceled" &&
-					  // 	user._id === asset.owner._id)
-					  [
+					? [
 							{
 								title: "Sell NFT",
 								action: () => approveMiddleware(sellAsset),
@@ -92,10 +94,10 @@ export const ActionsComponent2 = ({ asset }) => {
 							// },
 					  ]
 					: [
-							// {
-							// 	title: "Make Offer",
-							// 	action: () => loadMiddleware(makeOffer),
-							// },
+							{
+								title: "Make Offer",
+								action: () => loadMiddleware(makeOffer),
+							},
 					  ];
 		}
 		return actions;
@@ -209,6 +211,37 @@ export const ActionsComponent2 = ({ asset }) => {
 	// async function createAuction() {
 	// 	alert("Create Auction coming soon!");
 	// }
+
+	async function makeOffer() {
+		const amount = prompt("Please enter the amount in SHM");
+		if (isNaN(parseFloat(amount))) return;
+
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await marketContract.methods
+			.makeOffer(asset.contract_address, asset.token_id, convertedAmount)
+			.estimateGas({
+				from: currentAddress,
+				value: convertedAmount,
+			});
+
+		marketContract.methods
+			.makeOffer(asset.contract_address, asset.token_id, convertedAmount)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+				value: convertedAmount,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
+	}
 
 	async function sellAsset() {
 		const amount = prompt("Please enter the amount in SHM");
@@ -351,7 +384,7 @@ export const ActionsComponent2 = ({ asset }) => {
 	return loading ? (
 		<Box sx={loaderStyle}>loading</Box>
 	) : !user ? (
-		<Box p={2} display='flex' justifyContent='center'>
+		<Box p={2} display="flex" justifyContent="center">
 			<ConnectComponent />
 		</Box>
 	) : (
@@ -361,7 +394,7 @@ export const ActionsComponent2 = ({ asset }) => {
 				transactionStatus={transactionCompleted}
 			/>
 			{getActions(asset.events[0]).map((e, i) => (
-				<Box key={i} width='auto' p={1} display='flex'>
+				<Box key={i} width="auto" p={1} display="flex">
 					<ButtonComponent
 						text={e.title}
 						rounded={true}
