@@ -14,6 +14,10 @@ export const SALE_EVENT_HASH =
 	"0x0cd43fd9c12c0b040dc330b451adcefd47851dfa029dec57f23f570054ef4688";
 export const OFFER_EVENT_HASH =
 	"0x3d44ddf83a852335fb93dea137ad2410905452f00c66ea62151f153d0a11ae5e";
+// export const AUCTION_EVENT_HASH =
+// 	"0x88e98201e0ee31d381fbbafcc13f7a5a0a8e8203bf21a2eb739fa2388ac87207";
+// export const BID_EVENT_HASH =
+// 	"0x7d827aee9861babd4633b901c0e9619a8bf942083be2e2297aaf3dd5e8f7952b";
 
 export const ChainsConfig = {
 	SHARDEUM_LIBERTY: {

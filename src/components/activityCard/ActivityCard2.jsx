@@ -20,6 +20,8 @@ import {
 	NULL_ADDRESS,
 	SALE_EVENT_HASH,
 	OFFER_EVENT_HASH,
+	// BID_EVENT_HASH,
+	// AUCTION_EVENT_HASH,
 } from "../../constants";
 import { getShortAddress } from "../../utils/addressShort";
 
@@ -40,11 +42,13 @@ export function ActivityCardComponent2({ event, asset }) {
 		"Updated Sale",
 		"Canceled Sale",
 	];
-	const offerTypes = [
-		"Created Offer",
-		"Accepted Offer",
-		"Canceled Offer",
-	];
+	const offerTypes = ["Created Offer", "Accepted Offer", "Canceled Offer"];
+	// const auctionTypes = [
+	// 	"Created Auction starting at",
+	// 	"Canceled Auction for",
+	// 	"Auction reserve price updated for",
+	// 	"Auction settled for",
+	// ];
 
 	function getKeyword(event) {
 		let data;
@@ -68,17 +72,39 @@ export function ActivityCardComponent2({ event, asset }) {
 				);
 				type = web3.utils.hexToNumberString(event.log.topics[3]);
 				return `${offerTypes[type]} for ${web3.utils.fromWei(data[1])} SHM`;
-			case "0xa59ac6dd": // buy
-				return (
-					<>
-						Bought by{" "}
-						<small style={{ cursor: "pointer" }}>
-							{getShortAddress(event.to)}
-						</small>
-					</>
-				);
-			case "0xb62deb65":
-				return "Listing Canceled";
+			// case AUCTION_EVENT_HASH:
+			// 	data = web3.eth.abi.decodeParameters(
+			// 		[
+			// 			"uint256",
+			// 			"uint256",
+			// 			"uint256",
+			// 			"address",
+			// 			"address",
+			// 			"address",
+			// 			"bool",
+			// 		],
+			// 		event.data
+			// 	);
+			// 	type = web3.utils.hexToNumberString(event.log.topics[3]);
+			// 	return `${auctionTypes[type]} ${web3.utils.fromWei(data[1])} SHM`;
+			// case BID_EVENT_HASH:
+			// 	data = web3.eth.abi.decodeParameters(
+			// 		["uint256", "uint256"],
+			// 		event.data
+			// 	);
+			// 	return (
+			// 		<>
+			// 			Bid by{" "}
+			// 			<small style={{ cursor: "pointer" }}>
+			// 				{getShortAddress(
+			// 					web3.eth.abi.decodeParameter("address", event.log.topics[3])
+			// 				)}
+			// 			</small>
+			// 			<small style={{ cursor: "pointer" }}>
+			// 				{` for ${web3.utils.fromWei(data[1])} SHM`}
+			// 			</small>
+			// 		</>
+			// 	);
 			case "transfer":
 				return "Transfered";
 			default:
@@ -160,7 +186,7 @@ export function ActivityCardComponent2({ event, asset }) {
 								<Stack direction={"row"}>
 									<Stack>
 										<Stack direction={"row"}>
-											<Typography variant="h3" color={"black"}>
+											<Typography variant='h3' color={"black"}>
 												{getKeyword(event)}
 												{event.from === NULL_ADDRESS ? "" : <small></small>}
 											</Typography>
@@ -168,7 +194,7 @@ export function ActivityCardComponent2({ event, asset }) {
 										<Stack direction={"row"}>
 											<Typography
 												onClick={() => navigate(`/${event.from}`)}
-												variant="h6"
+												variant='h6'
 												color={"text.primary"}
 												sx={{ cursor: "pointer" }}
 											>
@@ -178,7 +204,7 @@ export function ActivityCardComponent2({ event, asset }) {
 											</Typography>
 											<Typography
 												onClick={() => navigate(`/${event.to}`)}
-												variant="h6"
+												variant='h6'
 												color={"text.primary"}
 												sx={{ cursor: "pointer" }}
 											>
@@ -230,5 +256,5 @@ export const Timer = ({ expireAt }) => {
 		}
 	}, 1000);
 
-	return <Typography variant="h6">{`(Expires in ${expiringIn})`}</Typography>;
+	return <Typography variant='h6'>{`(Expires in ${expiringIn})`}</Typography>;
 };
