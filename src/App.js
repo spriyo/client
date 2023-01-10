@@ -9,11 +9,7 @@ import {
 import { useDispatch } from "react-redux";
 import { AuthHttpService } from "./api/auth.js";
 import { login, logout } from "./state/actions/auth.js";
-import {
-	connectWalletToSite,
-	getChainId,
-	getWalletAddress,
-} from "./utils/wallet.js";
+import { connectWalletToSite, getWalletAddress } from "./utils/wallet.js";
 import { AssetScreen } from "./screens/asset/AssetScreen.jsx";
 import { CreateScreen } from "./screens/create/CreateScreen.jsx";
 import { ProfileScreen } from "./screens/profile/ProfileScreen";
@@ -28,9 +24,7 @@ import {
 	initNFTContract,
 } from "./state/actions/contracts.js";
 import { ExploreScreen } from "./screens/ExploreScreen";
-import { BlogScreen } from "./screens/BlogScreen";
 import { addNotification } from "./state/actions/notifications";
-import { ImportScreen } from "./screens/ImportScreen";
 import { FavoritesScreen } from "./screens/Favorites";
 import { InteractIrl } from "./screens/InteractIrl";
 import { IRLScreen } from "./screens/irl";
@@ -49,7 +43,9 @@ import { Create } from "./screens/collection/create/Create";
 import { Create as CreateDrop } from "./screens/collection/drop/Create";
 import { HomeScreen2 } from "./screens/home/HomeScreen2";
 import ReactGA from "react-ga";
+import { CHAIN } from "./constants";
 ReactGA.initialize(process.env.REACT_APP_GA_TRACKING);
+// <HighlightsComponent title='Shardeum Chat🔥' />; CHAT COMPONENT
 
 function App() {
 	const authHttpService = new AuthHttpService();
@@ -59,8 +55,7 @@ function App() {
 			const walletConnected = await connectWalletToSite();
 			if (walletConnected) {
 				let walletAddress = await getWalletAddress();
-				let chainId = await getChainId();
-				dispatch(actionSwitchChain(chainId));
+				dispatch(actionSwitchChain(CHAIN.chainId));
 				// Load contracts
 				await initializeMarketContract();
 				await initializeNftContract();
@@ -116,11 +111,9 @@ function App() {
 
 	async function initializeMarketContract() {
 		try {
-			const currentChainId = getChainId();
-
 			const contract = new window.web3.eth.Contract(
 				marketJsonInterface.abi,
-				marketJsonInterface.networks[currentChainId].address
+				CHAIN.marketContract
 			);
 			dispatch(initMarketContract(contract));
 		} catch (error) {
@@ -130,16 +123,14 @@ function App() {
 
 	async function initializeNftContract() {
 		try {
-			const currentChainId = getChainId();
-
 			const contract = new window.web3.eth.Contract(
 				nftJsonInterface.abi,
-				nftJsonInterface.networks[currentChainId].address
+				CHAIN.nftContract
 			);
 
 			const contract1155 = new window.web3.eth.Contract(
 				nft1155JsonInterface.abi,
-				nft1155JsonInterface.networks[currentChainId].address
+				CHAIN.nft1155Contract
 			);
 			dispatch(initNFTContract(contract));
 			dispatch(initNFT1155Contract(contract1155));
@@ -188,8 +179,6 @@ function App() {
 					<Route path="/create/multiple" exact element={<Create1155 />} />
 					<Route path="/explore" exact element={<ExploreScreen />} />
 					<Route path="/bids" exact element={<ActiveBids />} />
-					<Route path="/blogs/:name" exact element={<BlogScreen />} />
-					<Route path="/import" exact element={<ImportScreen />} />
 					<Route path="/irls" exact element={<IRLScreen />} />
 					<Route path="/irls/create" exact element={<IrlCreate />} />
 					<Route path="/irls/:irlId" exact element={<IRLActivityScreen />} />

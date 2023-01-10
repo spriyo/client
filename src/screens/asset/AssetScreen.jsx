@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { CircularProfile } from "../../components/CircularProfileComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { getNetworkByChainId } from "../../utils/getNetwork";
-import { getChainId, getWalletAddress, switchChain } from "../../utils/wallet";
+import { getWalletAddress, switchChain } from "../../utils/wallet";
 import { NFTHttpService } from "../../api/v2/nft";
 import { CollectionContainer } from "../../components/collectionContainer/CollectionContainerComponent";
 import { SearchHttpService } from "../../api/v2/search";
@@ -149,7 +149,7 @@ export function AssetScreen() {
 					"Feature yet to come on ERC-1155 token, try on ERC721 token."
 				);
 			const chain = await getNetworkByChainId(parseInt(asset.chain_id));
-			const currentChainId = await getChainId();
+			const currentChainId = await window.web3.eth.getChainId();
 			if (chain.chainId !== currentChainId) {
 				await switchChain(chain);
 			}

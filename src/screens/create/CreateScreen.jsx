@@ -1,5 +1,4 @@
 import "./CreateScreen.css";
-
 import { React, useEffect, useState } from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { getWalletAddress } from "../../utils/wallet";
@@ -14,35 +13,28 @@ import {
 	Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
-import { ChangeNetworkComponent } from "../../components/ChangeNetworkComponent";
-import { switchChain } from "../../state/actions/wallet";
-import { useDispatch } from "react-redux";
 import { switchChain as changeChain } from "../../utils/wallet";
-import { useRef } from "react";
 import { ButtonComponent } from "../../components/ButtonComponent";
-import { NFTHttpService } from "../../api/v2/nft";
 import nftJsonInterface from "../../contracts/Spriyo.json";
 import { CgAddR } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { CollectionHttpService } from "../../api/v2/collection";
 import SpriyoLetterLogo from "../../assets/spriyo-letter-logo.png";
+import { CHAIN } from "../../constants";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
 	const [file, setFile] = useState(null);
 	const [loading, setLoading] = useState(false);
-	const nftHttpService = new NFTHttpService();
 	const nftStorageHttpService = new NftStorageHttpService();
 	const [formInput, updateFormInput] = useState({
 		title: "",
 		description: "",
 	});
-	const dispatch = useDispatch();
-	const currentChainIdRef = useRef();
 	const stateChainId = useSelector((state) => state.walletReducer.chainId);
 	const user = useSelector((state) => state.authReducer.user);
 	const collectionHttpService = new CollectionHttpService();
-	const spriyoNFTAddress = "0x11480b80d1ae24b1a5efc8a4476502ea21e2d9fa";
+	const spriyoNFTAddress = CHAIN.nftContract;
 	const [collectionSelectValue, setCollectionSelectValue] =
 		useState(spriyoNFTAddress);
 	const [collections, setCollections] = useState([]);
@@ -95,54 +87,7 @@ export function CreateScreen({ closeModal }) {
 			alert(
 				`NFT with token ID ${transaction.events.Transfer.returnValues.tokenId} has been minted, it can take some time to reflect in your profile.`
 			);
-
-			// const resolved = await uploadToServer(
-			// 	transaction.to,
-			// 	parseInt(transaction.events.Transfer.returnValues.tokenId),
-			// 	metaDataUrl,
-			// 	transaction.events.Transfer.returnValues.to,
-			// 	metadata
-			// );
 			return transaction;
-		} catch (error) {
-			alert(error.message);
-			console.log(error);
-		}
-	}
-
-	async function uploadToServer(
-		contractAddress,
-		itemId,
-		metaDataUrl,
-		owner,
-		metadata
-	) {
-		try {
-			const { title, description } = formInput;
-			if (!title || !description || !file)
-				return alert("Please ensure everything is filled.");
-
-			// Get chain details
-			const chainId = currentChainIdRef.current;
-
-			var formData = new FormData();
-			formData.append("asset", file);
-			formData.set("name", title);
-			formData.set("description", description);
-			formData.set("chain_id", chainId);
-			formData.set("contract_address", contractAddress);
-			formData.set("metadata_url", metaDataUrl);
-			formData.set("token_id", itemId);
-			formData.set("type", "721");
-			formData.set("owner", owner);
-			formData.set("name", title);
-			formData.set("value", "1");
-			for (let previewKey in metadata) {
-				formData.append(`metadata[${previewKey}]`, metadata[previewKey]);
-			}
-
-			const resolved = await nftHttpService.createNFT(formData);
-			return resolved;
 		} catch (error) {
 			alert(error.message);
 			console.log(error);
@@ -184,12 +129,6 @@ export function CreateScreen({ closeModal }) {
 		}
 	}
 
-	async function onNetworkChange(network) {
-		await changeChain(network);
-		dispatch(switchChain(network.chainId));
-		currentChainIdRef.current = network.chainId;
-	}
-
 	function dragOverHandler(ev) {
 		ev.preventDefault();
 	}
@@ -227,7 +166,6 @@ export function CreateScreen({ closeModal }) {
 	useEffect(() => {
 		if (file) setImageUrl(URL.createObjectURL(file));
 		if (user) getCollections();
-		currentChainIdRef.current = stateChainId;
 	}, [file, stateChainId, user]);
 
 	return (
@@ -236,7 +174,6 @@ export function CreateScreen({ closeModal }) {
 				{/* Heading */}
 				<Box display={"flex"} justifyContent="space-between">
 					<div className="heading">Create NFT</div>
-					<ChangeNetworkComponent onNetworkChange={onNetworkChange} />
 				</Box>
 				<hr />
 				{/* Content */}
@@ -390,7 +327,15 @@ export function CreateScreen({ closeModal }) {
 						<Box className="createscreen-create-button">
 							<ButtonComponent
 								text={!loading ? "Create" : "loading..."}
-								onClick={uploadToIpfs}
+								onClick={async () => {
+									// Check if it is connected to right chain
+									const currentChainId = await window.web3.eth.getChainId();
+									if (currentChainId !== CHAIN.chainId) {
+										console.log(currentChainId, CHAIN.chainId);
+										await changeChain(CHAIN);
+									}
+									uploadToIpfs();
+								}}
 							/>
 						</Box>
 					</div>

@@ -1,4 +1,5 @@
 import Web3 from "web3";
+import { CHAIN } from "../constants";
 
 export async function connectWalletToSite() {
 	try {
@@ -23,8 +24,9 @@ export async function connectWalletToSite() {
 	}
 }
 
-export async function switchChain(config) {
-	config.chainId = Web3.utils.toHex(config.chainId);
+export async function switchChain() {
+	const config = { ...CHAIN };
+	config.chainId = Web3.utils.toHex(CHAIN.chainId);
 
 	try {
 		await window.ethereum.request({
@@ -49,33 +51,6 @@ export async function getWalletAddress() {
 	try {
 		let address = await window.ethereum.selectedAddress;
 		return address;
-	} catch (error) {
-		console.log(error);
-	}
-}
-
-export function getChainId() {
-	try {
-		let chainId;
-		const env = process.env.REACT_APP_ENV;
-		chainId =
-			Web3.utils.hexToNumber(window.ethereum.chainId) ||
-			window.ethereum.networkVersion;
-		if (env === "development") {
-			if (
-				chainId !== 56 &&
-				chainId !== 97 &&
-				chainId !== 8081 &&
-				chainId !== 80001
-			) {
-				chainId = 8081;
-			}
-		} else {
-			if (chainId !== 56 && chainId !== 8081) {
-				chainId = process.env.REACT_APP_CHAIN_ID;
-			}
-		}
-		return chainId;
 	} catch (error) {
 		console.log(error);
 	}

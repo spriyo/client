@@ -20,12 +20,14 @@ export const OFFER_EVENT_HASH =
 // 	"0x7d827aee9861babd4633b901c0e9619a8bf942083be2e2297aaf3dd5e8f7952b";
 
 export const ChainsConfig = {
-	SHARDEUM_LIBERTY: {
-		chainId: 8080,
-		chainName: "Shardeum Liberty",
-		nativeCurrency: { name: "Shardeum", symbol: "SHM", decimals: 18 },
-		rpcUrls: ["https://liberty10.shardeum.org/"],
-		blockExplorerUrls: ["https://explorer.liberty10.shardeum.org/"],
+	GANACHE: {
+		chainId: 8545,
+		chainName: "Ganache",
+		nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+		rpcUrls: ["http://127.0.0.1:8545"],
+		nftContract: "0x4f65017f74311ab393a9772ddfb459c0dbdd44bb",
+		nft1155Contract: "0x4f65017f74311ab393a9772ddfb459c0dbdd44bb",
+		marketContract: "0x30DE0FB5Cc4C42C4B051b29839f676B89B33d6F8",
 	},
 	SHARDEUM_LIBERTY_2: {
 		chainId: 8081,
@@ -44,5 +46,10 @@ export const ChainsConfig = {
 			decimals: 18,
 		},
 		blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+		nftContract: "0xd1e21Bdb3eb28d4c6A3612FF01f9fF81c01d5a17",
+		nft1155Contract: "0xd1e21Bdb3eb28d4c6A3612FF01f9fF81c01d5a17",
+		marketContract: "0x227D59C0C96C90Be57f772FE6354c40EcC91CD90",
 	},
 };
+
+export const CHAIN = ChainsConfig[process.env.REACT_APP_CHAIN];
