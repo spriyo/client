@@ -20,8 +20,8 @@ import {
 	NULL_ADDRESS,
 	SALE_EVENT_HASH,
 	OFFER_EVENT_HASH,
-	// BID_EVENT_HASH,
-	// AUCTION_EVENT_HASH,
+	AUCTION_EVENT_HASH,
+	BID_EVENT_HASH,
 } from "../../constants";
 import { getShortAddress } from "../../utils/addressShort";
 
@@ -43,12 +43,12 @@ export function ActivityCardComponent2({ event, asset }) {
 		"Canceled Sale",
 	];
 	const offerTypes = ["Created Offer", "Accepted Offer", "Canceled Offer"];
-	// const auctionTypes = [
-	// 	"Created Auction starting at",
-	// 	"Canceled Auction for",
-	// 	"Auction reserve price updated for",
-	// 	"Auction settled for",
-	// ];
+	const auctionTypes = [
+		"Created Auction starting at",
+		"Auction reserve price updated for",
+		"Canceled Auction for",
+		"Auction settled for",
+	];
 
 	function getKeyword(event) {
 		let data;
@@ -72,39 +72,39 @@ export function ActivityCardComponent2({ event, asset }) {
 				);
 				type = web3.utils.hexToNumberString(event.log.topics[3]);
 				return `${offerTypes[type]} for ${web3.utils.fromWei(data[1])} SHM`;
-			// case AUCTION_EVENT_HASH:
-			// 	data = web3.eth.abi.decodeParameters(
-			// 		[
-			// 			"uint256",
-			// 			"uint256",
-			// 			"uint256",
-			// 			"address",
-			// 			"address",
-			// 			"address",
-			// 			"bool",
-			// 		],
-			// 		event.data
-			// 	);
-			// 	type = web3.utils.hexToNumberString(event.log.topics[3]);
-			// 	return `${auctionTypes[type]} ${web3.utils.fromWei(data[1])} SHM`;
-			// case BID_EVENT_HASH:
-			// 	data = web3.eth.abi.decodeParameters(
-			// 		["uint256", "uint256"],
-			// 		event.data
-			// 	);
-			// 	return (
-			// 		<>
-			// 			Bid by{" "}
-			// 			<small style={{ cursor: "pointer" }}>
-			// 				{getShortAddress(
-			// 					web3.eth.abi.decodeParameter("address", event.log.topics[3])
-			// 				)}
-			// 			</small>
-			// 			<small style={{ cursor: "pointer" }}>
-			// 				{` for ${web3.utils.fromWei(data[1])} SHM`}
-			// 			</small>
-			// 		</>
-			// 	);
+			case AUCTION_EVENT_HASH:
+				data = web3.eth.abi.decodeParameters(
+					[
+						"uint256",
+						"uint256",
+						"uint256",
+						"address",
+						"address",
+						"address",
+						"bool",
+					],
+					event.data
+				);
+				type = web3.utils.hexToNumberString(event.log.topics[3]);
+				return `${auctionTypes[type]} ${web3.utils.fromWei(data[1])} SHM`;
+			case BID_EVENT_HASH:
+				data = web3.eth.abi.decodeParameters(
+					["uint256", "uint256"],
+					event.data
+				);
+				return (
+					<>
+						Bid by{" "}
+						<small style={{ cursor: "pointer" }}>
+							{getShortAddress(
+								web3.eth.abi.decodeParameter("address", event.log.topics[3])
+							)}
+						</small>
+						<small style={{ cursor: "pointer" }}>
+							{` for ${web3.utils.fromWei(data[1])} SHM`}
+						</small>
+					</>
+				);
 			case "transfer":
 				return "Transfered";
 			default:

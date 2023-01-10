@@ -4,7 +4,7 @@ import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { Box, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChainsConfig, DOTSHM_ADDRESS } from "../../constants";
+import { CHAIN, ChainsConfig, DOTSHM_ADDRESS } from "../../constants";
 import { useSelector } from "react-redux";
 import { CircularProfile } from "../../components/CircularProfileComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
@@ -27,11 +27,14 @@ import { ActivityCardComponent2 } from "../../components/activityCard/ActivityCa
 import { ActionsComponent2 } from "../../components/ActionsComponent2";
 import { OfferCardComponent } from "../../components/activityCard/OfferCard";
 import { OfferHttpService } from "../../api/offer";
+import AuctionJSONInterface from "../../contracts/Auction.json";
+import Web3 from "web3";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
 	const [asset, setAsset] = useState(null);
 	const [offers, setOffers] = useState([]);
+	const [auction, setAuction] = useState(false);
 	const nftHttpService = new NFTHttpService();
 	const offerHttpService = new OfferHttpService();
 	const chainId = useSelector((state) => state.walletReducer.chainId);
@@ -219,9 +222,30 @@ export function AssetScreen() {
 		}
 	}
 
+	async function getAuction() {
+		try {
+			if (window.web3) {
+				const web3 = new Web3(CHAIN.rpcUrls[0]);
+				const contract = new web3.eth.Contract(
+					AuctionJSONInterface.abi,
+					CHAIN.auctionContract
+				);
+				contract.methods
+					.auction_by_address_id(contract_address, token_id)
+					.call()
+					.then((resposne) => {
+						setAuction(resposne);
+					});
+			}
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
+
 	useEffect(() => {
 		getAsset();
 		getAssetsFromCollection();
+		getAuction();
 		return () => {
 			window.scrollTo({ top: 0, behavior: "smooth" });
 		};
@@ -668,14 +692,19 @@ export function AssetScreen() {
 							<Box flex={1} mt={4}>
 								{/* Offers */}
 								<Box>
+									{auction && (
+										<h5>{`Auction expires at ${new Date(
+											parseInt(auction.expireAt) * 1000
+										).toLocaleString()}`}</h5>
+									)}
+									<ActionsComponent2 asset={asset} />
 									<Typography variant="h3">Offers</Typography>
-									{asset.events.length === 0 ? (
+									{offers.length === 0 ? (
 										<Typography variant="h3" color="lightgrey">
-											No Activity
+											No Offers
 										</Typography>
 									) : (
 										<Box>
-											<ActionsComponent2 asset={asset} />
 											<Box className="activityScroll">
 												{offers.map((e, i) => (
 													<Box key={i}>

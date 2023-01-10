@@ -8,6 +8,8 @@ import { checkApproval } from "../utils/checkApproval";
 import { utils } from "web3";
 import TransactionDialogue from "./TransactionDialogue";
 import nftJsonInterface from "../contracts/Spriyo.json";
+import { NULL_ADDRESS } from "../constants";
+import { toast } from "react-toastify";
 
 const loaderStyle = {
 	backgroundImage:
@@ -26,11 +28,26 @@ export const ActionsComponent2 = ({ asset }) => {
 	const [owner, setOwner] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [sale, setSale] = useState(false);
+	const [auction, setAuction] = useState(false);
 	const marketContract = useSelector(
 		(state) => state.contractReducer.marketContract
 	);
+	const auctionContract = useSelector(
+		(state) => state.contractReducer.auctionContract
+	);
 
 	useEffect(() => {
+		if (asset && auctionContract) {
+			// Get Sale
+			auctionContract.methods
+				.auction_by_address_id(asset.contract_address, asset.token_id)
+				.call()
+				.then((auctionData) => {
+					if (!auctionData.sold && auctionData.seller !== NULL_ADDRESS) {
+						setAuction(auctionData);
+					}
+				});
+		}
 		if (asset && marketContract) {
 			// Get Owner
 			if (asset.type === "721") {
@@ -53,11 +70,16 @@ export const ActionsComponent2 = ({ asset }) => {
 					setSale(saleData);
 				});
 		}
-	}, [asset, marketContract]);
+	}, [asset, marketContract, auctionContract]);
 
 	const user = useSelector((state) => state.authReducer.user);
 
+	function isAuctionExpired(expireAt) {
+		return new Date(expireAt).getTime() / 1000 < Date.now() / 1000;
+	}
+
 	function getActions() {
+		const userAddress = utils.toChecksumAddress(user.address);
 		let actions = [];
 		if (!user) return actions;
 		if (sale && !sale.sold && sale.id !== "0") {
@@ -80,18 +102,49 @@ export const ActionsComponent2 = ({ asset }) => {
 								action: () => loadMiddleware(cancelSale),
 							},
 					  ];
+		} else if (auction) {
+			if (
+				isAuctionExpired(auction.expireAt) &&
+				(userAddress === auction.seller ||
+					userAddress === auction.currentBidder)
+			) {
+				actions = [
+					{
+						title: "Settle Auction",
+						action: () => loadMiddleware(settleAuction),
+					},
+				];
+			} else
+				actions =
+					userAddress === auction.seller
+						? [
+								{
+									title: "Cancel Auction",
+									action: () => loadMiddleware(cancelAuction),
+								},
+								{
+									title: "Update Price",
+									action: () => loadMiddleware(updateReservePrice),
+								},
+						  ]
+						: [
+								{
+									title: "Place Bid",
+									action: () => loadMiddleware(bidAuction),
+								},
+						  ];
 		} else {
 			actions =
-				utils.toChecksumAddress(user.address) === owner
+				userAddress === owner
 					? [
 							{
 								title: "Sell NFT",
 								action: () => approveMiddleware(sellAsset),
 							},
-							// {
-							// 	title: "Create Auction",
-							// 	action: () => approveMiddleware(createAuction),
-							// },
+							{
+								title: "Create Auction",
+								action: () => approveMiddleware(true, createAuction),
+							},
 					  ]
 					: [
 							{
@@ -101,116 +154,186 @@ export const ActionsComponent2 = ({ asset }) => {
 					  ];
 		}
 		return actions;
-		// switch (event.log.topics[0]) {
-		// 	case ERC1155_BATCH_TRANSFER_EVENT_HASH:
-		// 	case ERC1155_TRANSFER_EVENT_HASH:
-		// 	case ERC721_TRANSFER_EVENT_HASH:
-		// 		actions =
-		// 			utils.toChecksumAddress(user.address) === event.to
-		// 				? // || (event.event_type === "offer_canceled" &&
-		// 				  // 	user._id === asset.owner._id)
-		// 				  [
-		// 						{
-		// 							title: "Sell NFT",
-		// 							action: () => approveMiddleware(sellAsset),
-		// 						},
-		// 						// {
-		// 						// 	title: "Create Auction",
-		// 						// 	action: () => approveMiddleware(createAuction),
-		// 						// },
-		// 				  ]
-		// 				: [
-		// 						// {
-		// 						// 	title: "Make Offer",
-		// 						// 	action: () => loadMiddleware(makeOffer),
-		// 						// },
-		// 				  ];
-		// 		break;
-		// 	case SALE_EVENT_HASH:
-		// 		actions =
-		// 			sale.seller !== utils.toChecksumAddress(user.address) ||
-		// 			event.from !== utils.toChecksumAddress(user.address)
-		// 				? [
-		// 						{
-		// 							title: `Buy for ${utils.fromWei(
-		// 								sale ? sale.amount : "0"
-		// 							)}SHM`,
-		// 							action: () => loadMiddleware(buyAsset),
-		// 						},
-		// 				  ]
-		// 				: [
-		// 						{
-		// 							title: "Update Price",
-		// 							action: () => loadMiddleware(updateAsset),
-		// 						},
-		// 						{
-		// 							title: "Cancel Sale",
-		// 							action: () => loadMiddleware(cancelSale),
-		// 						},
-		// 				  ];
-		// 		break;
-		// 	case "Update": // sale_update_price
-		// 		actions =
-		// 			sale.seller === utils.toChecksumAddress(user.address)
-		// 				? [
-		// 						{
-		// 							title: "Update Price",
-		// 							action: () => loadMiddleware(updateAsset),
-		// 						},
-		// 						{
-		// 							title: "Cancel Sale",
-		// 							action: () => loadMiddleware(cancelSale),
-		// 						},
-		// 				  ]
-		// 				: [
-		// 						{
-		// 							title: `Buy for ${utils.fromWei(
-		// 								sale ? sale.amount : "0"
-		// 							)}SHM`,
-		// 							action: () => loadMiddleware(buyAsset),
-		// 						},
-		// 				  ];
-		// 		break;
-		// 	default:
-		// 		actions = [
-		// 			{
-		// 				title: "Invalid Event",
-		// 				action: function () {
-		// 					alert("Invalid Event");
-		// 				},
-		// 			},
-		// 		];
-		// 		break;
-		// }
 	}
 
-	// async function acceptOffer() {
-	// 	const confirm = window.confirm(
-	// 		"Are you sure you want to accept the offer?"
-	// 	);
-	// 	if (!confirm) return;
+	async function createAuction() {
+		const amount = prompt("Please enter the reserve amount.");
+		if (isNaN(parseFloat(amount))) return;
 
-	// 	const currentAddress = await getWalletAddress();
-	// 	const transaction = await marketContract.methods
-	// 		.acceptOffer(asset.events[0].data.offer_id)
-	// 		.send({
-	// 			from: currentAddress,
-	// 		});
-	// 	console.log(transaction);
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		window.web3.eth.handleRevert = true;
 
-	// 	// Server Event
-	// 	const resolved = await offerHttpService.acceptOffer(
-	// 		asset.events[0].data._id
-	// 	);
-	// 	console.log(resolved);
-	// 	if (!resolved.error) {
-	// 		window.location.reload();
-	// 	}
-	// }
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await auctionContract.methods
+			.createReserveAuction(
+				asset.contract_address,
+				asset.token_id,
+				convertedAmount
+			)
+			.estimateGas({
+				from: currentAddress,
+			});
 
-	// async function createAuction() {
-	// 	alert("Create Auction coming soon!");
-	// }
+		auctionContract.methods
+			.createReserveAuction(
+				asset.contract_address,
+				asset.token_id,
+				convertedAmount
+			)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
+	}
+
+	async function updateReservePrice() {
+		if (auction.currentBidder !== NULL_ADDRESS) {
+			return toast("Auction has started already, cant update now.", {
+				type: "error",
+			});
+		}
+		const amount = prompt("Please enter new reserve amount.");
+		if (isNaN(parseFloat(amount))) return;
+
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await auctionContract.methods
+			.updateReservePrice(auction.id, convertedAmount)
+			.estimateGas({
+				from: currentAddress,
+			});
+		auctionContract.methods
+			.updateReservePrice(auction.id, convertedAmount)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
+	}
+
+	async function cancelAuction() {
+		if (auction.currentBidder !== NULL_ADDRESS) {
+			return toast(
+				"Auction has started already, you can't cancel the auction now.",
+				{
+					type: "error",
+				}
+			);
+		}
+		const confirmed = window.confirm(
+			"Are you sure you want to cancel this auction?"
+		);
+		if (!confirmed) return;
+
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await auctionContract.methods
+			.cancelReserveAuction(auction.id)
+			.estimateGas({
+				from: currentAddress,
+			});
+
+		auctionContract.methods
+			.cancelReserveAuction(auction.id)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
+	}
+
+	async function settleAuction() {
+		const confirmed = window.confirm(
+			"Are you sure you want to settle this auction?"
+		);
+		if (!confirmed) return;
+
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await auctionContract.methods
+			.settleAuction(auction.id)
+			.estimateGas({
+				from: currentAddress,
+			});
+
+		auctionContract.methods
+			.settleAuction(auction.id)
+			.send({
+				from: currentAddress,
+				gasPrice,
+				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
+	}
+
+	async function bidAuction() {
+		const amount = prompt("Please enter bid amount.");
+		if (isNaN(parseFloat(amount))) return;
+
+		const currentAddress = await getWalletAddress();
+		const convertedAmount = window.web3.utils.toWei(amount);
+		window.web3.eth.handleRevert = true;
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		console.log(auction);
+		const gas = await auctionContract.methods
+			.placeBid(auction.id, convertedAmount)
+			.estimateGas({
+				from: currentAddress,
+				value: convertedAmount,
+			});
+
+		auctionContract.methods
+			.placeBid(auction.id, convertedAmount)
+			.send({
+				from: currentAddress,
+				value: convertedAmount,
+				gasPrice,
+				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", function (_) {
+				setTransactionCompleted(true);
+			});
+	}
 
 	async function makeOffer() {
 		const amount = prompt("Please enter the amount in SHM");
@@ -347,7 +470,7 @@ export const ActionsComponent2 = ({ asset }) => {
 			});
 	}
 
-	async function approveMiddleware(callback) {
+	async function approveMiddleware(isAuction, callback) {
 		try {
 			if (asset.type === "1155")
 				return alert(
@@ -355,7 +478,7 @@ export const ActionsComponent2 = ({ asset }) => {
 				);
 			setLoading(true);
 			const isApproved = await checkApproval(
-				marketContract._address,
+				isAuction ? auctionContract._address : marketContract._address,
 				asset.contract_address,
 				asset.token_id
 			);

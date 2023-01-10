@@ -114,17 +114,17 @@ export function OfferCardComponent({ asset, offer }) {
 					secondaryAction={
 						<Stack direction={"row"} alignItems={"center"}>
 							{offer.offer_status === "created" &&
+							user &&
 							asset.owners[0].address ===
 								web3.utils.toChecksumAddress(user.address) ? (
 								<Button onClick={() => approveMiddleware(acceptOffer)}>
 									Accept Offer
 								</Button>
-							) : offer.offer_from ===
+							) : user &&
+							  offer.offer_from ===
 									web3.utils.toChecksumAddress(user.address) &&
 							  offer.offer_status === "created" ? (
-								<Button onClick={cancelOffer}>
-									Cancel Offer
-								</Button>
+								<Button onClick={cancelOffer}>Cancel Offer</Button>
 							) : (
 								""
 							)}

@@ -17,8 +17,10 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import marketJsonInterface from "./contracts/Market.json";
 import nftJsonInterface from "./contracts/Spriyo.json";
+import auctionJsonInterface from "./contracts/Auction.json";
 import nft1155JsonInterface from "./contracts/Spriyo1155.json";
 import {
+	initAuctionContract,
 	initMarketContract,
 	initNFT1155Contract,
 	initNFTContract,
@@ -59,6 +61,7 @@ function App() {
 				// Load contracts
 				await initializeMarketContract();
 				await initializeNftContract();
+				await initializeAuctionContract();
 
 				// Login to account if not logged
 				const token = localStorage.getItem("token");
@@ -116,6 +119,18 @@ function App() {
 				CHAIN.marketContract
 			);
 			dispatch(initMarketContract(contract));
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async function initializeAuctionContract() {
+		try {
+			const contract = new window.web3.eth.Contract(
+				auctionJsonInterface.abi,
+				CHAIN.auctionContract
+			);
+			dispatch(initAuctionContract(contract));
 		} catch (error) {
 			console.log(error);
 		}
