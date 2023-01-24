@@ -9,6 +9,7 @@ import { TopNotification } from "../../components/topNotification/TopNotificatio
 import { useNavigate } from "react-router-dom";
 import LionForceBanner from "../../assets/lionforce_banner.png";
 import LionForceIcon from "../../assets/lionforce_icon.png";
+import { RiTwitterLine } from "react-icons/ri";
 
 export const HomeScreen2 = () => {
 	const navigate = useNavigate();
@@ -510,7 +511,39 @@ export const HomeScreen2 = () => {
 								</Box>
 							</Box>
 						</Box>
+
+						{/* Page 2 */}
+						<Box className="homepage-secondscreen-wrapper">
+							<Box className="homepage-secondscreen-container">
+								<h1>Get, set, launch.</h1>
+								<h1>
+									Ready to enter the metaverse
+									<br /> with digital assets? Publish <br /> your NFTs with a
+									single click.
+								</h1>
+								<Box className="secondscreen-launch-button">
+									<h2>Apply for launchpad🚀</h2>
+								</Box>
+							</Box>
+							<p className="homepage-secondscreen-icon a">🌈</p>
+							<p className="homepage-secondscreen-icon b">🚀</p>
+							<p className="homepage-secondscreen-icon c">🥳</p>
+							<p className="homepage-secondscreen-icon d">🦄</p>
+						</Box>
 						{/* <FooterComponent /> */}
+						<Box className="homepage-footer">
+							<p>&copy; 2023 Spriyo | &nbsp;</p>
+							<p>
+								<a
+									href="https://twitter.com/spriyomarket"
+									target={"_blank"}
+									rel="noreferrer"
+								>
+									<RiTwitterLine />
+									@spriyomarket
+								</a>
+							</p>
+						</Box>
 					</Box>
 				</div>
 			</div>
