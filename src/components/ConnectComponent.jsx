@@ -69,10 +69,11 @@ export function ConnectComponent() {
 		<ButtonComponent
 			text="Connect Wallet"
 			onClick={() => {
-				navigate("/connect")
+				navigate("/connect");
 				// connectAndListenWallet();
 				// fetchCurrentUser();
 			}}
+			sx={{ border: "none", backgroundColor: "#00e472" }}
 		/>
 	);
 }

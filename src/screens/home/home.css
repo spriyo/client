@@ -2,10 +2,6 @@
 	background-color: #efeff8;
 }
 
-.navbar {
-	height: 11vh;
-}
-
 .body {
 	display: flex;
 	background-color: #efeff8;
@@ -40,4 +36,83 @@ input:focus {
 input[type="search"]::-webkit-search-cancel-button {
 	appearance: none;
 	-webkit-appearance: none;
+}
+
+.homepage-background-wrapper {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+	overflow: hidden;
+	display: flex;
+	justify-content: space-between;
+}
+
+.background-card-wrapper {
+	display: flex;
+	width: 100%;
+	justify-content: space-evenly;
+}
+
+.background-cards-container:nth-child(even) {
+	animation: move infinite reverse 45s linear;
+	transform: translateY(-1000px);
+}
+
+.background-cards-container:nth-child(odd) {
+	animation: move infinite 55s linear;
+}
+
+@keyframes moveEven {
+	0% {
+		transform: translateY(0px);
+	}
+	100% {
+		transform: translateY(1400px);
+	}
+}
+
+@keyframes move {
+	0% {
+		transform: translateY(0px);
+	}
+	100% {
+		transform: translateY(-1400px);
+	}
+}
+
+.homepage-background-card {
+	height: 50vh;
+	width: 15.5vw;
+	background-color: white;
+	border-radius: 12px;
+	margin: 16px 0;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	/* background-color: #3b28147f; Tint color */
+	background-blend-mode: multiply;
+}
+
+.homepage-background-card:hover {
+	background-color: black;
+}
+
+.homepage-shadow-overlay {
+	position: absolute;
+	height: 100vh;
+	width: 100%;
+	z-index: 1;
+
+	background: linear-gradient(
+		rgba(0, 0, 0, 1) 0%,
+		rgba(0, 0, 0, 0.4) 10%,
+		rgba(0, 0, 0, 0.7) 40%,
+		rgba(0, 228, 114, 1) 100%
+	);
+	box-shadow: rgb(0, 255, 128) 0px 2px 0px 0px;
 }

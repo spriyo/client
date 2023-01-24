@@ -29,7 +29,7 @@ export const theme = createTheme({
 		...Array(24).fill("none"),
 	],
 	palette: {
-		primary: { main: "#00c775" },
+		primary: { main: "#00e472" },
 		text: {
 			primary: "#505050",
 			secondary: "#b1b1b1",
