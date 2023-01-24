@@ -237,3 +237,15 @@ input[type="search"]::-webkit-search-cancel-button {
 	text-decoration: none;
 	color: black;
 }
+
+@media only screen and (max-width: 1200px) {
+  .homepage-background-card {
+	width: 22.5vw;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .homepage-background-card {
+	width: 45vw;
+  }
+}

@@ -78,7 +78,10 @@ export const HomeScreen2 = () => {
 							{/* Animation */}
 							<Box className="homepage-background-wrapper">
 								<Box className="background-card-wrapper">
-									<Box className="background-cards-container">
+									<Box
+										sx={{ display: { lg: "block", sm: "none" } }}
+										className="background-cards-container"
+									>
 										<Box
 											className="homepage-background-card"
 											sx={{
@@ -107,8 +110,12 @@ export const HomeScreen2 = () => {
 													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/28.png')",
 											}}
 										></Box>
+										,{" "}
 									</Box>
-									<Box className="background-cards-container">
+									<Box
+										sx={{ display: { lg: "block", xs: "none", sm: "block" } }}
+										className="background-cards-container"
+									>
 										<Box
 											className="homepage-background-card"
 											sx={{
@@ -145,7 +152,10 @@ export const HomeScreen2 = () => {
 											}}
 										></Box>
 									</Box>
-									<Box className="background-cards-container">
+									<Box
+										sx={{ display: { lg: "block", xs: "none", sm: "block" } }}
+										className="background-cards-container"
+									>
 										<Box
 											className="homepage-background-card"
 											sx={{
@@ -175,7 +185,10 @@ export const HomeScreen2 = () => {
 											}}
 										></Box>
 									</Box>
-									<Box className="background-cards-container">
+									<Box
+										sx={{ display: { lg: "block", xs: "none", sm: "block" } }}
+										className="background-cards-container"
+									>
 										<Box
 											className="homepage-background-card"
 											sx={{
@@ -212,7 +225,10 @@ export const HomeScreen2 = () => {
 											}}
 										></Box>
 									</Box>
-									<Box className="background-cards-container">
+									<Box
+										sx={{ display: { lg: "block", xs: "none", sm: "block" } }}
+										className="background-cards-container"
+									>
 										<Box
 											className="homepage-background-card"
 											sx={{
@@ -242,7 +258,10 @@ export const HomeScreen2 = () => {
 											}}
 										></Box>
 									</Box>
-									<Box className="background-cards-container">
+									<Box
+										sx={{ display: { lg: "block", sm: "none" } }}
+										className="background-cards-container"
+									>
 										<Box
 											className="homepage-background-card"
 											sx={{
