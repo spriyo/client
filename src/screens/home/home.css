@@ -46,6 +46,7 @@ input[type="search"]::-webkit-search-cancel-button {
 	overflow: hidden;
 	display: flex;
 	justify-content: space-between;
+	animation: initiate 1 5s ease-out;
 }
 
 .background-card-wrapper {
@@ -56,11 +57,42 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .background-cards-container:nth-child(even) {
 	animation: move infinite reverse 45s linear;
-	transform: translateY(-1000px);
 }
 
 .background-cards-container:nth-child(odd) {
 	animation: move infinite 55s linear;
+}
+
+.homepage-shadow-overlay {
+	animation: initiate 1 5s ease-out;
+}
+
+.animation-delay {
+	animation: delayHeaders 1 5s linear;
+}
+
+@keyframes delayHeaders {
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0;
+	}
+	60% {
+		opacity: 0.8;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes initiate {
+	0% {
+		transform: rotate(-15deg) scale(1.5);
+	}
+	100% {
+		transform: rotate(0deg) scale(1);
+	}
 }
 
 @keyframes moveEven {

@@ -59,7 +59,7 @@ export const HomeScreen2 = () => {
 			<div>
 				<div>
 					<Box sx={{ backgroundColor: "black" }}>
-						<Box sx={{ zIndex: 100 }}>
+						<Box sx={{ zIndex: 100 }} className="animation-delay">
 							<NavbarComponent />
 						</Box>
 						{/* Page 1 */}
@@ -283,6 +283,7 @@ export const HomeScreen2 = () => {
 									alignItems: "center",
 									flexDirection: "column",
 								}}
+								className="animation-delay"
 							>
 								{/* Title */}
 								<Typography
