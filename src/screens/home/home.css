@@ -239,13 +239,46 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 @media only screen and (max-width: 1200px) {
-  .homepage-background-card {
-	width: 22.5vw;
-  }
+	.homepage-background-card {
+		width: 22.5vw;
+	}
+	.homepage-secondscreen-icon.d {
+		bottom: 100px;
+	}
+	.homepage-secondscreen-container h1:first-child {
+		font-size: 75px;
+	}
+	.homepage-secondscreen-container h1 {
+		font-size: 30px;
+	}
 }
 
 @media only screen and (max-width: 600px) {
-  .homepage-background-card {
-	width: 45vw;
-  }
+	.homepage-background-card {
+		width: 45vw;
+	}
+	.homepage-secondscreen-icon {
+		font-size: 75px;
+	}
+	.homepage-secondscreen-icon.a {
+		left: 50px;
+	}
+	.homepage-secondscreen-icon.b {
+		top: 100px;
+		right: 50px;
+	}
+	.homepage-secondscreen-icon.c {
+		bottom: 150px;
+		left: 50px;
+	}
+	.homepage-secondscreen-icon.d {
+		bottom: 50px;
+		right: 50px;
+	}
+	.homepage-secondscreen-container h1:first-child {
+		font-size: 45px;
+	}
+	.homepage-secondscreen-container h1 {
+		font-size: 20px;
+	}
 }
