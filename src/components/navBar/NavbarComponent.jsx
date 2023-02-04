@@ -11,7 +11,7 @@ import { RectangleProfile } from "../RectangleProfile";
 import { MdOutlineExplore } from "react-icons/md";
 import { BsCollection } from "react-icons/bs";
 
-export function NavbarComponent() {
+export function NavbarComponent({ isHomeScreen = false }) {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
 	const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
@@ -56,6 +56,7 @@ export function NavbarComponent() {
 				display: "flex",
 				justifyContent: "center",
 				backgroundColor: "rgb(0, 0, 0)",
+				boxShadow: isHomeScreen ? "none" : "inherit",
 			}}
 			className="navbar-wrapper"
 		>

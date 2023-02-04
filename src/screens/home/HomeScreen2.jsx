@@ -60,7 +60,7 @@ export const HomeScreen2 = () => {
 				<div>
 					<Box sx={{ backgroundColor: "black" }}>
 						<Box sx={{ zIndex: 100 }} className="animation-delay">
-							<NavbarComponent />
+							<NavbarComponent isHomeScreen={true} />
 						</Box>
 						{/* Page 1 */}
 						{/* Set display to flex to add search back */}
@@ -110,7 +110,13 @@ export const HomeScreen2 = () => {
 													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/28.png')",
 											}}
 										></Box>
-										,{" "}
+										<Box
+											className="homepage-background-card"
+											sx={{
+												backgroundImage:
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/36.png')",
+											}}
+										></Box>
 									</Box>
 									<Box
 										sx={{ display: { lg: "block", xs: "none", sm: "block" } }}
@@ -134,13 +140,6 @@ export const HomeScreen2 = () => {
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/24.png')",
-											}}
-										></Box>
-										<Box
-											className="homepage-background-card"
-											sx={{
-												backgroundImage:
 													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/20.png')",
 											}}
 										></Box>
@@ -149,6 +148,13 @@ export const HomeScreen2 = () => {
 											sx={{
 												backgroundImage:
 													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/19.jpg')",
+											}}
+										></Box>
+										<Box
+											className="homepage-background-card"
+											sx={{
+												backgroundImage:
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/24.png')",
 											}}
 										></Box>
 									</Box>
@@ -167,7 +173,7 @@ export const HomeScreen2 = () => {
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/17.jpg')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/30.jpg')",
 											}}
 										></Box>
 										<Box
@@ -182,6 +188,13 @@ export const HomeScreen2 = () => {
 											sx={{
 												backgroundImage:
 													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/15.png')",
+											}}
+										></Box>
+										<Box
+											className="homepage-background-card"
+											sx={{
+												backgroundImage:
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/35.jpg')",
 											}}
 										></Box>
 									</Box>
@@ -233,21 +246,21 @@ export const HomeScreen2 = () => {
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/9.png')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/37.png')",
 											}}
 										></Box>
 										<Box
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/19.jpg')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/38.jpg')",
 											}}
 										></Box>
 										<Box
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/10.png')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/39.jpg')",
 											}}
 										></Box>
 										<Box
@@ -255,6 +268,13 @@ export const HomeScreen2 = () => {
 											sx={{
 												backgroundImage:
 													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/14.png')",
+											}}
+										></Box>
+										<Box
+											className="homepage-background-card"
+											sx={{
+												backgroundImage:
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/34.jpg')",
 											}}
 										></Box>
 									</Box>
@@ -266,28 +286,35 @@ export const HomeScreen2 = () => {
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/9.png')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/33.jpg')",
 											}}
 										></Box>
 										<Box
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/7.png')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/17.jpg')",
 											}}
 										></Box>
 										<Box
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/5.jpg')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/31.jpg')",
 											}}
 										></Box>
 										<Box
 											className="homepage-background-card"
 											sx={{
 												backgroundImage:
-													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/28.png')",
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/40.jpg')",
+											}}
+										></Box>
+										<Box
+											className="homepage-background-card"
+											sx={{
+												backgroundImage:
+													"url('https://rendamarket.s3.ap-south-1.amazonaws.com/hi/29.jpg')",
 											}}
 										></Box>
 									</Box>
@@ -390,7 +417,13 @@ export const HomeScreen2 = () => {
 									>
 										Suggested searches
 									</p>
-									<Box>
+									<Box
+										sx={{
+											display: "flex",
+											padding:"0 16px",
+											alignItems: "center",
+										}}
+									>
 										<Chip
 											size="small"
 											sx={{ color: "white" }}
