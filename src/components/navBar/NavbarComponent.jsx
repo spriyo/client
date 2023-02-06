@@ -55,7 +55,7 @@ export function NavbarComponent({ isHomeScreen = false }) {
 			style={{
 				display: "flex",
 				justifyContent: "center",
-				backgroundColor: "rgb(0, 0, 0)",
+				backgroundColor: isHomeScreen ? "rgb(0, 0, 0)" : "grey",
 				boxShadow: isHomeScreen ? "none" : "inherit",
 			}}
 			className="navbar-wrapper"

@@ -29,6 +29,13 @@ export class NFTHttpService {
 		return resolved;
 	}
 
+	async createEvent(trxHash) {
+		const resolved = await resolve(
+			axios.get(`http://localhost:3004/api/createEvents/${trxHash}`)
+		);
+		return resolved;
+	}
+
 	async getAssetById(contract_address, token_id) {
 		const resolved = await resolve(
 			axios.get(`${WEB_API_BASE_URL}/nfts/${contract_address}/${token_id}`)

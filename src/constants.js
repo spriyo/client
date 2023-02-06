@@ -30,12 +30,16 @@ export const ChainsConfig = {
 		marketContract: "0x30DE0FB5Cc4C42C4B051b29839f676B89B33d6F8",
 		auctionContract: "0x80113527eC332C0369582dF83E26E975B7b58988",
 	},
-	SHARDEUM_LIBERTY_2: {
-		chainId: 8081,
+	SHARDEUM_BETA: {
+		chainId: 8082,
 		chainName: "Shardeum Liberty 2.0",
 		nativeCurrency: { name: "Shardeum", symbol: "SHM", decimals: 18 },
-		rpcUrls: ["https://liberty20.shardeum.org/"],
-		blockExplorerUrls: ["https://explorer-liberty20.shardeum.org/"],
+		rpcUrls: ["https://sphinx.shardeum.org"],
+		blockExplorerUrls: ["https://explorer-sphinx.shardeum.org/"],
+		nftContract: "0x5F362d4Ed224aE949Eac7015fA3E8091B89b95e8",
+		nft1155Contract: "0xFD1dA889CeF3a6194FEa6587F836e10a8F0ba7D0",
+		marketContract: "0xe3D06f136529B2e969CB99a47244B17c7081f90a",
+		auctionContract: "0xcFC27BC05c79eB9e05D1DB6314a2071c720b926C",
 	},
 	POLYGON_TESTNET: {
 		chainId: 80001,

@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { CollectionHttpService } from "../../api/v2/collection";
 import SpriyoLetterLogo from "../../assets/spriyo-letter-logo.png";
 import { CHAIN } from "../../constants";
+import { NFTHttpService } from "../../api/v2/nft";
 
 export function CreateScreen({ closeModal }) {
 	const navigate = useNavigate();
@@ -35,6 +36,7 @@ export function CreateScreen({ closeModal }) {
 	const user = useSelector((state) => state.authReducer.user);
 	const collectionHttpService = new CollectionHttpService();
 	const spriyoNFTAddress = CHAIN.nftContract;
+	const nftHttpService = new NFTHttpService();
 	const [collectionSelectValue, setCollectionSelectValue] =
 		useState(spriyoNFTAddress);
 	const [collections, setCollections] = useState([]);
@@ -83,7 +85,10 @@ export function CreateScreen({ closeModal }) {
 
 			const transaction = await nftContract.methods
 				.mint(metaDataUrl)
-				.send({ from: currentAddress });
+				.send({ from: currentAddress })
+				.on("receipt", function (receipt) {
+					nftHttpService.createEvent(receipt.transactionHash);
+				});
 			alert(
 				`NFT with token ID ${transaction.events.Transfer.returnValues.tokenId} has been minted, it can take some time to reflect in your profile.`
 			);
