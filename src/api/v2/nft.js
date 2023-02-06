@@ -31,7 +31,7 @@ export class NFTHttpService {
 
 	async createEvent(trxHash) {
 		const resolved = await resolve(
-			axios.get(`http://localhost:3004/api/createEvents/${trxHash}`)
+			axios.get(`https://indexer.spriyo.xyz/api/createEvents/${trxHash}`)
 		);
 		return resolved;
 	}
