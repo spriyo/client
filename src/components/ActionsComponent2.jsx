@@ -10,6 +10,7 @@ import TransactionDialogue from "./TransactionDialogue";
 import nftJsonInterface from "../contracts/Spriyo.json";
 import { NULL_ADDRESS } from "../constants";
 import { toast } from "react-toastify";
+import { NFTHttpService } from "../api/v2/nft";
 
 const loaderStyle = {
 	backgroundImage:
@@ -35,6 +36,7 @@ export const ActionsComponent2 = ({ asset }) => {
 	const auctionContract = useSelector(
 		(state) => state.contractReducer.auctionContract
 	);
+	const nftHttpService = new NFTHttpService();
 
 	useEffect(() => {
 		if (asset && auctionContract) {
@@ -139,7 +141,7 @@ export const ActionsComponent2 = ({ asset }) => {
 					? [
 							{
 								title: "Sell NFT",
-								action: () => approveMiddleware(sellAsset),
+								action: () => approveMiddleware(false, sellAsset),
 							},
 							{
 								title: "Create Auction",
@@ -190,7 +192,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -225,7 +228,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -265,7 +269,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -297,7 +302,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -330,7 +336,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -361,7 +368,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -379,7 +387,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -409,7 +418,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -442,7 +452,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
@@ -465,7 +476,8 @@ export const ActionsComponent2 = ({ asset }) => {
 			.on("transactionHash", function (hash) {
 				setTransactionHash(hash);
 			})
-			.on("receipt", function (_) {
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
 				setTransactionCompleted(true);
 			});
 	}
