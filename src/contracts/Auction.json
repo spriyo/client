@@ -1,0 +1,438 @@
+{
+	"abi": [
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "itemId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "reservePrice",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "expireAt",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "previousBidder",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "currentBidder",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "seller",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "contractAddress",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "bool",
+					"name": "sold",
+					"type": "bool"
+				},
+				{
+					"indexed": true,
+					"internalType": "enum AuctionContract.TypeAuction",
+					"name": "eventType",
+					"type": "uint8"
+				}
+			],
+			"name": "EventAuction",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "auction_id",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "amount",
+					"type": "uint256"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "itemId",
+					"type": "uint256"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "contractAddress",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "bidder",
+					"type": "address"
+				}
+			],
+			"name": "EventBid",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "previousOwner",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "newOwner",
+					"type": "address"
+				}
+			],
+			"name": "OwnershipTransferred",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "Paused",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "Unpaused",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "auction_by_address_id",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "itemId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "reservePrice",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "expireAt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "previousBidder",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "currentBidder",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "seller",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "contractAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "bool",
+					"name": "sold",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "auctions",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "itemId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "reservePrice",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "expireAt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "previousBidder",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "currentBidder",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "seller",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "contractAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "bool",
+					"name": "sold",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_auctionId",
+					"type": "uint256"
+				}
+			],
+			"name": "cancelReserveAuction",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_contractAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_itemId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_reservePrice",
+					"type": "uint256"
+				}
+			],
+			"name": "createReserveAuction",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "owner",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "paused",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_auctionId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_amount",
+					"type": "uint256"
+				}
+			],
+			"name": "placeBid",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "renounceOwnership",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_auctionId",
+					"type": "uint256"
+				}
+			],
+			"name": "settleAuction",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "newOwner",
+					"type": "address"
+				}
+			],
+			"name": "transferOwnership",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_auctionId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_reservePrice",
+					"type": "uint256"
+				}
+			],
+			"name": "updateReservePrice",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	],
+	"networks": {
+		"8081": {
+			"events": {},
+			"links": {},
+			"address": "0x80113527eC332C0369582dF83E26E975B7b58988"
+		},
+		"80001": {
+			"events": {},
+			"links": {},
+			"address": "0xd45B741b8C33Fa0A39f0251ce95FF6cb3769a16A",
+			"transactionHash": "0x3951ea821d4054197a83aeedd5ecccbb9b2a0fdbf099f0ddb89f1e27c7a0c03f"
+		}
+	}
+}

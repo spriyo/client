@@ -7,16 +7,23 @@ import {
 	styled,
 	Typography,
 } from "@mui/material";
-import web3 from "web3";
+import Web3 from "web3";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { OfferHttpService } from "../../api/offer";
-import { getWalletAddress } from "../../utils/wallet";
 import "./activityCard.css";
 import { useNavigate } from "react-router-dom";
-import { checkApproval } from "../../utils/checkApproval";
 import { FiExternalLink } from "react-icons/fi";
-import { ChainsConfig, NULL_ADDRESS } from "../../constants";
+import {
+	ChainsConfig,
+	ERC1155_BATCH_TRANSFER_EVENT_HASH,
+	ERC1155_TRANSFER_EVENT_HASH,
+	ERC721_TRANSFER_EVENT_HASH,
+	NULL_ADDRESS,
+	SALE_EVENT_HASH,
+	OFFER_EVENT_HASH,
+	AUCTION_EVENT_HASH,
+	BID_EVENT_HASH,
+} from "../../constants";
+import { getShortAddress } from "../../utils/addressShort";
 
 const BoxShadow = styled(Box)(({ theme }) => ({
 	boxShadow: theme.shadows[0],
@@ -25,90 +32,119 @@ const BoxShadow = styled(Box)(({ theme }) => ({
 	borderRadius: "10px",
 }));
 
-function getKeyword(event) {
-	switch (event.event_type) {
-		case "mint":
-			return "Minted";
-		case "imported":
-			return "Imported";
-		case "bid":
-			return "Bidded";
-		case "auction_create":
-			return "Listed";
-		case "auction_update_price":
-			return "Updated Price";
-		case "auction_canceled":
-			return "Auction Canceled";
-		case "offer_created":
-			return "Offer Made";
-		case "offer_accepted":
-			return "Offer Accepted";
-		case "offer_canceled":
-			return "Offer Canceled";
-		case "sale_created":
-			return "Buy Now Price Set";
-		case "sale_update_price":
-			return "Buy Now Price Updated";
-		case "sale_accepted":
-			return "Bought";
-		case "sale_canceled":
-			return "Buy Now Removed";
-		case "transfer":
-			return "Transfered";
-		default:
-			return "None";
-	}
-}
-
 export function ActivityCardComponent2({ event, asset }) {
-	const offerHttpService = new OfferHttpService();
-	const [loading, setLoading] = useState(false);
-	const marketContract = useSelector(
-		(state) => state.contractReducer.marketContract
-	);
-	const user = useSelector((state) => state.authReducer.user);
+	// const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
+	const web3 = new Web3();
+	const saleTypes = [
+		"Created Sale",
+		"Accepted Sale",
+		"Updated Sale",
+		"Canceled Sale",
+	];
+	const offerTypes = ["Created Offer", "Accepted Offer", "Canceled Offer"];
+	const auctionTypes = [
+		"Created Auction starting at",
+		"Auction reserve price updated for",
+		"Canceled Auction for",
+		"Auction settled for",
+	];
 
-	async function acceptOffer() {
-		if (loading) return;
-		setLoading(true);
-		const isApproved = await checkApproval(
-			marketContract._address,
-			asset.contract_address,
-			asset.token_id
-		);
-		if (!isApproved) {
-			setLoading(false);
-			return;
+	function getKeyword(event) {
+		let data;
+		let type;
+		switch (event.log.topics[0]) {
+			case ERC1155_BATCH_TRANSFER_EVENT_HASH:
+			case ERC1155_TRANSFER_EVENT_HASH:
+			case ERC721_TRANSFER_EVENT_HASH:
+				return event.from === NULL_ADDRESS ? "Minted" : "Transfer";
+			case SALE_EVENT_HASH:
+				data = web3.eth.abi.decodeParameters(
+					["uint", "uint256", "address", "uint8"],
+					event.data
+				);
+				type = web3.utils.hexToNumberString(event.log.topics[3]);
+				return `${saleTypes[type]} for ${web3.utils.fromWei(data[1])} SHM`;
+			case OFFER_EVENT_HASH:
+				data = web3.eth.abi.decodeParameters(
+					["uint", "uint256", "uint256", "address", "bool"],
+					event.data
+				);
+				type = web3.utils.hexToNumberString(event.log.topics[3]);
+				return `${offerTypes[type]} for ${web3.utils.fromWei(data[1])} SHM`;
+			case AUCTION_EVENT_HASH:
+				data = web3.eth.abi.decodeParameters(
+					[
+						"uint256",
+						"uint256",
+						"uint256",
+						"address",
+						"address",
+						"address",
+						"bool",
+					],
+					event.data
+				);
+				type = web3.utils.hexToNumberString(event.log.topics[3]);
+				return `${auctionTypes[type]} ${web3.utils.fromWei(data[1])} SHM`;
+			case BID_EVENT_HASH:
+				data = web3.eth.abi.decodeParameters(
+					["uint256", "uint256"],
+					event.data
+				);
+				return (
+					<>
+						Bid by{" "}
+						<small style={{ cursor: "pointer" }}>
+							{getShortAddress(
+								web3.eth.abi.decodeParameter("address", event.log.topics[3])
+							)}
+						</small>
+						<small style={{ cursor: "pointer" }}>
+							{` for ${web3.utils.fromWei(data[1])} SHM`}
+						</small>
+					</>
+				);
+			case "transfer":
+				return "Transfered";
+			default:
+				return event.to === NULL_ADDRESS ? "Burn" : "Transfer";
 		}
-		const confirm = window.confirm(
-			"Are you sure you want to accept the offer?"
-		);
-		if (!confirm) {
-			setLoading(false);
-			return;
-		}
-		try {
-			const currentAddress = await getWalletAddress();
-			const transaction = await marketContract.methods
-				.acceptOffer(asset.events[0].data.offer_id)
-				.send({
-					from: currentAddress,
-				});
-			console.log(transaction);
+	}
 
-			// Server Event
-			const resolved = await offerHttpService.acceptOffer(
-				asset.events[0].data._id
-			);
-			console.log(resolved);
-			if (!resolved.error) {
-				window.location.reload();
-			}
-		} catch (e) {
-			console.log(e);
+	function decodeParameters(event) {
+		switch (event.method) {
+			case "0x798bac8d": // Set Buy Price
+				return web3.eth.abi.decodeParameters(
+					[
+						{ type: "address", name: "contract_address" },
+						{ type: "uint256", name: "item_id" },
+						{ type: "uint256", name: "amount" },
+					],
+					`0x${event.input.substring(10)}`
+				);
+			case "0xa59ac6dd": // Buy
+				return web3.eth.abi.decodeParameters(
+					[
+						{ type: "address", name: "contract_address" },
+						{ type: "uint256", name: "item_id" },
+						{ type: "uint256", name: "sale_id" },
+					],
+					`0x${event.input.substring(10)}`
+				);
+			default:
+				return 0;
 		}
-		setLoading(false);
+	}
+
+	function getPrice(event) {
+		switch (event.method) {
+			case "0x798bac8d":
+				const decodedResult = decodeParameters(event);
+				return web3.utils.fromWei(decodedResult.amount);
+			default:
+				return 0;
+		}
 	}
 
 	function handleExploreClick(chainId, transactionHash) {
@@ -129,10 +165,11 @@ export function ActivityCardComponent2({ event, asset }) {
 				<ListItem
 					secondaryAction={
 						<Stack direction={"row"} alignItems={"center"}>
-							{(event.transaction_hash === "0x0" ||
-								(event.value && event.value !== 0)) && (
-								<h4>{web3.utils.fromWei(event.value.toString())} SHM</h4>
-							)}
+							{
+								<h4>{`${
+									getPrice(event) !== 0 ? getPrice(event) + " SHM" : ""
+								}`}</h4>
+							}
 							<IconButton
 								onClick={() =>
 									handleExploreClick(asset.chain_id, event.transaction_hash)
@@ -150,14 +187,8 @@ export function ActivityCardComponent2({ event, asset }) {
 									<Stack>
 										<Stack direction={"row"}>
 											<Typography variant='h3' color={"black"}>
-												{event.from === NULL_ADDRESS
-													? "Minted"
-													: `${event.method}`}
-												{event.from === NULL_ADDRESS ? (
-													""
-												) : (
-													<small>(transfer)</small>
-												)}
+												{getKeyword(event)}
+												{event.from === NULL_ADDRESS ? "" : <small></small>}
 											</Typography>
 										</Stack>
 										<Stack direction={"row"}>
@@ -167,10 +198,9 @@ export function ActivityCardComponent2({ event, asset }) {
 												color={"text.primary"}
 												sx={{ cursor: "pointer" }}
 											>
-												{`From @${`${event.from.substring(
-													0,
-													4
-												)}...${event.from.slice(-4)}`} To`}
+												{`Transfered ${event.supply} from @${getShortAddress(
+													event.from
+												)} to`}
 											</Typography>
 											<Typography
 												onClick={() => navigate(`/${event.to}`)}
@@ -179,9 +209,7 @@ export function ActivityCardComponent2({ event, asset }) {
 												sx={{ cursor: "pointer" }}
 											>
 												&nbsp;
-												{`@${`${event.to.substring(0, 4)}...${event.to.slice(
-													-4
-												)}`}`}
+												{`@${getShortAddress(event.to)}`}
 											</Typography>
 										</Stack>
 									</Stack>

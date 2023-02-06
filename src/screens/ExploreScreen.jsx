@@ -10,19 +10,16 @@ import {
 	Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { CardComponent } from "../components/card/CardComponent";
 import { FooterComponent } from "../components/FooterComponent";
 import { NavbarComponent } from "../components/navBar/NavbarComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLocationChange } from "../utils/useLocationChange";
-import { ChangeNetworkComponent } from "../components/ChangeNetworkComponent";
-import { switchChain } from "../state/actions/wallet";
 import { SearchHttpService } from "../api/v2/search";
+import { CHAIN } from "../constants";
 
 export const ExploreScreen = ({ listen }) => {
-	const dispatch = useDispatch();
 	const searchHttpService = new SearchHttpService();
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
 	const [createdAt, setCreatedAt] = useState("desc");
@@ -32,7 +29,6 @@ export const ExploreScreen = ({ listen }) => {
 	const search = useLocation().search;
 	const query = new URLSearchParams(search).get("query");
 	const navigate = useNavigate();
-	const chainId = useSelector((state) => state.walletReducer.chainId);
 
 	async function getRecentlyAdded(sorted = false) {
 		if (sorted) {
@@ -44,7 +40,7 @@ export const ExploreScreen = ({ listen }) => {
 			skip: skip.current,
 			createdAt: createdAtRef.current,
 			query: query || "",
-			chainId: chainId,
+			chainId: CHAIN.chainId,
 		});
 		skip.current += 10;
 		recentlyAddedItemsRef.current = [
@@ -60,18 +56,10 @@ export const ExploreScreen = ({ listen }) => {
 		}
 	});
 
-	function onNetworkChange(network) {
-		if (network === 0) {
-			dispatch(switchChain(""));
-		} else {
-			dispatch(switchChain(network.chainId));
-		}
-	}
-
 	useEffect(() => {
 		getRecentlyAdded(true);
 		return () => {};
-	}, [chainId]);
+	}, []);
 
 	return (
 		<Stack>
@@ -87,10 +75,6 @@ export const ExploreScreen = ({ listen }) => {
 							Explore
 						</Typography>
 						<Box display="flex">
-							<ChangeNetworkComponent
-								onNetworkChange={onNetworkChange}
-								enableAll={true}
-							/>
 							<FormControl sx={{ m: 1, minWidth: 120 }} size="small">
 								<InputLabel id="sort-select-label">Sort</InputLabel>
 								<Select
