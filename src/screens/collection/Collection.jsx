@@ -264,10 +264,8 @@ export const Collection = () => {
 								backgroundRepeat: "no-repeat",
 								width: { xs: "auto", md: "40vw" },
 								left: { xs: "auto", md: "60px" },
-								width: "150px",
 								height: "150px",
 								bottom: "-48px",
-								left: "64px",
 								position: "absolute",
 								borderRadius: "10px",
 								backgroundImage: `url(${collection.image})`,
@@ -420,11 +418,13 @@ export const Collection = () => {
 									<Box mt={1} mr={5}>
 										<Typography variant="h2" fontWeight={"bold"}>
 											{Math.floor(
-												(contract.owners_count
+												((contract.owners_count
 													? contract.owners_count.count
-													: 0 / contract.nfts_count
-													? contract.nfts_count.count
-													: 0) * 100
+													: 0) /
+													(contract.nfts_count
+														? contract.nfts_count.count
+														: 0)) *
+													100
 											)}
 											%
 										</Typography>

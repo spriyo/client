@@ -104,7 +104,7 @@ export function CardComponent({ asset }) {
 							{asset.contract_address === DOTSHM_ADDRESS
 								? asset.metadata_url
 								: asset.name === ""
-								? asset.token_id
+								? asset.token_id.substring(0,20)
 								: asset.name}
 						</p>
 					</div>

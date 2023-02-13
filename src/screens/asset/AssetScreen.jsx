@@ -383,7 +383,7 @@ export function AssetScreen() {
 												>
 													{asset.contract_address === DOTSHM_ADDRESS
 														? asset.metadata_url
-														: asset.name || `#${asset.token_id}`}
+														: asset.name || `#${asset.token_id.substring(0,20)}`}
 												</Typography>
 												<Typography
 													variant="subtitle2"
@@ -748,11 +748,24 @@ export function AssetScreen() {
 					<p>loading</p>
 				</Box>
 			)}
-			<Box sx={{ margin: { xs: "12px", md: "24px 40px" } }}>
-				<CollectionContainer
-					title={"More from this Collection"}
-					assets={itemFromCollection}
-				/>
+			<Box
+				sx={{
+					margin: { xs: "12px", md: "24px 40px" },
+					justifyContent: "center",
+					alignItems: "center",
+					display: "flex",
+				}}
+			>
+				<Box
+					sx={{
+						maxWidth: "1400px",
+					}}
+				>
+					<CollectionContainer
+						title={"More from this Collection"}
+						assets={itemFromCollection}
+					/>
+				</Box>
 			</Box>
 			<FooterComponent />
 		</Box>
