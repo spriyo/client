@@ -3,13 +3,14 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ConnectComponent } from "../ConnectComponent";
 import { Box, Menu } from "@mui/material";
-import logo from "../../assets/spriyo light.png";
+import lightlogo from "../../assets/spriyo light.png";
+import darklogo from "../../assets/spriyo.png";
 import { useEffect, useState } from "react";
 import { RiNotification3Line } from "react-icons/ri";
 import { NotificationHttpService } from "../../api/notification";
-import { RectangleProfile } from "../RectangleProfile";
 import { MdOutlineExplore } from "react-icons/md";
 import { BsCollection } from "react-icons/bs";
+import { CgProfile } from "react-icons/cg";
 
 export function NavbarComponent({ isHomeScreen = false }) {
 	const authenticated = useSelector((state) => state.authReducer.authenticated);
@@ -55,7 +56,7 @@ export function NavbarComponent({ isHomeScreen = false }) {
 			style={{
 				display: "flex",
 				justifyContent: "center",
-				backgroundColor: isHomeScreen ? "rgb(0, 0, 0)" : "grey",
+				backgroundColor: isHomeScreen ? "rgb(0, 0, 0)" : "white",
 				boxShadow: isHomeScreen ? "none" : "inherit",
 			}}
 			className="navbar-wrapper"
@@ -77,7 +78,11 @@ export function NavbarComponent({ isHomeScreen = false }) {
 						style={{ cursor: "pointer" }}
 						onClick={() => navigate("/")}
 					>
-						<img src={logo} alt="logo" height={36} />
+						<img
+							src={isHomeScreen ? lightlogo : darklogo}
+							alt="logo"
+							height={36}
+						/>
 						<small>beta</small>
 					</Box>
 					{/* search */}
@@ -95,16 +100,34 @@ export function NavbarComponent({ isHomeScreen = false }) {
 								{notificationCount > 9 ? "9+" : notificationCount}
 							</Box>
 							<Box sx={IconButtonStyle}>
-								<RiNotification3Line size={20} color="white" />
+								<RiNotification3Line
+									size={20}
+									color={isHomeScreen ? "white" : "black"}
+								/>
 							</Box>
 						</Box>
 					)}
 					<Box onClick={() => navigate("/collections")} sx={IconButtonStyle}>
-						<BsCollection size={20} color="white" />
+						<BsCollection size={20} color={isHomeScreen ? "white" : "black"} />
 					</Box>
 					<Box onClick={() => navigate("/explore")} sx={IconButtonStyle}>
-						<MdOutlineExplore size={20} color="white" />
+						<MdOutlineExplore
+							size={20}
+							color={isHomeScreen ? "white" : "black"}
+						/>
 					</Box>
+					{authenticated ? (
+						<Box
+							onClick={() => navigate(`/${user.username}`)}
+							sx={IconButtonStyle}
+						>
+							<CgProfile size={20} color={isHomeScreen ? "white" : "black"} />
+						</Box>
+					) : (
+						<Box>
+							<ConnectComponent />
+						</Box>
+					)}
 					{authenticated ? (
 						<Box
 							mr={1}
@@ -149,19 +172,6 @@ export function NavbarComponent({ isHomeScreen = false }) {
 							<Box sx={{ backgroundColor: "background.default" }}></Box>
 						</Menu>
 					</Box>
-
-					{authenticated ? (
-						<Box onClick={() => navigate(`/${user.username}`)} m={1}>
-							<RectangleProfile
-								userImgUrl={user.displayImage}
-								userId={user._id}
-							/>
-						</Box>
-					) : (
-						<Box>
-							<ConnectComponent />
-						</Box>
-					)}
 				</div>
 			</Box>
 		</div>
