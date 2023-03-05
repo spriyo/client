@@ -4,7 +4,11 @@ import {
 	Box,
 	Checkbox,
 	Divider,
+	FormControl,
 	Grid,
+	InputLabel,
+	MenuItem,
+	Select,
 	Stack,
 	Typography,
 } from "@mui/material";
@@ -22,6 +26,7 @@ import axios from "axios";
 export const ExploreScreen = ({ listen }) => {
 	const searchHttpService = new SearchHttpService();
 	const [recentlyAddedItems, setRecentlyAddedItems] = useState([]);
+	const [createdAt, setCreatedAt] = useState("desc");
 	let skip = useRef(0);
 	let createdAtRef = useRef("desc");
 	let recentlyAddedItemsRef = useRef([]);
@@ -126,12 +131,13 @@ export const ExploreScreen = ({ listen }) => {
 				<Box
 					sx={{
 						maxWidth: "1400px",
+						width: "100%",
 						display: "flex",
 						height: "95vh",
 					}}
 				>
 					{/* NFT Filter */}
-					<Box flex={1} className="nft_filter" mr={1}>
+					<Box maxWidth={"20%"} className="nft_filter" mr={1}>
 						{/* Status Options */}
 						<Box>
 							<p className="sidenav_title">Status</p>
@@ -247,7 +253,29 @@ export const ExploreScreen = ({ listen }) => {
 						</Box>
 					</Box>
 					{/* NFT LIST */}
-					<Box flex={4}>
+					<Box width="80%">
+						<Box display="flex" alignItems={"center"} justifyContent="flex-end">
+							<Box >
+								<SearchComponent />
+							</Box>
+							<FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+								<InputLabel id="sort-select-label">Sort</InputLabel>
+								<Select
+									labelId="sort-select-label"
+									id="sort-select"
+									value={createdAt}
+									label="Age"
+									onChange={(event) => {
+										createdAtRef.current = event.target.value;
+										setCreatedAt(event.target.value);
+										getRecentlyAdded(true);
+									}}
+								>
+									<MenuItem value={"desc"}>Newest</MenuItem>
+									<MenuItem value={"asc"}>Oldest</MenuItem>
+								</Select>
+							</FormControl>
+						</Box>
 						<InfiniteScroll
 							dataLength={recentlyAddedItems.length}
 							next={getRecentlyAdded}

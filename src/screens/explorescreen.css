@@ -47,3 +47,7 @@
 	background-color: rgb(235, 235, 235);
 	border-radius: 8px;
 }
+
+#sort-select {
+	padding: 6.2px;
+}
