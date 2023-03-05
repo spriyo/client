@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { TbSearch } from "react-icons/tb";
 
-export function SearchComponent() {
+export function SearchComponent({ onChange }) {
 	const navigate = useNavigate();
 	const [input, setInput] = useState("");
 	const handleKeyDown = (event) => {
@@ -22,14 +22,24 @@ export function SearchComponent() {
 	return (
 		<div>
 			<div className="search-container">
-				<TbSearch onClick={onSearch} color="grey" cursor={"pointer"} size={18}/>
+				<TbSearch
+					onClick={onSearch}
+					color="grey"
+					cursor={"pointer"}
+					size={18}
+				/>
 				<input
 					type="search"
 					id="search"
 					onKeyDown={handleKeyDown}
 					placeholder="Search..."
 					value={input}
-					onInput={(e) => setInput(e.target.value)}
+					onInput={(e) => {
+						setInput(e.target.value);
+						if (onChange) {
+							onChange(e.target.value);
+						}
+					}}
 				/>
 			</div>
 		</div>

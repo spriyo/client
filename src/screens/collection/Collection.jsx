@@ -31,6 +31,7 @@ import { ButtonComponent } from "../../components/ButtonComponent";
 import { getWalletAddress } from "../../utils/wallet";
 import NoDrop from "../../assets/nodrop.jpg";
 import Web3 from "web3";
+import { NFTHttpService } from "../../api/v2/nft";
 
 const mapping = {
 	twitter: <SiTwitter size={24} />,
@@ -56,6 +57,7 @@ export const Collection = () => {
 	const navigate = useNavigate();
 	let skip = useRef(0);
 	const NFTContract = useRef();
+	const nftHttpService = new NFTHttpService();
 
 	async function getCollection() {
 		try {
@@ -155,10 +157,29 @@ export const Collection = () => {
 		try {
 			setLoading(true);
 			const currentAddress = await getWalletAddress();
-			const transaction = await NFTContract.current.methods.Mint().send({
+			NFTContract.current.methods
+			.Mint()
+			.send({
 				from: currentAddress,
 				value: Web3.utils.toWei(drop.amount) * quantity,
-			});
+			})
+			.on("transactionHash", function (hash) {})
+			.on("receipt", async function (receipt) {
+					console.log(receipt)
+					await nftHttpService.createEvent(receipt.transactionHash);
+					let ids;
+					if (Array.isArray(receipt.events.Transfer)) {
+						ids = receipt.events.Transfer.map(
+							(a) => a.returnValues.tokenId
+						).join(", ");
+					} else {
+						ids = receipt.events.Transfer.returnValues.tokenId;
+					}
+					alert(
+						`Token with ID ${ids} is minted and will be reflected in your profile shortly🥳`
+					);
+					navigate("/");
+				});
 
 			// const resolved = await uploadToServer(
 			// 	parseInt(transaction.events.Transfer.returnValues.tokenId),
@@ -167,19 +188,10 @@ export const Collection = () => {
 			// if (!resolved.error) {
 			// 	toast("Successfully minted", { type: "success" });
 			// }
-			let ids;
-			if (Array.isArray(transaction.events.Transfer)) {
-				ids = transaction.events.Transfer.map(
-					(a) => a.returnValues.tokenId
-				).join(", ");
-			} else {
-				ids = transaction.events.Transfer.returnValues.tokenId;
-			}
-			alert(
-				`Token with ID ${ids} is minted and will be reflected in your profile shortly🥳`
-			);
-			navigate("/");
+			
+			
 		} catch (error) {
+			console.log(error)
 			toast(error.message, { type: "warning" });
 		}
 		setLoading(false);

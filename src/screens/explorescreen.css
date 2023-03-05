@@ -1,0 +1,53 @@
+.nftlist {
+	/* hide scrollbar but allow scrolling */
+	-ms-overflow-style: none; /* for Internet Explorer, Edge */
+	scrollbar-width: none; /* for Firefox */
+	overflow-y: scroll;
+}
+
+/* hide scrollbar but allow scrolling */
+.nftlist::-webkit-scrollbar {
+	display: none; /* for Chrome, Safari, and Opera */
+}
+
+.nft_filter {
+	border-radius: 8px;
+	/* background-color: rgb(245, 245, 245); */
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding: 16px 6px;
+}
+
+.sidenav_title {
+	font-weight: 500;
+	margin-left: 14px;
+	color: #000000;
+	font-weight: 600;
+	font-size: 16px;
+}
+
+.sidenav_item {
+	padding: 6px 0;
+}
+
+.sidenav_item:hover {
+	background-color: lightgrey;
+	border-radius: 8px;
+}
+
+.collection_item {
+	padding: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.collection_item:hover {
+	background-color: rgb(235, 235, 235);
+	border-radius: 8px;
+}
+
+#sort-select {
+	padding: 6.2px;
+}
