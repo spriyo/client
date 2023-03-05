@@ -9,6 +9,7 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
+	Skeleton,
 	Stack,
 	Typography,
 } from "@mui/material";
@@ -41,8 +42,10 @@ export const ExploreScreen = ({ listen }) => {
 	const selectedTypeRef = useRef("");
 	const [selectedStatus, setSelectedStatus] = useState("");
 	const selectedStatusRef = useRef("");
+	const [fetchingNft, setFetchingNft] = useState(true);
 
 	async function searchAssets(byStatus) {
+		setFetchingNft(true);
 		const resolved = await searchHttpService.searchAssets({
 			skip: skip.current,
 			createdAt: createdAtRef.current,
@@ -58,6 +61,7 @@ export const ExploreScreen = ({ listen }) => {
 			...resolved.data,
 		];
 		setRecentlyAddedItems(recentlyAddedItemsRef.current);
+		setFetchingNft(false);
 	}
 
 	async function getRecentlyAdded(sorted = false) {
@@ -255,7 +259,7 @@ export const ExploreScreen = ({ listen }) => {
 					{/* NFT LIST */}
 					<Box width="80%">
 						<Box display="flex" alignItems={"center"} justifyContent="flex-end">
-							<Box >
+							<Box>
 								<SearchComponent />
 							</Box>
 							<FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -276,35 +280,52 @@ export const ExploreScreen = ({ listen }) => {
 								</Select>
 							</FormControl>
 						</Box>
-						<InfiniteScroll
-							dataLength={recentlyAddedItems.length}
-							next={getRecentlyAdded}
-							hasMore={true}
-							loader={<p></p>}
-							style={{ overflowX: "clip" }}
-							height="95vh"
-							className="nftlist"
-						>
+						{fetchingNft ? (
 							<Grid
 								container
+								sx={{ marginLeft: "8px !important" }}
 								spacing={{ xs: 2, md: 3 }}
 								columns={{ xs: 4, sm: 8, md: 12 }}
 							>
-								{recentlyAddedItems.map((asset, index) => (
-									<Grid item xs={12} sm={4} md={4} key={index}>
-										<Box
-											onClick={() =>
-												navigate(
-													`/assets/${asset.contract_address}/${asset.token_id}`
-												)
-											}
-										>
-											<CardComponent asset={asset} />
-										</Box>
-									</Grid>
-								))}
+								{Array.from({ length: 12 }).map((j, i) => {
+									return (
+										<Grid item xs={12} sm={4} md={4} key={i} margin={0}>
+											<Skeleton sx={{ m: 1 }} width={"100%"} height={350} />
+										</Grid>
+									);
+								})}
 							</Grid>
-						</InfiniteScroll>
+						) : (
+							<InfiniteScroll
+								dataLength={recentlyAddedItems.length}
+								next={getRecentlyAdded}
+								hasMore={true}
+								loader={<p></p>}
+								style={{ overflowX: "clip" }}
+								height="95vh"
+								className="nftlist"
+							>
+								<Grid
+									container
+									spacing={{ xs: 2, md: 3 }}
+									columns={{ xs: 4, sm: 8, md: 12 }}
+								>
+									{recentlyAddedItems.map((asset, index) => (
+										<Grid item xs={12} sm={4} md={4} key={index}>
+											<Box
+												onClick={() =>
+													navigate(
+														`/assets/${asset.contract_address}/${asset.token_id}`
+													)
+												}
+											>
+												<CardComponent asset={asset} />
+											</Box>
+										</Grid>
+									))}
+								</Grid>
+							</InfiniteScroll>
+						)}
 					</Box>
 				</Box>
 			</Box>
