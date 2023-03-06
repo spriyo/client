@@ -67,7 +67,7 @@ export const ExploreScreen = ({ listen }) => {
 			setRecentlyAddedItems(recentlyAddedItemsRef.current);
 		}
 		await searchAssets();
-		skip.current += 10;
+		skip.current += 30;
 	}
 
 	async function handleCollectionChange(contract_address) {
