@@ -8,7 +8,7 @@ export class SearchHttpService {
 	async searchAssets({
 		byStatus,
 		createdAt = "desc",
-		limit = 10,
+		limit = 30,
 		skip = 0,
 		query = "",
 		chainId = "",

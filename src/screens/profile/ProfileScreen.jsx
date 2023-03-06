@@ -53,7 +53,7 @@ export function ProfileScreen() {
 			nft.owners.push(e);
 			return nft;
 		});
-		setAssets((prevnfts) => [...nfts, ...prevnfts]);
+		setAssets((prevnfts) => [...prevnfts, ...nfts]);
 		skip.current += 10;
 	}
 
