@@ -29,7 +29,7 @@
 .card-info {
 	height: 80px;
 	margin: 8px;
-	padding: 10px;
+	padding: 8px;
 	width: 100%;
 
 	display: flex;
@@ -58,19 +58,11 @@
 	background-color: white;
 }
 
-.card-info-creator {
-	position: absolute;
-	top: 6px;
-	right: 16px;
-	font-size: 10px;
-	font-weight: 300;
-}
 
 .card-info-top {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	margin-top: 16px;
+	align-items: flex-start;
 }
 
 .card-info-top .card-info-title {
@@ -86,7 +78,7 @@
 }
 
 .card-info-bottom .card-info-price {
-	font-size: 12px;
+	font-size: 10px;
 }
 
 .card-info-bottom .card-info-price span {

@@ -23,6 +23,15 @@ export function CardComponent({ asset }) {
 		}
 	}
 
+	function getMethodName(methodHash) {
+		switch (methodHash) {
+			case "0x68656c6c":
+				return "Transfered";
+			default:
+				return "";
+		}
+	}
+
 	useEffect(() => {
 		setLiked(asset.liked);
 
@@ -36,13 +45,14 @@ export function CardComponent({ asset }) {
 			className="card-container"
 			position="relative"
 			style={{
-				backgroundImage: asset.image && asset.image.includes(".mp4")
-					? "none"
-					: `url('${
-							asset.contract_address === DOTSHM_ADDRESS
-								? DOTSHM_IMAGE
-								: asset.image || LOADING_IMG
-					  }')`,
+				backgroundImage:
+					asset.image && asset.image.includes(".mp4")
+						? "none"
+						: `url('${
+								asset.contract_address === DOTSHM_ADDRESS
+									? DOTSHM_IMAGE
+									: asset.image || LOADING_IMG
+						  }')`,
 			}}
 		>
 			{asset.image && asset.image.includes(".mp4") ? (
@@ -89,14 +99,6 @@ export function CardComponent({ asset }) {
 						}}
 					></div>
 				)}
-				<div className="card-info-creator">
-					{/* created by */}
-					<Typography variant="h6">
-						{/* {asset.created_by && `Created : @${asset.created_by.displayName}`} */}
-						{asset.type}
-						{`(${asset.chain_id === "8080" ? "Lib 1.x" : "Lib 2.0"})`}
-					</Typography>
-				</div>
 				<div className="card-info-top">
 					{/* title */}
 					<div className="card-info-title">
@@ -104,20 +106,28 @@ export function CardComponent({ asset }) {
 							{asset.contract_address === DOTSHM_ADDRESS
 								? asset.metadata_url
 								: asset.name === ""
-								? asset.token_id.substring(0,20)
+								? asset.token_id.substring(0, 15)
 								: asset.name}
 						</p>
+						<p style={{ fontSize: "10px" }}>
+							#{asset.token_id.substring(0, 10)}
+						</p>
 					</div>
+					<Typography variant="h6">
+						{/* {asset.created_by && `Created : @${asset.created_by.displayName}`} */}
+						{asset.type}
+						{`(${asset.chain_id === "8080" ? "Lib 1.x" : "Lib 2.0"})`}
+					</Typography>
 				</div>
 				<div className="card-info-bottom">
 					{/* Event */}
 					<div className="card-info-price">
 						<p>
-							{asset.events
-								? asset.events.length === 0
+							{getMethodName(
+								asset.events.length === 0
 									? "" // no events
-									: asset.events[0].event_type.replace("_", " ").toUpperCase()
-								: "Events Not present"}
+									: asset.events[0].method
+							)}
 						</p>
 					</div>
 					{/* price
