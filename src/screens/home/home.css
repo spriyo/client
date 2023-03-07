@@ -64,7 +64,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 .homepage-shadow-overlay {
-	animation: initiate 1 5s ease-out;
+	animation: initiate 1 4s ease-out;
 }
 
 .animation-delay {
@@ -272,4 +272,23 @@ input[type="search"]::-webkit-search-cancel-button {
 	.homepage-secondscreen-container h1 {
 		font-size: 20px;
 	}
+}
+
+.home_stats {
+	background-color: black;
+	color: #f5f8ffb2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 4px;
+	font-size: 14px;
+}
+
+.home_stats div {
+	margin: 0 8px;
+}
+
+.home_stats span {
+	color: #00e472;
+	font-weight: 300;
 }
