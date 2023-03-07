@@ -3,19 +3,23 @@ import { TbSearch } from "react-icons/tb";
 import { NFTHttpService } from "../../api/v2/nft";
 import React, { useEffect, useState } from "react";
 import { HiOutlineInformationCircle } from "react-icons/hi";
-import { Box, Chip, Tooltip, Typography } from "@mui/material";
+import { Box, Chip, Divider, Tooltip, Typography } from "@mui/material";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { TopNotification } from "../../components/topNotification/TopNotification";
 import { useNavigate } from "react-router-dom";
 import LionForceBanner from "../../assets/lionforce_banner.png";
 import LionForceIcon from "../../assets/lionforce_icon.png";
 import { RiTwitterLine } from "react-icons/ri";
+import axios from "axios";
+import { V2_WEB_API_BASE_URL } from "../../constants";
+import Web3 from "web3";
 
 export const HomeScreen2 = () => {
 	const navigate = useNavigate();
 	const nftHttpService = new NFTHttpService();
 	const [count, setCount] = useState(0);
 	const [input, setInput] = useState("");
+	const [statistics, setStatistics] = useState(false);
 	const handleKeyDown = (event) => {
 		const value = event.target.value;
 		if (event.key === "Enter" && value !== "") {
@@ -46,16 +50,49 @@ export const HomeScreen2 = () => {
 		// );
 	}
 
+	async function getStatistics() {
+		const response = await axios.get(
+			`${V2_WEB_API_BASE_URL}/display/getStatistics`
+		);
+		setStatistics(response.data);
+	}
+
 	useEffect(() => {
 		nftHttpService.getTotalNFTCount().then((resp) => {
 			setCount(resp.data.count);
 		});
 		updateNotification();
+		getStatistics();
 	}, []);
 
 	return (
 		<Box>
 			<TopNotification />
+			{statistics && (
+				<Box className="home_stats">
+					<div>
+						NFT Collection: &nbsp;
+						<span>{statistics.total_collections.total_collections}</span>
+					</div>
+					<div>
+						Total Volume: &nbsp;
+						<span>
+							{Web3.utils.fromWei(statistics.total_volume.toString())} SHM
+						</span>
+					</div>
+					<div>
+						1D Volume: &nbsp;
+						<span>
+							{Web3.utils.fromWei(statistics.one_day_volume.toString())} SHM
+						</span>
+					</div>
+					<div>
+						1D NFT Mint: &nbsp;
+						<span>{statistics.one_day_mints.one_day_mints}</span>
+					</div>
+				</Box>
+			)}
+			<Divider sx={{ bgcolor: "#161616" }} />
 			<div>
 				<div>
 					<Box sx={{ backgroundColor: "black" }}>
@@ -420,7 +457,7 @@ export const HomeScreen2 = () => {
 									<Box
 										sx={{
 											display: "flex",
-											padding:"0 16px",
+											padding: "0 16px",
 											alignItems: "center",
 										}}
 									>
