@@ -42,7 +42,7 @@ export const ExploreScreen = ({ listen }) => {
 	const [selectedStatus, setSelectedStatus] = useState("");
 	const selectedStatusRef = useRef("");
 
-	async function searchAssets(byStatus) {
+	async function searchAssets() {
 		const resolved = await searchHttpService.searchAssets({
 			skip: skip.current,
 			createdAt: createdAtRef.current,
@@ -51,13 +51,14 @@ export const ExploreScreen = ({ listen }) => {
 			contract: selectedCollectionAddressRed.current,
 			type: selectedTypeRef.current,
 			status: selectedStatusRef.current,
-			byStatus,
+			byStatus: selectedStatusRef.current ? true : false,
 		});
 		recentlyAddedItemsRef.current = [
 			...recentlyAddedItemsRef.current,
 			...resolved.data,
 		];
 		setRecentlyAddedItems(recentlyAddedItemsRef.current);
+		skip.current += 30;
 	}
 
 	async function getRecentlyAdded(sorted = false) {
@@ -67,7 +68,6 @@ export const ExploreScreen = ({ listen }) => {
 			setRecentlyAddedItems(recentlyAddedItemsRef.current);
 		}
 		await searchAssets();
-		skip.current += 30;
 	}
 
 	async function handleCollectionChange(contract_address) {
@@ -76,7 +76,7 @@ export const ExploreScreen = ({ listen }) => {
 		recentlyAddedItemsRef.current = [];
 		setRecentlyAddedItems(recentlyAddedItemsRef.current);
 		skip.current = 0;
-		await searchAssets(selectedStatusRef.current ? true : false);
+		await searchAssets();
 	}
 
 	async function handleTypeChange(type) {
@@ -86,7 +86,7 @@ export const ExploreScreen = ({ listen }) => {
 		recentlyAddedItemsRef.current = [];
 		setRecentlyAddedItems(recentlyAddedItemsRef.current);
 		skip.current = 0;
-		await searchAssets(selectedStatusRef.current ? true : false);
+		await searchAssets();
 	}
 
 	async function handleStatusChange(status) {
@@ -96,7 +96,7 @@ export const ExploreScreen = ({ listen }) => {
 		recentlyAddedItemsRef.current = [];
 		setRecentlyAddedItems(recentlyAddedItemsRef.current);
 		skip.current = 0;
-		await searchAssets(status ? true : false);
+		await searchAssets();
 	}
 
 	useLocationChange((location, prevLocation) => {
