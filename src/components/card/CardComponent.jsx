@@ -23,8 +23,9 @@ export function CardComponent({ asset }) {
 		}
 	}
 
-	function getMethodName(methodHash) {
-		switch (methodHash) {
+	function getMethodName(events) {
+		if (!events || events.length === 0) return "";
+		switch (asset.events[0].method) {
 			case "0x68656c6c":
 				return "Transfered";
 			default:
@@ -122,13 +123,7 @@ export function CardComponent({ asset }) {
 				<div className="card-info-bottom">
 					{/* Event */}
 					<div className="card-info-price">
-						<p>
-							{getMethodName(
-								asset.events.length === 0
-									? "" // no events
-									: asset.events[0].method
-							)}
-						</p>
+						<p>{getMethodName(asset.events)}</p>
 					</div>
 					{/* price
 					<div className="card-info-price">
