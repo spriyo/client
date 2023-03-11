@@ -77,7 +77,12 @@ export const HomeScreen2 = () => {
 					<div>
 						Total Volume: &nbsp;
 						<span>
-							{Web3.utils.fromWei(statistics.total_volume.toString())} SHM
+							{Web3.utils.fromWei(
+								statistics.total_volume.toLocaleString("fullwide", {
+									useGrouping: false,
+								})
+							)}{" "}
+							SHM
 						</span>
 					</div>
 					<div>
