@@ -8,9 +8,10 @@ import { checkApproval } from "../utils/checkApproval";
 import { utils } from "web3";
 import TransactionDialogue from "./TransactionDialogue";
 import nftJsonInterface from "../contracts/Spriyo.json";
-import { NULL_ADDRESS } from "../constants";
+import { CHAIN, NULL_ADDRESS } from "../constants";
 import { toast } from "react-toastify";
 import { NFTHttpService } from "../api/v2/nft";
+import { SellDialogue } from "./SellDialogue";
 
 const loaderStyle = {
 	backgroundImage:
@@ -30,11 +31,15 @@ export const ActionsComponent2 = ({ asset }) => {
 	const [loading, setLoading] = useState(false);
 	const [sale, setSale] = useState(false);
 	const [auction, setAuction] = useState(false);
+	const [sellDialogueOpen, setSellDialogueOpen] = useState(false);
 	const marketContract = useSelector(
 		(state) => state.contractReducer.marketContract
 	);
 	const auctionContract = useSelector(
 		(state) => state.contractReducer.auctionContract
+	);
+	const listingContract = useSelector(
+		(state) => state.contractReducer.listingContract
 	);
 	const nftHttpService = new NFTHttpService();
 
@@ -50,7 +55,7 @@ export const ActionsComponent2 = ({ asset }) => {
 					}
 				});
 		}
-		if (asset && marketContract) {
+		if (asset && listingContract) {
 			// Get Owner
 			if (asset.type === "721") {
 				const contract = new window.web3.eth.Contract(
@@ -65,14 +70,14 @@ export const ActionsComponent2 = ({ asset }) => {
 					});
 			}
 			// Get Sale
-			marketContract.methods
-				.sales_by_address_id(asset.contract_address, asset.token_id)
+			listingContract.methods
+				.listings_by_address_id(asset.contract_address, asset.token_id)
 				.call()
 				.then((saleData) => {
 					setSale(saleData);
 				});
 		}
-	}, [asset, marketContract, auctionContract]);
+	}, [asset, auctionContract, listingContract]);
 
 	const user = useSelector((state) => state.authReducer.user);
 
@@ -90,7 +95,9 @@ export const ActionsComponent2 = ({ asset }) => {
 				sale.seller !== utils.toChecksumAddress(user.address)
 					? [
 							{
-								title: `Buy for ${utils.fromWei(sale ? sale.amount : "0")}SHM`,
+								title: `Buy for ${utils.fromWei(
+									sale ? sale.pricePerToken : "0"
+								)}SHM`,
 								action: () => loadMiddleware(buyAsset),
 							},
 					  ]
@@ -141,7 +148,8 @@ export const ActionsComponent2 = ({ asset }) => {
 					? [
 							{
 								title: "Sell NFT",
-								action: () => approveMiddleware(false, sellAsset),
+								action: () =>
+									approveMiddleware(false, { isListing: true }, sellAsset),
 							},
 							{
 								title: "Create Auction",
@@ -375,22 +383,7 @@ export const ActionsComponent2 = ({ asset }) => {
 	}
 
 	async function sellAsset() {
-		const amount = prompt("Please enter the amount in SHM");
-		if (isNaN(parseFloat(amount))) return;
-
-		const currentAddress = await getWalletAddress();
-		window.web3.eth.handleRevert = true;
-		const convertedAmount = window.web3.utils.toWei(amount);
-		marketContract.methods
-			.setBuyPrice(asset.contract_address, asset.token_id, convertedAmount)
-			.send({ from: currentAddress })
-			.on("transactionHash", function (hash) {
-				setTransactionHash(hash);
-			})
-			.on("receipt", async function (receipt) {
-				await nftHttpService.createEvent(receipt.transactionHash);
-				setTransactionCompleted(true);
-			});
+		setSellDialogueOpen(true);
 	}
 
 	async function buyAsset() {
@@ -400,18 +393,18 @@ export const ActionsComponent2 = ({ asset }) => {
 
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.buy(asset.contract_address, asset.token_id, sale.id)
+		const gas = await listingContract.methods
+			.buy(sale.id, 1, sale.currency, currentAddress)
 			.estimateGas({
 				from: currentAddress,
-				value: sale.amount,
+				value: sale.pricePerToken,
 			});
 
-		marketContract.methods
-			.buy(asset.contract_address, asset.token_id, sale.id)
+		listingContract.methods
+			.buy(sale.id, 1, sale.currency, currentAddress)
 			.send({
 				from: currentAddress,
-				value: sale.amount,
+				value: sale.pricePerToken,
 				gasPrice,
 				gas,
 			})
@@ -425,25 +418,61 @@ export const ActionsComponent2 = ({ asset }) => {
 	}
 
 	async function updateAsset() {
-		const amount = prompt(
-			"Please enter the amount in SHM to update the sale price."
-		);
-		if (isNaN(parseFloat(amount))) return;
+		alert("Can't update listing, cancel the current listing and relist.");
+		return;
+		// const amount = prompt(
+		// 	"Please enter the amount in SHM to update the sale price."
+		// );
+		// if (isNaN(parseFloat(amount))) return;
 
-		const convertedAmount = window.web3.utils.toWei(amount);
+		// const convertedAmount = window.web3.utils.toWei(amount);
+		// const currentAddress = await getWalletAddress();
+		// window.web3.eth.handleRevert = true;
+
+		// // Gas Calculation
+		// const gasPrice = await window.web3.eth.getGasPrice();
+		// const gas = await marketContract.methods
+		// 	.updateBuyPrice(sale.id, convertedAmount)
+		// 	.estimateGas({
+		// 		from: currentAddress,
+		// 	});
+
+		// marketContract.methods
+		// 	.updateBuyPrice(sale.id, convertedAmount)
+		// 	.send({
+		// 		from: currentAddress,
+		// 		gasPrice,
+		// 		gas,
+		// 	})
+		// 	.on("transactionHash", function (hash) {
+		// 		setTransactionHash(hash);
+		// 	})
+		// 	.on("receipt", async function (receipt) {
+		// 		await nftHttpService.createEvent(receipt.transactionHash);
+		// 		setTransactionCompleted(true);
+		// 	});
+	}
+
+	async function cancelSale() {
+		const confirmed = window.confirm(
+			"Are you sure you want to cancel this sale?"
+		);
+		if (!confirmed) return;
+
 		const currentAddress = await getWalletAddress();
 		window.web3.eth.handleRevert = true;
+		console.log(asset);
 
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await marketContract.methods
-			.updateBuyPrice(sale.id, convertedAmount)
+		const gas = await listingContract.methods
+			.cancelBuyPrice(sale.id)
 			.estimateGas({
 				from: currentAddress,
 			});
 
-		marketContract.methods
-			.updateBuyPrice(sale.id, convertedAmount)
+		listingContract.methods
+			.cancelBuyPrice(sale.id)
 			.send({
 				from: currentAddress,
 				gasPrice,
@@ -458,31 +487,7 @@ export const ActionsComponent2 = ({ asset }) => {
 			});
 	}
 
-	async function cancelSale() {
-		const confirmed = window.confirm(
-			"Are you sure you want to cancel this sale?"
-		);
-		if (!confirmed) return;
-
-		const currentAddress = await getWalletAddress();
-		window.web3.eth.handleRevert = true;
-		console.log(asset);
-
-		marketContract.methods
-			.cancelBuyPrice(sale.id)
-			.send({
-				from: currentAddress,
-			})
-			.on("transactionHash", function (hash) {
-				setTransactionHash(hash);
-			})
-			.on("receipt", async function (receipt) {
-				await nftHttpService.createEvent(receipt.transactionHash);
-				setTransactionCompleted(true);
-			});
-	}
-
-	async function approveMiddleware(isAuction, callback) {
+	async function approveMiddleware(isAuction, { isListing }, callback) {
 		try {
 			if (asset.type === "1155")
 				return alert(
@@ -490,7 +495,11 @@ export const ActionsComponent2 = ({ asset }) => {
 				);
 			setLoading(true);
 			const isApproved = await checkApproval(
-				isAuction ? auctionContract._address : marketContract._address,
+				isAuction
+					? auctionContract._address
+					: isListing
+					? CHAIN.listingContract
+					: marketContract._address,
 				asset.contract_address,
 				asset.token_id
 			);
@@ -528,6 +537,7 @@ export const ActionsComponent2 = ({ asset }) => {
 				transactionHash={transactionHash}
 				transactionStatus={transactionCompleted}
 			/>
+			<SellDialogue isOpen={sellDialogueOpen} nft={asset} />
 			{getActions(asset.events[0]).map((e, i) => (
 				<Box key={i} width="auto" p={1} display="flex">
 					<ButtonComponent

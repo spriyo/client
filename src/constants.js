@@ -54,7 +54,7 @@ export const ChainsConfig = {
 	},
 	POLYGON_TESTNET: {
 		chainId: 80001,
-		rpcUrl: "https://matic-mumbai.chainstacklabs.com",
+		rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
 		chainName: "Polygon Testnet",
 		nativeCurrency: {
 			name: "tMATIC",
@@ -65,6 +65,8 @@ export const ChainsConfig = {
 		nftContract: "0xd1e21Bdb3eb28d4c6A3612FF01f9fF81c01d5a17",
 		nft1155Contract: "0xd1e21Bdb3eb28d4c6A3612FF01f9fF81c01d5a17",
 		marketContract: "0x227D59C0C96C90Be57f772FE6354c40EcC91CD90",
+		auctionContract: "0x7E7d95087319D6aF613cA39632d857a58d2b6f37",
+		listingContract: "0x571A0982E177bdD805A60b10767D3566feD5224F",
 	},
 };
 

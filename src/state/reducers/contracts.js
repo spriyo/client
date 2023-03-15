@@ -17,6 +17,11 @@ export const contractReducer = (state = contracts, action) => {
 				...state,
 				auctionContract: action.payload.auctionContract,
 			};
+		case "INIT_LISTING_CONTRACT":
+			return {
+				...state,
+				listingContract: action.payload.listingContract,
+			};
 		case "INIT_NFT_CONTRACT":
 			return {
 				...state,

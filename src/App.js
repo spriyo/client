@@ -18,9 +18,11 @@ import { theme } from "./theme";
 import marketJsonInterface from "./contracts/Market.json";
 import nftJsonInterface from "./contracts/Spriyo.json";
 import auctionJsonInterface from "./contracts/Auction.json";
+import listingJsonInterface from "./contracts/Listing.json";
 import nft1155JsonInterface from "./contracts/Spriyo1155.json";
 import {
 	initAuctionContract,
+	initListingContract,
 	initMarketContract,
 	initNFT1155Contract,
 	initNFTContract,
@@ -62,6 +64,7 @@ function App() {
 				await initializeMarketContract();
 				await initializeNftContract();
 				await initializeAuctionContract();
+				await initializeListingContract();
 
 				// Login to account if not logged
 				const token = localStorage.getItem("token");
@@ -131,6 +134,18 @@ function App() {
 				CHAIN.auctionContract
 			);
 			dispatch(initAuctionContract(contract));
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async function initializeListingContract() {
+		try {
+			const contract = new window.web3.eth.Contract(
+				listingJsonInterface.abi,
+				CHAIN.listingContract
+			);
+			dispatch(initListingContract(contract));
 		} catch (error) {
 			console.log(error);
 		}

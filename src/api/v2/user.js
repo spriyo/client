@@ -8,7 +8,7 @@ export class UserHttpService {
 	async getUserNFTs(userAddress, { limit = 10, skip = 0 }) {
 		const resolved = await resolve(
 			axios.get(
-				`${V2_WEB_API_BASE_URL}/users/nfts/${userAddress}?&limit=${limit}&skip=${skip}&createdAt=asc`,
+				`${V2_WEB_API_BASE_URL}/users/nfts/${userAddress}?&limit=${limit}&skip=${skip}&createdAt=desc`,
 				{
 					headers: {
 						Authorization: `Bearer ${this.token}`,

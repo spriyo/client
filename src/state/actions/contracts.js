@@ -16,6 +16,15 @@ export const initAuctionContract = (auctionContract) => {
 	};
 };
 
+export const initListingContract = (listingContract) => {
+	return {
+		type: "INIT_LISTING_CONTRACT",
+		payload: {
+			listingContract,
+		},
+	};
+};
+
 export const initNFTContract = (nftContract) => {
 	return {
 		type: "INIT_NFT_CONTRACT",

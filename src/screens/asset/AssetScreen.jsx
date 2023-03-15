@@ -4,7 +4,12 @@ import { NavbarComponent } from "../../components/navBar/NavbarComponent";
 import { Box, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
-import { CHAIN, ChainsConfig, DOTSHM_ADDRESS } from "../../constants";
+import {
+	CHAIN,
+	ChainsConfig,
+	DOTSHM_ADDRESS,
+	V2_WEB_API_BASE_URL,
+} from "../../constants";
 import { useSelector } from "react-redux";
 import { CircularProfile } from "../../components/CircularProfileComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
@@ -29,6 +34,9 @@ import { OfferCardComponent } from "../../components/activityCard/OfferCard";
 import { OfferHttpService } from "../../api/offer";
 import AuctionJSONInterface from "../../contracts/Auction.json";
 import Web3 from "web3";
+import { AiOutlineClockCircle } from "react-icons/ai";
+import TransactionDialogue from "../../components/TransactionDialogue";
+import axios from "axios";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -41,12 +49,18 @@ export function AssetScreen() {
 	const user = useSelector((state) => state.authReducer.user);
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
+	const [sale, setSale] = useState(false);
 	const [itemFromCollection, setItemFromCollection] = useState([]);
 	const searchHttpService = new SearchHttpService();
 	const commentHttpService = new CommentHttpService();
 	const [comments, setComments] = useState([]);
 	const [comment, setComment] = useState("");
 	const NFTContract = useRef(null);
+	const listingContract = useSelector(
+		(state) => state.contractReducer.listingContract
+	);
+	const [transactionHash, setTransactionHash] = useState("");
+	const [transactionCompleted, setTransactionCompleted] = useState(false);
 
 	const getAsset = async function () {
 		const resolved = await nftHttpService.getAssetById(
@@ -59,6 +73,7 @@ export function AssetScreen() {
 				fetchedAsset.owner = fetchedAsset.owners[0].user;
 			}
 			setAsset(fetchedAsset);
+			getListing();
 			initializeContract(fetchedAsset.contract_address);
 			getComments(fetchedAsset._id);
 			getOffers(fetchedAsset._id);
@@ -197,7 +212,8 @@ export function AssetScreen() {
 
 	async function initializeContract(contract_address) {
 		try {
-			const contract = new window.web3.eth.Contract(
+			const web3 = new Web3(CHAIN.rpcUrls[0]);
+			const contract = new web3.eth.Contract(
 				NFTContractJSON.abi,
 				contract_address
 			);
@@ -242,17 +258,65 @@ export function AssetScreen() {
 		}
 	}
 
+	async function buyAsset() {
+		if (!sale && sale.sold) return;
+		const currentAddress = await getWalletAddress();
+		window.web3.eth.handleRevert = true;
+
+		// Gas Calculation
+		const gasPrice = await window.web3.eth.getGasPrice();
+		const gas = await listingContract.methods
+			.buy(sale.id, 1, sale.currency, currentAddress)
+			.estimateGas({
+				from: currentAddress,
+				value: sale.pricePerToken,
+			});
+
+		listingContract.methods
+			.buy(sale.id, 1, sale.currency, currentAddress)
+			.send({
+				from: currentAddress,
+				value: sale.pricePerToken,
+				gasPrice,
+				gas,
+			})
+			.on("transactionHash", function (hash) {
+				setTransactionHash(hash);
+			})
+			.on("receipt", async function (receipt) {
+				await nftHttpService.createEvent(receipt.transactionHash);
+				setTransactionCompleted(true);
+			});
+	}
+
+	// Get Sale
+	async function getListing() {
+		try {
+			const response = await axios.get(
+				`${V2_WEB_API_BASE_URL}/listing/${contract_address}/${token_id}`
+			);
+			setSale(response.data[0]);
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
+
 	useEffect(() => {
 		getAsset();
 		getAssetsFromCollection();
 		getAuction();
 		return () => {
-			window.scrollTo({ top: 0, behavior: "smooth" });
+			// window.scrollTo({ top: 0, behavior: "smooth" });
 		};
-	}, [contract_address, token_id]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [contract_address, token_id, listingContract]);
 
 	return (
 		<Box sx={{ backgroundColor: "#efeff8" }}>
+			<TransactionDialogue
+				transactionHash={transactionHash}
+				transactionStatus={transactionCompleted}
+			/>
 			<Box>
 				<NavbarComponent />
 			</Box>
@@ -383,7 +447,8 @@ export function AssetScreen() {
 												>
 													{asset.contract_address === DOTSHM_ADDRESS
 														? asset.metadata_url
-														: asset.name || `#${asset.token_id.substring(0,20)}`}
+														: asset.name ||
+														  `#${asset.token_id.substring(0, 20)}`}
 												</Typography>
 												<Typography
 													variant="subtitle2"
@@ -698,9 +763,46 @@ export function AssetScreen() {
 										).toLocaleString()}`}</h5>
 									)}
 									<ActionsComponent2 asset={asset} />
+									{sale && !sale.sold && (
+										<Box sx={{ border: " 1px solid #ebebeb", p: 2, my: 2 }}>
+											<Box display={"flex"}>
+												<AiOutlineClockCircle
+													style={{ marginRight: "4px" }}
+													size={24}
+												/>
+												Sale ends at{" "}
+												{`${new Date(
+													parseInt(sale.endTimestamp) * 1000
+												).toLocaleString()}`}
+											</Box>
+
+											<Box my={1}>
+												<h4 style={{ color: "grey" }}>Price</h4>
+												<h3>{Web3.utils.fromWei(sale.pricePerToken)} SHM</h3>
+											</Box>
+											<Box>
+												<Box
+													sx={{
+														backgroundColor: "#00e472",
+														borderRadius: "8px",
+														px: 0.5,
+														py: 1,
+														textAlign: "center",
+														fontSize: "18px",
+														fontWeight: "500",
+														cursor: "pointer",
+													}}
+													onClick={buyAsset}
+												>
+													Buy Now
+												</Box>
+											</Box>
+										</Box>
+									)}
+
 									<Typography variant="h3">Offers</Typography>
 									{offers.length === 0 ? (
-										<Typography variant="h3" color="lightgrey">
+										<Typography variant="h3" mb={1} color="lightgrey">
 											No Offers
 										</Typography>
 									) : (
