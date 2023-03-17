@@ -15,7 +15,7 @@ import {
 import { useSelector } from "react-redux";
 import { switchChain as changeChain } from "../../utils/wallet";
 import { ButtonComponent } from "../../components/ButtonComponent";
-import nftJsonInterface from "../../contracts/Spriyo.json";
+import nftJsonInterface from "../../contracts/ERC721.json";
 import { CgAddR } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { CollectionHttpService } from "../../api/v2/collection";

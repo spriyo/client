@@ -51,11 +51,7 @@ export function OfferCardComponent({ asset, offer }) {
 
 	async function approveMiddleware(callback) {
 		try {
-			const isApproved = await checkApproval(
-				marketContract._address,
-				offer.contract_address,
-				offer.token_id
-			);
+			const isApproved = await checkApproval(marketContract._address, asset);
 			if (!isApproved) return;
 			await callback();
 		} catch (error) {

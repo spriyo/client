@@ -7,8 +7,13 @@ import { ConnectComponent } from "./ConnectComponent";
 import { checkApproval } from "../utils/checkApproval";
 import { utils } from "web3";
 import TransactionDialogue from "./TransactionDialogue";
-import nftJsonInterface from "../contracts/Spriyo.json";
-import { CHAIN, NULL_ADDRESS } from "../constants";
+import {
+	CHAIN,
+	ERC1155Contract,
+	ERC721Contract,
+	ListingContract,
+	NULL_ADDRESS,
+} from "../constants";
 import { toast } from "react-toastify";
 import { NFTHttpService } from "../api/v2/nft";
 import { SellDialogue } from "./SellDialogue";
@@ -32,6 +37,7 @@ export const ActionsComponent2 = ({ asset }) => {
 	const [sale, setSale] = useState(false);
 	const [auction, setAuction] = useState(false);
 	const [sellDialogueOpen, setSellDialogueOpen] = useState(false);
+	const user = useSelector((state) => state.authReducer.user);
 	const marketContract = useSelector(
 		(state) => state.contractReducer.marketContract
 	);
@@ -55,31 +61,36 @@ export const ActionsComponent2 = ({ asset }) => {
 					}
 				});
 		}
-		if (asset && listingContract) {
+		if (asset && user) {
 			// Get Owner
 			if (asset.type === "721") {
-				const contract = new window.web3.eth.Contract(
-					nftJsonInterface.abi,
-					asset.contract_address
-				);
-				contract.methods
+				const ERC721 = ERC721Contract(asset.contract_address);
+				ERC721.methods
 					.ownerOf(asset.token_id)
 					.call()
 					.then((owner) => {
 						setOwner(owner);
 					});
+			} else if (asset.type === "1155") {
+				const ERC1155 = ERC1155Contract(asset.contract_address);
+				ERC1155.methods
+					.balanceOf(user.address, asset.token_id)
+					.call()
+					.then((balance) => {
+						if (balance > 0) {
+							setOwner(utils.toChecksumAddress(user.address));
+						}
+					});
 			}
 			// Get Sale
-			listingContract.methods
+			ListingContract.methods
 				.listings_by_address_id(asset.contract_address, asset.token_id)
 				.call()
 				.then((saleData) => {
 					setSale(saleData);
 				});
 		}
-	}, [asset, auctionContract, listingContract]);
-
-	const user = useSelector((state) => state.authReducer.user);
+	}, [asset, auctionContract, user]);
 
 	function isAuctionExpired(expireAt) {
 		return new Date(expireAt).getTime() / 1000 < Date.now() / 1000;
@@ -393,7 +404,7 @@ export const ActionsComponent2 = ({ asset }) => {
 
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await listingContract.methods
+		const gas = await ListingContract.methods
 			.buy(sale.id, 1, sale.currency, currentAddress)
 			.estimateGas({
 				from: currentAddress,
@@ -465,7 +476,7 @@ export const ActionsComponent2 = ({ asset }) => {
 
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await listingContract.methods
+		const gas = await ListingContract.methods
 			.cancelBuyPrice(sale.id)
 			.estimateGas({
 				from: currentAddress,
@@ -489,10 +500,6 @@ export const ActionsComponent2 = ({ asset }) => {
 
 	async function approveMiddleware(isAuction, { isListing }, callback) {
 		try {
-			if (asset.type === "1155")
-				return alert(
-					"Feature yet to come on ERC-1155 token, try on ERC721 token."
-				);
 			setLoading(true);
 			const isApproved = await checkApproval(
 				isAuction
@@ -500,8 +507,7 @@ export const ActionsComponent2 = ({ asset }) => {
 					: isListing
 					? CHAIN.listingContract
 					: marketContract._address,
-				asset.contract_address,
-				asset.token_id
+				asset
 			);
 			if (!isApproved) return setLoading(false);
 			await callback();

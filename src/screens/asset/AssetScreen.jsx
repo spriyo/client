@@ -1,13 +1,22 @@
 import "./asset.css";
 import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
-import { Box, IconButton, Stack, TextField, Typography } from "@mui/material";
+import {
+	Box,
+	IconButton,
+	ListItem,
+	ListItemText,
+	Stack,
+	TextField,
+	Typography,
+} from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import {
 	CHAIN,
 	ChainsConfig,
 	DOTSHM_ADDRESS,
+	ERC721Contract,
 	V2_WEB_API_BASE_URL,
 } from "../../constants";
 import { useSelector } from "react-redux";
@@ -22,7 +31,6 @@ import { RiDeleteBin5Line, RiSendPlane2Line } from "react-icons/ri";
 import { CommentHttpService } from "../../api/comment";
 import NoComment from "../../assets/no-comments.gif";
 import { Helmet } from "react-helmet";
-import NFTContractJSON from "../../contracts/Spriyo.json";
 import { toast } from "react-toastify";
 import DOTSHM_IMAGE from "../../assets/dotshm.png";
 import LOADING_IMG from "../../assets/loading-image.gif";
@@ -37,6 +45,17 @@ import Web3 from "web3";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import TransactionDialogue from "../../components/TransactionDialogue";
 import axios from "axios";
+import { MdOutlinePeopleOutline } from "react-icons/md";
+import { TbBorderAll, TbSquareRoundedChevronDown } from "react-icons/tb";
+import styled from "@emotion/styled";
+import { BuyDialogue } from "../../components/BuyDialogue";
+
+const BoxShadow = styled(Box)(({ theme }) => ({
+	boxShadow: theme.shadows[0],
+	margin: "4px 0",
+	border: "1px solid #ebebeb",
+	borderRadius: "10px",
+}));
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -50,6 +69,7 @@ export function AssetScreen() {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 	const [sale, setSale] = useState(false);
+	const [saleList, setSaleList] = useState([]);
 	const [itemFromCollection, setItemFromCollection] = useState([]);
 	const searchHttpService = new SearchHttpService();
 	const commentHttpService = new CommentHttpService();
@@ -61,6 +81,7 @@ export function AssetScreen() {
 	);
 	const [transactionHash, setTransactionHash] = useState("");
 	const [transactionCompleted, setTransactionCompleted] = useState(false);
+	const [buyDialogueOpen, setBuyDialogueOpen] = useState(false);
 
 	const getAsset = async function () {
 		const resolved = await nftHttpService.getAssetById(
@@ -212,11 +233,7 @@ export function AssetScreen() {
 
 	async function initializeContract(contract_address) {
 		try {
-			const web3 = new Web3(CHAIN.rpcUrls[0]);
-			const contract = new web3.eth.Contract(
-				NFTContractJSON.abi,
-				contract_address
-			);
+			const contract = ERC721Contract(contract_address);
 			NFTContract.current = contract;
 		} catch (error) {
 			toast(error.message);
@@ -296,6 +313,7 @@ export function AssetScreen() {
 				`${V2_WEB_API_BASE_URL}/listing/${contract_address}/${token_id}`
 			);
 			setSale(response.data[0]);
+			setSaleList(response.data);
 		} catch (error) {
 			console.log(error.message);
 		}
@@ -372,9 +390,7 @@ export function AssetScreen() {
 							height="auto"
 							display={"flex"}
 							justifyContent="center"
-							onClick={() =>
-								window.open(asset.image || asset.medias[0].path, "_blank")
-							}
+							onClick={() => window.open(asset.image, "_blank")}
 							m={1}
 						>
 							{asset.image && asset.image.includes(".mp4") ? (
@@ -533,6 +549,36 @@ export function AssetScreen() {
 															</Typography>
 														</Box>
 													</Box>
+												</Box>
+											</Box>
+											{/* Owners Details */}
+											<Box mt={4} display="flex">
+												<Box mr={2} display="flex" alignItems={"center"}>
+													<MdOutlinePeopleOutline
+														style={{ marginRight: "4px" }}
+														size={22}
+													/>
+													<p style={{ fontSize: "14px", fontWeight: "500" }}>
+														{asset.owners_data.total_owners} owners
+													</p>
+												</Box>
+												<Box mr={2} display="flex" alignItems={"center"}>
+													<TbBorderAll
+														style={{ marginRight: "4px" }}
+														size={20}
+													/>
+													<p style={{ fontSize: "14px", fontWeight: "500" }}>
+														{asset.owners_data.total_supply} items
+													</p>
+												</Box>
+												<Box mr={2} display="flex" alignItems={"center"}>
+													<TbSquareRoundedChevronDown
+														style={{ marginRight: "4px" }}
+														size={20}
+													/>
+													<p style={{ fontSize: "14px", fontWeight: "500" }}>
+														You own {asset.owners_data.user_supply} items
+													</p>
 												</Box>
 											</Box>
 											{/* Description */}
@@ -755,7 +801,6 @@ export function AssetScreen() {
 							</Box>
 							{/* Activity & Offers */}
 							<Box flex={1} mt={4}>
-								{/* Offers */}
 								<Box>
 									{auction && (
 										<h5>{`Auction expires at ${new Date(
@@ -763,7 +808,7 @@ export function AssetScreen() {
 										).toLocaleString()}`}</h5>
 									)}
 									<ActionsComponent2 asset={asset} />
-									{sale && !sale.sold && (
+									{asset.type === "721" && sale && !sale.sold && (
 										<Box sx={{ border: " 1px solid #ebebeb", p: 2, my: 2 }}>
 											<Box display={"flex"}>
 												<AiOutlineClockCircle
@@ -800,9 +845,67 @@ export function AssetScreen() {
 										</Box>
 									)}
 
+									<Box mb={2}>
+										<Typography variant="h3">Listings</Typography>
+										{saleList.length === 0 ? (
+											<Typography variant="h3" color="lightgrey">
+												No Listings
+											</Typography>
+										) : (
+											<Box>
+												<Box className="activityScroll">
+													{saleList.map((e, i) => (
+														<BoxShadow key={i}>
+															<Box>
+																<Stack>
+																	<BuyDialogue
+																		isOpen={buyDialogueOpen}
+																		listing={e}
+																	/>
+																	<ListItem
+																		secondaryAction={
+																			<Box
+																				p={1}
+																				borderRadius={"4px"}
+																				backgroundColor="#00e472"
+																				sx={{ cursor: "pointer" }}
+																				onClick={() => setBuyDialogueOpen(true)}
+																			>
+																				<h5>Buy</h5>
+																			</Box>
+																		}
+																	>
+																		<ListItemText
+																			primary={
+																				<Box
+																					display={"flex"}
+																					alignItems={"center"}
+																				>
+																					<h4>
+																						{Web3.utils.fromWei(
+																							e.pricePerToken
+																						)}{" "}
+																						SHM
+																					</h4>
+																					<h6>&nbsp; per unit</h6>
+																				</Box>
+																			}
+																			secondary={"12 Available"}
+																		/>
+																	</ListItem>
+																</Stack>
+															</Box>
+														</BoxShadow>
+													))}
+												</Box>
+											</Box>
+										)}
+									</Box>
+
+									{/* Offers */}
 									<Typography variant="h3">Offers</Typography>
 									{offers.length === 0 ? (
-										<Typography variant="h3" mb={1} color="lightgrey">
+										<Typography variant="h3" mb={2} color="lightgrey">
 											No Offers
 										</Typography>
 									) : (

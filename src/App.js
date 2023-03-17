@@ -16,10 +16,10 @@ import { ProfileScreen } from "./screens/profile/ProfileScreen";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import marketJsonInterface from "./contracts/Market.json";
-import nftJsonInterface from "./contracts/Spriyo.json";
+import nftJsonInterface from "./contracts/ERC721.json";
 import auctionJsonInterface from "./contracts/Auction.json";
 import listingJsonInterface from "./contracts/Listing.json";
-import nft1155JsonInterface from "./contracts/Spriyo1155.json";
+import nft1155JsonInterface from "./contracts/ERC1155.json";
 import {
 	initAuctionContract,
 	initListingContract,

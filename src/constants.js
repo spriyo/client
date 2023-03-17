@@ -1,3 +1,8 @@
+import Web3 from "web3";
+import ListingContractInterface from "./contracts/Listing.json";
+import ERC1155Interface from "./contracts/ERC1155.json";
+import ERC721Interface from "./contracts/ERC721.json";
+
 export const BASE_URL = process.env.REACT_APP_BASE_URL;
 export const WEB_API_BASE_URL = `${BASE_URL}/website/v1`;
 export const V2_WEB_API_BASE_URL = `${BASE_URL}/website/v2`;
@@ -71,3 +76,14 @@ export const ChainsConfig = {
 };
 
 export const CHAIN = ChainsConfig[process.env.REACT_APP_CHAIN];
+export const web3 = new Web3(CHAIN.rpcUrls[0]);
+export const ListingContract = new web3.eth.Contract(
+	ListingContractInterface.abi,
+	CHAIN.listingContract
+);
+export const ERC1155Contract = function (address) {
+	return new web3.eth.Contract(ERC1155Interface.abi, address);
+};
+export const ERC721Contract = function (address) {
+	return new web3.eth.Contract(ERC721Interface.abi, address);
+};

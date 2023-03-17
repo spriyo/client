@@ -18,11 +18,11 @@ import TransactionDialogue from "./TransactionDialogue";
 import ListingContract from "../contracts/Listing.json";
 
 export const SellDialogue = ({ isOpen, nft }) => {
+	let loading = false;
 	const [closed, setClosed] = useState(false);
 	const [selectedTime, setSelectedTime] = useState(1);
 	const [price, setPrice] = useState("1");
 	const [quantity, setQuantity] = useState(1);
-	const [loading, setLoading] = useState(false);
 	const [transactionHash, setTransactionHash] = useState("");
 	const [transactionCompleted, setTransactionCompleted] = useState(false);
 	const [selectedCurrency, setSelectedCurrency] = useState(
@@ -38,6 +38,7 @@ export const SellDialogue = ({ isOpen, nft }) => {
 				"0x571A0982E177bdD805A60b10767D3566feD5224F"
 			);
 			if (loading) return;
+			loading = true;
 			if (!price || price === 0) return toast("Enter Price");
 			const convertedAmount = window.web3.utils.toWei(price);
 			const startingTime = Math.floor(new Date().getTime() / 1000);
@@ -67,9 +68,10 @@ export const SellDialogue = ({ isOpen, nft }) => {
 				.on("receipt", async function (receipt) {
 					await nftHttpService.createEvent(receipt.transactionHash);
 					setTransactionCompleted(true);
+					loading = false;
 				});
 		} catch (error) {
-			console.log(error);
+			loading = false;
 			toast(error.message);
 		}
 	}
@@ -166,7 +168,37 @@ export const SellDialogue = ({ isOpen, nft }) => {
 						flexDirection={"column"}
 						alignItems={"flex-start"}
 					>
-						<Box>
+						{nft.type === "1155" && (
+							<Box
+								width={"30vw"}
+								display={"flex"}
+								flexDirection={"column"}
+								alignItems={"flex-start"}
+							>
+								<Box>
+									<h4>Set quantity</h4>
+								</Box>
+								<Box display={"flex"} alignItems="center" width={"100%"}>
+									<TextField
+										type={"number"}
+										fullWidth
+										placeholder="Set price"
+										size="small"
+										value={quantity}
+										inputProps={{ min: 1, max: nft.owners_data.user_supply }}
+										onChange={(e) => {
+											setQuantity(e.target.value);
+										}}
+									/>
+								</Box>
+								<p
+									style={{ color: "grey", fontSize: "12px", fontWeight: "500" }}
+								>
+									You own {nft.owners_data.user_supply}
+								</p>
+							</Box>
+						)}
+						<Box mt={2}>
 							<h4>Set Price</h4>
 						</Box>
 						<Box display={"flex"} alignItems="center">
@@ -200,30 +232,6 @@ export const SellDialogue = ({ isOpen, nft }) => {
 									</MenuItem>
 								</Select>
 							</FormControl>
-						</Box>
-						<Box
-							mt={2}
-							width={"30vw"}
-							display={"flex"}
-							flexDirection={"column"}
-							alignItems={"flex-start"}
-						>
-							<Box>
-								<h4>Set quantity</h4>
-							</Box>
-							<Box display={"flex"} alignItems="center">
-								<TextField
-									type={"number"}
-									fullWidth
-									placeholder="Set price"
-									size="small"
-									value={quantity}
-									inputProps={{ min: 1 }}
-									onChange={(e) => {
-										setQuantity(e.target.value);
-									}}
-								/>
-							</Box>
 						</Box>
 						<Box mt={2}>
 							<h4>Set Duration</h4>

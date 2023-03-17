@@ -72,11 +72,7 @@ export function ActivityCardComponent({ event, asset }) {
 	async function acceptOffer() {
 		if (loading) return;
 		setLoading(true);
-		const isApproved = await checkApproval(
-			marketContract._address,
-			asset.contract_address,
-			asset.token_id
-		);
+		const isApproved = await checkApproval(marketContract._address, asset);
 		if (!isApproved) {
 			setLoading(false);
 			return;
