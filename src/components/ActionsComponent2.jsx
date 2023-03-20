@@ -122,6 +122,13 @@ export const ActionsComponent2 = ({ asset }) => {
 								action: () => loadMiddleware(cancelSale),
 							},
 					  ];
+			if (asset.owners_data.user_supply > 0) {
+				actions.push({
+					title: "Sell NFT",
+					action: () =>
+						approveMiddleware(false, { isListing: true }, sellAsset),
+				});
+			}
 		} else if (auction) {
 			if (
 				isAuctionExpired(auction.expireAt) &&
@@ -519,10 +526,6 @@ export const ActionsComponent2 = ({ asset }) => {
 
 	async function loadMiddleware(callback) {
 		try {
-			if (asset.type === "1155")
-				return alert(
-					"Feature yet to come on ERC-1155 token, try on ERC721 token."
-				);
 			setLoading(true);
 			await callback();
 			setLoading(false);

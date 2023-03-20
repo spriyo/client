@@ -267,7 +267,7 @@ export const SellDialogue = ({ isOpen, nft }) => {
 						</Box>
 						<Box display={"flex"} justifyContent={"space-between"}>
 							<h4 style={{ fontWeight: "600" }}>Creator Fee</h4>
-							<h4 style={{ fontWeight: "600" }}>5 %</h4>
+							<h4 style={{ fontWeight: "600" }}>0 %</h4>
 						</Box>
 						<Box display={"flex"} mt={0.5} justifyContent={"space-between"}>
 							<h4>Final earnings</h4>

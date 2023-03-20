@@ -46,13 +46,15 @@ export function ProfileScreen() {
 		const resolved = await userHttpService.getUserNFTs(address, {
 			skip: skip.current,
 		});
-		const nfts = resolved.data.map((e) => {
-			let nft = e.nft;
-			delete e.nft;
-			nft.owners = [];
-			nft.owners.push(e);
-			return nft;
-		});
+		const nfts = resolved.data
+			.filter((e) => e.nft)
+			.map((e) => {
+				let nft = e.nft;
+				delete e.nft;
+				nft.owners = [];
+				nft.owners.push(e);
+				return nft;
+			});
 		setAssets((prevnfts) => [...prevnfts, ...nfts]);
 		skip.current += 10;
 	}

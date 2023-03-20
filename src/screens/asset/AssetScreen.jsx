@@ -1,15 +1,7 @@
 import "./asset.css";
 import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../../components/navBar/NavbarComponent";
-import {
-	Box,
-	IconButton,
-	ListItem,
-	ListItemText,
-	Stack,
-	TextField,
-	Typography,
-} from "@mui/material";
+import { Box, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { FooterComponent } from "../../components/FooterComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -17,6 +9,7 @@ import {
 	ChainsConfig,
 	DOTSHM_ADDRESS,
 	ERC721Contract,
+	ListingContract,
 	V2_WEB_API_BASE_URL,
 } from "../../constants";
 import { useSelector } from "react-redux";
@@ -47,15 +40,7 @@ import TransactionDialogue from "../../components/TransactionDialogue";
 import axios from "axios";
 import { MdOutlinePeopleOutline } from "react-icons/md";
 import { TbBorderAll, TbSquareRoundedChevronDown } from "react-icons/tb";
-import styled from "@emotion/styled";
-import { BuyDialogue } from "../../components/BuyDialogue";
-
-const BoxShadow = styled(Box)(({ theme }) => ({
-	boxShadow: theme.shadows[0],
-	margin: "4px 0",
-	border: "1px solid #ebebeb",
-	borderRadius: "10px",
-}));
+import { ListingCard } from "../../components/ListingCard";
 
 export function AssetScreen() {
 	const { contract_address, token_id } = useParams();
@@ -81,7 +66,6 @@ export function AssetScreen() {
 	);
 	const [transactionHash, setTransactionHash] = useState("");
 	const [transactionCompleted, setTransactionCompleted] = useState(false);
-	const [buyDialogueOpen, setBuyDialogueOpen] = useState(false);
 
 	const getAsset = async function () {
 		const resolved = await nftHttpService.getAssetById(
@@ -282,15 +266,15 @@ export function AssetScreen() {
 
 		// Gas Calculation
 		const gasPrice = await window.web3.eth.getGasPrice();
-		const gas = await listingContract.methods
-			.buy(sale.id, 1, sale.currency, currentAddress)
+		const gas = await ListingContract.methods
+			.buy(sale.listing_id, 1, sale.currency, currentAddress)
 			.estimateGas({
 				from: currentAddress,
 				value: sale.pricePerToken,
 			});
 
 		listingContract.methods
-			.buy(sale.id, 1, sale.currency, currentAddress)
+			.buy(sale.listing_id, 1, sale.currency, currentAddress)
 			.send({
 				from: currentAddress,
 				value: sale.pricePerToken,
@@ -552,35 +536,37 @@ export function AssetScreen() {
 												</Box>
 											</Box>
 											{/* Owners Details */}
-											<Box mt={4} display="flex">
-												<Box mr={2} display="flex" alignItems={"center"}>
-													<MdOutlinePeopleOutline
-														style={{ marginRight: "4px" }}
-														size={22}
-													/>
-													<p style={{ fontSize: "14px", fontWeight: "500" }}>
-														{asset.owners_data.total_owners} owners
-													</p>
+											{asset.type === "1155" && (
+												<Box mt={4} display="flex">
+													<Box mr={2} display="flex" alignItems={"center"}>
+														<MdOutlinePeopleOutline
+															style={{ marginRight: "4px" }}
+															size={22}
+														/>
+														<p style={{ fontSize: "14px", fontWeight: "500" }}>
+															{asset.owners_data.total_owners} owners
+														</p>
+													</Box>
+													<Box mr={2} display="flex" alignItems={"center"}>
+														<TbBorderAll
+															style={{ marginRight: "4px" }}
+															size={20}
+														/>
+														<p style={{ fontSize: "14px", fontWeight: "500" }}>
+															{asset.owners_data.total_supply} items
+														</p>
+													</Box>
+													<Box mr={2} display="flex" alignItems={"center"}>
+														<TbSquareRoundedChevronDown
+															style={{ marginRight: "4px" }}
+															size={20}
+														/>
+														<p style={{ fontSize: "14px", fontWeight: "500" }}>
+															You own {asset.owners_data.user_supply}
+														</p>
+													</Box>
 												</Box>
-												<Box mr={2} display="flex" alignItems={"center"}>
-													<TbBorderAll
-														style={{ marginRight: "4px" }}
-														size={20}
-													/>
-													<p style={{ fontSize: "14px", fontWeight: "500" }}>
-														{asset.owners_data.total_supply} items
-													</p>
-												</Box>
-												<Box mr={2} display="flex" alignItems={"center"}>
-													<TbSquareRoundedChevronDown
-														style={{ marginRight: "4px" }}
-														size={20}
-													/>
-													<p style={{ fontSize: "14px", fontWeight: "500" }}>
-														You own {asset.owners_data.user_supply} items
-													</p>
-												</Box>
-											</Box>
+											)}
 											{/* Description */}
 											<Box mt={4}>
 												<Typography variant="h3">Description</Typography>
@@ -855,47 +841,7 @@ export function AssetScreen() {
 											<Box>
 												<Box className="activityScroll">
 													{saleList.map((e, i) => (
-														<BoxShadow key={i}>
-															<Box>
-																<Stack>
-																	<BuyDialogue
-																		isOpen={buyDialogueOpen}
-																		listing={e}
-																	/>
-																	<ListItem
-																		secondaryAction={
-																			<Box
-																				p={1}
-																				borderRadius={"4px"}
-																				backgroundColor="#00e472"
-																				sx={{ cursor: "pointer" }}
-																				onClick={() => setBuyDialogueOpen(true)}
-																			>
-																				<h5>Buy</h5>
-																			</Box>
-																		}
-																	>
-																		<ListItemText
-																			primary={
-																				<Box
-																					display={"flex"}
-																					alignItems={"center"}
-																				>
-																					<h4>
-																						{Web3.utils.fromWei(
-																							e.pricePerToken
-																						)}{" "}
-																						SHM
-																					</h4>
-																					<h6>&nbsp; per unit</h6>
-																				</Box>
-																			}
-																			secondary={"12 Available"}
-																		/>
-																	</ListItem>
-																</Stack>
-															</Box>
-														</BoxShadow>
+														<ListingCard listing={e} key={i} />
 													))}
 												</Box>
 											</Box>

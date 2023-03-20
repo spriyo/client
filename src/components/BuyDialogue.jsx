@@ -9,9 +9,9 @@ import TransactionDialogue from "./TransactionDialogue";
 import Web3 from "web3";
 import { useSelector } from "react-redux";
 
-export const BuyDialogue = ({ isOpen, listing }) => {
+export const BuyDialogue = ({ isOpen, listing, onClose }) => {
 	let loading = false;
-	const [closed, setClosed] = useState(false);
+	const [open, setOpen] = useState(false);
 	const [quantity, setQuantity] = useState(1);
 	const [transactionHash, setTransactionHash] = useState("");
 	const [transactionCompleted, setTransactionCompleted] = useState(false);
@@ -55,14 +55,12 @@ export const BuyDialogue = ({ isOpen, listing }) => {
 	}
 
 	useEffect(() => {
-		if (isOpen) {
-			setClosed(true);
-		}
+		setOpen(isOpen);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen]);
 
 	return (
-		<Dialog open={closed}>
+		<Dialog open={open}>
 			<TransactionDialogue
 				transactionHash={transactionHash}
 				transactionStatus={transactionCompleted}
@@ -72,7 +70,8 @@ export const BuyDialogue = ({ isOpen, listing }) => {
 					sx={{ position: "absolute", right: 2, top: 8 }}
 					onClick={() => {
 						if (loading) return;
-						setClosed(false);
+						setOpen(false);
+						onClose();
 					}}
 				>
 					<IoClose />
