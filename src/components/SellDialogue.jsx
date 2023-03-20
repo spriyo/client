@@ -16,6 +16,7 @@ import LOADING_IMG from "../assets/loading-image.gif";
 import { getWalletAddress } from "../utils/wallet";
 import TransactionDialogue from "./TransactionDialogue";
 import ListingContract from "../contracts/Listing.json";
+import { CHAIN } from "../constants";
 
 export const SellDialogue = ({ isOpen, nft }) => {
 	let loading = false;
@@ -35,7 +36,7 @@ export const SellDialogue = ({ isOpen, nft }) => {
 		try {
 			listingContract = new window.web3.eth.Contract(
 				ListingContract.abi,
-				"0x571A0982E177bdD805A60b10767D3566feD5224F"
+				CHAIN.listingContract
 			);
 			if (loading) return;
 			loading = true;
@@ -226,7 +227,7 @@ export const SellDialogue = ({ isOpen, nft }) => {
 										ETH
 									</MenuItem>
 									<MenuItem
-										value={"0xebEDE296FE8FFC38A40d09aCf6Ea5E75b77449f1"}
+										value={"0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"}
 									>
 										WETH
 									</MenuItem>

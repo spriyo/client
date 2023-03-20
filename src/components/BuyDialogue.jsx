@@ -8,6 +8,9 @@ import { getWalletAddress } from "../utils/wallet";
 import TransactionDialogue from "./TransactionDialogue";
 import Web3 from "web3";
 import { useSelector } from "react-redux";
+import { getShortAddress } from "../utils/addressShort";
+import { CHAIN, NATIVE_CURRENCY } from "../constants";
+import { validateERC20AndAllowance } from "../utils/validateERC20AndAllowance";
 
 export const BuyDialogue = ({ isOpen, listing, onClose }) => {
 	let loading = false;
@@ -28,6 +31,13 @@ export const BuyDialogue = ({ isOpen, listing, onClose }) => {
 				return toast("Enter Quantity", { type: "warning" });
 			const price = Web3.utils.fromWei(listing.pricePerToken) * quantity;
 			const convertedAmount = Web3.utils.toWei(price.toString());
+			if (listing.currency !== NATIVE_CURRENCY) {
+				await validateERC20AndAllowance(
+					listing.currency,
+					convertedAmount,
+					CHAIN.listingContract
+				);
+			}
 			const currentAddress = await getWalletAddress();
 
 			const gas = await listingContract.methods
@@ -50,7 +60,7 @@ export const BuyDialogue = ({ isOpen, listing, onClose }) => {
 				});
 		} catch (error) {
 			loading = false;
-			toast(error.message);
+			toast(error.message, { type: "error" });
 		}
 	}
 
@@ -125,6 +135,12 @@ export const BuyDialogue = ({ isOpen, listing, onClose }) => {
 					</Box>
 				</Box>
 				<Box width={"100%"}>
+					<Box display={"flex"} justifyContent={"space-between"}>
+						<h5 style={{ fontWeight: "600" }}>Currency</h5>
+						<h5 style={{ fontWeight: "600" }}>
+							{getShortAddress(listing.currency)}
+						</h5>
+					</Box>
 					<Box display={"flex"} justifyContent={"space-between"}>
 						<h5 style={{ fontWeight: "600" }}>Listing Price</h5>
 						<h5 style={{ fontWeight: "600" }}>
