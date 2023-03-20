@@ -3,6 +3,7 @@ import { Box } from "@mui/system";
 import React, { useState } from "react";
 import Web3 from "web3";
 import { BuyDialogue } from "../components/BuyDialogue";
+import { getSymbolFromAddress } from "../utils/getSymbolFromAddress";
 
 const BoxShadow = styled(Box)(({ theme }) => ({
 	boxShadow: theme.shadows[0],
@@ -43,7 +44,10 @@ export const ListingCard = ({ listing }) => {
 							<ListItemText
 								primary={
 									<Box display={"flex"} alignItems={"center"}>
-										<h4>{Web3.utils.fromWei(listing.pricePerToken)} SHM</h4>
+										<h4>
+											{Web3.utils.fromWei(listing.pricePerToken)}{" "}
+											{getSymbolFromAddress(listing.currency)}
+										</h4>
 										<h6>&nbsp; per unit</h6>
 									</Box>
 								}

@@ -16,7 +16,7 @@ import LOADING_IMG from "../assets/loading-image.gif";
 import { getWalletAddress } from "../utils/wallet";
 import TransactionDialogue from "./TransactionDialogue";
 import ListingContract from "../contracts/Listing.json";
-import { CHAIN } from "../constants";
+import { CHAIN, NATIVE_CURRENCY } from "../constants";
 
 export const SellDialogue = ({ isOpen, nft }) => {
 	let loading = false;
@@ -26,9 +26,7 @@ export const SellDialogue = ({ isOpen, nft }) => {
 	const [quantity, setQuantity] = useState(1);
 	const [transactionHash, setTransactionHash] = useState("");
 	const [transactionCompleted, setTransactionCompleted] = useState(false);
-	const [selectedCurrency, setSelectedCurrency] = useState(
-		"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-	);
+	const [selectedCurrency, setSelectedCurrency] = useState(NATIVE_CURRENCY);
 	const nftHttpService = new NFTHttpService();
 	let listingContract;
 
