@@ -6,8 +6,8 @@ import {
 	MenuItem,
 	Select,
 	TextField,
+	Box,
 } from "@mui/material";
-import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
