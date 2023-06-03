@@ -93,7 +93,13 @@ export const HomeScreen2 = () => {
 					</div>
 					<div>
 						1D NFT Mint: &nbsp;
-						<span>{statistics.one_day_mints.one_day_mints}</span>
+						<span>
+							{statistics
+								? statistics.one_day_mints
+									? statistics.one_day_mints.one_day_mints
+									: 0
+								: 0}
+						</span>
 					</div>
 				</Box>
 			)}
